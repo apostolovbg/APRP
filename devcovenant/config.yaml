@@ -80,8 +80,16 @@ profiles:
   - github
   - python
   - docs
+  - userproject
   generated:
-    file_suffixes: []
+    file_suffixes:
+    - .ipynb
+    - .md
+    - .py
+    - .pyi
+    - .pyw
+    - .rst
+    - .txt
     devcov_core_paths:
     - devcovenant/core
     - devcovenant/builtin
@@ -166,7 +174,7 @@ doc_assets:
 # Set this to true after review to allow `devcovenant deploy`.
 
 install:
-  config_reviewed: false
+  config_reviewed: true
   import_managed_docs:
   - README.md
   - SPEC.md
@@ -358,14 +366,14 @@ workflow:
 # When unversioned, the top visible changelog heading must match `unreleased_heading` exactly.
 
 project-governance:
-  project_name: Project Name
-  project_description: 'Describe the project this repository ships: what it does,
-    who it helps, and what problem it solves.'
-  copyright_notice: YEAR Legal Owner Name
-  stage: prototype
+  project_name: APRP
+  project_description: ERPNext-based infrastructure for businesses that outgrew spreadsheets,
+    improvisation, and fragile integrations.
+  copyright_notice: 2026 APRP Contributors
+  stage: beta
   maintenance_stance: active
-  compatibility_policy: unspecified
-  versioning_mode: unversioned
+  compatibility_policy: forward-only
+  versioning_mode: versioned
   unversioned_label: Unversioned
   unreleased_heading: '## Unreleased'
   changelog_file: CHANGELOG.md
@@ -397,10 +405,24 @@ project-governance:
 # The shipped install baseline keeps `managed-environment` false until the repository enables a matching profile such as `python_venv`.
 
 policy_state:
+  changelog-coverage: true
+  dependency-management: true
+  docstring-and-comment-coverage: true
+  documentation-growth-tracking: true
+  last-updated: true
+  line-length-limit: true
   managed-environment: false
+  modules-need-tests: true
+  name-clarity: true
+  no-future-dates: true
+  no-print-outside-output-runtime: true
+  no-raw-errors: true
   raw-string-escapes: false
-  version-governance: false
-  version-sync: false
+  read-only-directories: true
+  security-scanner: true
+  tests-coverage: true
+  version-governance: true
+  version-sync: true
 
 # -------------------------------------------------------------------
 # Global ignore patterns
@@ -467,7 +489,850 @@ gitignore:
 
 # Keep one metadata key in one shape across layers.
 
-autogen_metadata_overlays: {}
+autogen_metadata_overlays:
+  changelog-coverage:
+    gate_status_file: devcovenant/registry/runtime/gate_status.json
+    header_doc_suffixes:
+    - .md
+    - .rst
+    - .txt
+    header_keys:
+    - Last Updated
+    - Project Version
+    - Project Stage
+    - Maintenance Stance
+    - Compatibility Policy
+    - Versioning Mode
+    - Project Codename
+    - Build Identity
+    - DevCovenant Version
+    header_scan_lines: '4'
+    main_changelog:
+    - CHANGELOG.md
+    required_globs:
+    - README.md
+    - AGENTS.md
+    - CONTRIBUTING.md
+    - CHANGELOG.md
+    - SPEC.md
+    - PLAN.md
+    skipped_files:
+    - devcovenant/config.yaml
+    - CHANGELOG.md
+    - devcovenant/registry/registry.yaml
+    - .gitignore
+    - .pre-commit-config.yaml
+    - .github/workflows/ci.yml
+    skipped_globs:
+    - '*_old.*'
+    skipped_prefixes:
+    - devcovenant
+    - tests/devcovenant
+    summary_labels:
+    - Change
+    - Why
+    - Impact
+    summary_verbs:
+    - add
+    - added
+    - address
+    - addressed
+    - adjust
+    - adjusted
+    - align
+    - aligned
+    - amend
+    - amended
+    - automate
+    - automated
+    - bootstrap
+    - build
+    - built
+    - bump
+    - bumped
+    - cache
+    - clean
+    - cleaned
+    - clarify
+    - clarified
+    - consolidate
+    - consolidated
+    - configure
+    - correct
+    - corrected
+    - create
+    - created
+    - define
+    - defined
+    - deserialize
+    - deprecate
+    - deprecated
+    - detect
+    - document
+    - documented
+    - drop
+    - dropped
+    - enable
+    - enabled
+    - enforce
+    - enforced
+    - expand
+    - expanded
+    - extract
+    - fix
+    - fixed
+    - harden
+    - hardened
+    - implement
+    - improve
+    - improved
+    - instrument
+    - integrate
+    - introduce
+    - introduced
+    - invalidate
+    - lock
+    - materialize
+    - merge
+    - migrate
+    - migrated
+    - normalize
+    - normalized
+    - optimize
+    - pin
+    - preserve
+    - prevent
+    - profile
+    - publish
+    - reconcile
+    - regenerate
+    - refactor
+    - refactored
+    - release
+    - remove
+    - removed
+    - rename
+    - renamed
+    - replace
+    - replaced
+    - resolve
+    - restructure
+    - restructured
+    - revert
+    - revise
+    - revised
+    - sanitize
+    - scaffold
+    - serialize
+    - simplify
+    - simplified
+    - split
+    - stabilize
+    - stabilized
+    - streamline
+    - streamlined
+    - support
+    - supported
+    - sync
+    - tune
+    - unpin
+    - update
+    - updated
+    - upgrade
+    - upgraded
+    - validate
+    - validated
+    - verify
+    - verified
+    - wrap
+    - wrapped
+    - allow
+    - allowed
+    - analyze
+    - analyzed
+    - annotate
+    - annotated
+    - assess
+    - assessed
+    - audit
+    - audited
+    - calculate
+    - calculated
+    - check
+    - checked
+    - choose
+    - chosen
+    - close
+    - closed
+    - collect
+    - collected
+    - compare
+    - compared
+    - complete
+    - completed
+    - compose
+    - composed
+    - constrain
+    - constrained
+    - convert
+    - converted
+    - copy
+    - copied
+    - cover
+    - covered
+    - delete
+    - deleted
+    - derive
+    - derived
+    - describe
+    - described
+    - design
+    - designed
+    - diagnose
+    - diagnosed
+    - disable
+    - disabled
+    - ensure
+    - ensured
+    - estimate
+    - estimated
+    - evaluate
+    - evaluated
+    - execute
+    - executed
+    - explain
+    - explained
+    - expose
+    - exposed
+    - finalize
+    - finalized
+    - make
+    - made
+    - map
+    - mapped
+    - mark
+    - marked
+    - measure
+    - measured
+    - organize
+    - organized
+    - prioritize
+    - prioritized
+    - promote
+    - promoted
+    - prune
+    - pruned
+    - prove
+    - proved
+    - record
+    - recorded
+    - reduce
+    - reduced
+    - reject
+    - rejected
+    - repair
+    - repaired
+    - report
+    - reported
+    - reset
+    - restore
+    - restored
+    - retain
+    - retained
+    - review
+    - reviewed
+    - rewrite
+    - rewrote
+    - select
+    - selected
+    - sequence
+    - sequenced
+    - show
+    - showed
+    - sort
+    - sorted
+    - stage
+    - staged
+    - standardize
+    - standardized
+    - strengthen
+    - strengthened
+    - suppress
+    - suppressed
+    - test
+    - tested
+  dependency-management:
+    surfaces:
+    - id: devcovenant_runtime
+      lock_file: devcovenant/runtime-requirements.lock
+      direct_dependency_files: []
+      third_party_file: devcovenant/licenses/THIRD_PARTY_LICENSES.md
+      licenses_dir: devcovenant/licenses
+      report_heading: '## License Report'
+      manage_licenses_readme: 'true'
+      generate_hashes: 'true'
+      audit_service: pypi
+      required_paths:
+      - devcovenant/runtime-requirements.lock
+      hash_targets:
+      - id: linux-py311
+        marker: sys_platform == "linux" and python_version == "3.11"
+        pip:
+          platform: manylinux2014_x86_64
+          implementation: cp
+          python_version: '3.11'
+          abi: cp311
+      - id: linux-py312
+        marker: sys_platform == "linux" and python_version == "3.12"
+        pip:
+          platform: manylinux2014_x86_64
+          implementation: cp
+          python_version: '3.12'
+          abi: cp312
+      - id: linux-py313
+        marker: sys_platform == "linux" and python_version == "3.13"
+        pip:
+          platform: manylinux2014_x86_64
+          implementation: cp
+          python_version: '3.13'
+          abi: cp313
+      - id: linux-py314
+        marker: sys_platform == "linux" and python_version == "3.14"
+        pip:
+          platform: manylinux2014_x86_64
+          implementation: cp
+          python_version: '3.14'
+          abi: cp314
+      - id: windows-py311
+        marker: sys_platform == "win32" and python_version == "3.11"
+        pip:
+          platform: win_amd64
+          implementation: cp
+          python_version: '3.11'
+          abi: cp311
+      - id: windows-py312
+        marker: sys_platform == "win32" and python_version == "3.12"
+        pip:
+          platform: win_amd64
+          implementation: cp
+          python_version: '3.12'
+          abi: cp312
+      - id: windows-py313
+        marker: sys_platform == "win32" and python_version == "3.13"
+        pip:
+          platform: win_amd64
+          implementation: cp
+          python_version: '3.13'
+          abi: cp313
+      - id: windows-py314
+        marker: sys_platform == "win32" and python_version == "3.14"
+        pip:
+          platform: win_amd64
+          implementation: cp
+          python_version: '3.14'
+          abi: cp314
+      - id: macos-py311
+        marker: sys_platform == "darwin" and python_version == "3.11"
+        pip:
+          platform: macosx_11_0_x86_64
+          implementation: cp
+          python_version: '3.11'
+          abi: cp311
+      - id: macos-py312
+        marker: sys_platform == "darwin" and python_version == "3.12"
+        pip:
+          platform: macosx_11_0_x86_64
+          implementation: cp
+          python_version: '3.12'
+          abi: cp312
+      - id: macos-py313
+        marker: sys_platform == "darwin" and python_version == "3.13"
+        pip:
+          platform: macosx_11_0_x86_64
+          implementation: cp
+          python_version: '3.13'
+          abi: cp313
+      - id: macos-py314
+        marker: sys_platform == "darwin" and python_version == "3.14"
+        pip:
+          platform: macosx_11_0_x86_64
+          implementation: cp
+          python_version: '3.14'
+          abi: cp314
+    - id: root_workspace
+      lock_file: requirements.lock
+      direct_dependency_files:
+      - requirements.in
+      dependency_files:
+      - requirements.in
+      - devcovenant/runtime-requirements.lock
+      third_party_file: licenses/THIRD_PARTY_LICENSES.md
+      licenses_dir: licenses
+      report_heading: '## License Report'
+      manage_licenses_readme: 'true'
+      generate_hashes: 'true'
+      audit_service: pypi
+      required_paths:
+      - requirements.in
+      - devcovenant/runtime-requirements.lock
+      hash_targets:
+      - id: linux-py311
+        marker: sys_platform == "linux" and python_version == "3.11"
+        pip:
+          platform: manylinux2014_x86_64
+          implementation: cp
+          python_version: '3.11'
+          abi: cp311
+      - id: linux-py312
+        marker: sys_platform == "linux" and python_version == "3.12"
+        pip:
+          platform: manylinux2014_x86_64
+          implementation: cp
+          python_version: '3.12'
+          abi: cp312
+      - id: linux-py313
+        marker: sys_platform == "linux" and python_version == "3.13"
+        pip:
+          platform: manylinux2014_x86_64
+          implementation: cp
+          python_version: '3.13'
+          abi: cp313
+      - id: linux-py314
+        marker: sys_platform == "linux" and python_version == "3.14"
+        pip:
+          platform: manylinux2014_x86_64
+          implementation: cp
+          python_version: '3.14'
+          abi: cp314
+      - id: windows-py311
+        marker: sys_platform == "win32" and python_version == "3.11"
+        pip:
+          platform: win_amd64
+          implementation: cp
+          python_version: '3.11'
+          abi: cp311
+      - id: windows-py312
+        marker: sys_platform == "win32" and python_version == "3.12"
+        pip:
+          platform: win_amd64
+          implementation: cp
+          python_version: '3.12'
+          abi: cp312
+      - id: windows-py313
+        marker: sys_platform == "win32" and python_version == "3.13"
+        pip:
+          platform: win_amd64
+          implementation: cp
+          python_version: '3.13'
+          abi: cp313
+      - id: windows-py314
+        marker: sys_platform == "win32" and python_version == "3.14"
+        pip:
+          platform: win_amd64
+          implementation: cp
+          python_version: '3.14'
+          abi: cp314
+      - id: macos-py311
+        marker: sys_platform == "darwin" and python_version == "3.11"
+        pip:
+          platform: macosx_11_0_x86_64
+          implementation: cp
+          python_version: '3.11'
+          abi: cp311
+      - id: macos-py312
+        marker: sys_platform == "darwin" and python_version == "3.12"
+        pip:
+          platform: macosx_11_0_x86_64
+          implementation: cp
+          python_version: '3.12'
+          abi: cp312
+      - id: macos-py313
+        marker: sys_platform == "darwin" and python_version == "3.13"
+        pip:
+          platform: macosx_11_0_x86_64
+          implementation: cp
+          python_version: '3.13'
+          abi: cp313
+      - id: macos-py314
+        marker: sys_platform == "darwin" and python_version == "3.14"
+        pip:
+          platform: macosx_11_0_x86_64
+          implementation: cp
+          python_version: '3.14'
+          abi: cp314
+    - id: package_runtime
+      lock_file: '{{ PROJECT_NAME_PATH }}/runtime-requirements.lock'
+      direct_dependency_files:
+      - pyproject.toml
+      dependency_files:
+      - pyproject.toml
+      third_party_file: '{{ PROJECT_NAME_PATH }}/licenses/THIRD_PARTY_LICENSES.md'
+      licenses_dir: '{{ PROJECT_NAME_PATH }}/licenses'
+      report_heading: '## License Report'
+      manage_licenses_readme: 'true'
+      generate_hashes: 'true'
+      audit_service: pypi
+      required_paths:
+      - pyproject.toml
+      - '{{ PROJECT_NAME_PATH }}'
+      hash_targets:
+      - id: linux-py311
+        marker: sys_platform == "linux" and python_version == "3.11"
+        pip:
+          platform: manylinux2014_x86_64
+          implementation: cp
+          python_version: '3.11'
+          abi: cp311
+      - id: linux-py312
+        marker: sys_platform == "linux" and python_version == "3.12"
+        pip:
+          platform: manylinux2014_x86_64
+          implementation: cp
+          python_version: '3.12'
+          abi: cp312
+      - id: linux-py313
+        marker: sys_platform == "linux" and python_version == "3.13"
+        pip:
+          platform: manylinux2014_x86_64
+          implementation: cp
+          python_version: '3.13'
+          abi: cp313
+      - id: linux-py314
+        marker: sys_platform == "linux" and python_version == "3.14"
+        pip:
+          platform: manylinux2014_x86_64
+          implementation: cp
+          python_version: '3.14'
+          abi: cp314
+      - id: windows-py311
+        marker: sys_platform == "win32" and python_version == "3.11"
+        pip:
+          platform: win_amd64
+          implementation: cp
+          python_version: '3.11'
+          abi: cp311
+      - id: windows-py312
+        marker: sys_platform == "win32" and python_version == "3.12"
+        pip:
+          platform: win_amd64
+          implementation: cp
+          python_version: '3.12'
+          abi: cp312
+      - id: windows-py313
+        marker: sys_platform == "win32" and python_version == "3.13"
+        pip:
+          platform: win_amd64
+          implementation: cp
+          python_version: '3.13'
+          abi: cp313
+      - id: windows-py314
+        marker: sys_platform == "win32" and python_version == "3.14"
+        pip:
+          platform: win_amd64
+          implementation: cp
+          python_version: '3.14'
+          abi: cp314
+      - id: macos-py311
+        marker: sys_platform == "darwin" and python_version == "3.11"
+        pip:
+          platform: macosx_11_0_x86_64
+          implementation: cp
+          python_version: '3.11'
+          abi: cp311
+      - id: macos-py312
+        marker: sys_platform == "darwin" and python_version == "3.12"
+        pip:
+          platform: macosx_11_0_x86_64
+          implementation: cp
+          python_version: '3.12'
+          abi: cp312
+      - id: macos-py313
+        marker: sys_platform == "darwin" and python_version == "3.13"
+        pip:
+          platform: macosx_11_0_x86_64
+          implementation: cp
+          python_version: '3.13'
+          abi: cp313
+      - id: macos-py314
+        marker: sys_platform == "darwin" and python_version == "3.14"
+        pip:
+          platform: macosx_11_0_x86_64
+          implementation: cp
+          python_version: '3.14'
+          abi: cp314
+  docstring-and-comment-coverage:
+    exclude_prefixes:
+    - devcovenant
+    force_include_globs:
+    - devcovenant/custom/**/*.py
+    - tests/devcovenant/custom/**/*.py
+    include_suffixes:
+    - .py
+  documentation-growth-tracking:
+    doc_quality_files:
+    - README.md
+    - CONTRIBUTING.md
+    - AGENTS.md
+    - SPEC.md
+    - PLAN.md
+    exclude_prefixes:
+    - devcovenant
+    - tests/devcovenant
+    user_facing_exclude_dirs:
+    - tests/**
+    user_facing_exclude_files:
+    - devcovenant/config.yaml
+    user_facing_exclude_prefixes:
+    - tests
+    - devcovenant
+    - tests/devcovenant
+    user_facing_files:
+    - .pre-commit-config.yaml
+    - pyproject.toml
+    user_facing_globs:
+    - .github/workflows/*.yml
+    - .github/workflows/*.yaml
+    user_facing_suffixes:
+    - .py
+    - .js
+    - .ts
+    - .tsx
+    - .vue
+    - .go
+    - .rs
+    - .java
+    - .kt
+    - .swift
+    - .rb
+    - .php
+    - .cs
+    - .yml
+    - .yaml
+    - .json
+    - .toml
+    user_visible_files:
+    - README.md
+    - CONTRIBUTING.md
+    - AGENTS.md
+    - SPEC.md
+    - PLAN.md
+  last-updated:
+    allowed_globs:
+    - README.md
+    - AGENTS.md
+    - CONTRIBUTING.md
+    - CHANGELOG.md
+    - SPEC.md
+    - PLAN.md
+    include_globs:
+    - '*.md'
+    include_suffixes:
+    - .md
+    required_globs:
+    - README.md
+    - AGENTS.md
+    - CONTRIBUTING.md
+    - CHANGELOG.md
+    - SPEC.md
+    - PLAN.md
+  line-length-limit:
+    allow_long_lines: 'true'
+    allow_long_url_lines: 'true'
+    exclude_globs:
+    - devcovenant/logs/**
+    - build/**
+    - dist/**
+    - node_modules/**
+    - '*.egg-info/**'
+    - '**/*.egg-info/**'
+    exclude_prefixes:
+    - build
+    - dist
+    - node_modules
+    - devcovenant
+    force_include_globs:
+    - devcovenant/custom/**
+    - tests/devcovenant/custom/**
+    include_globs:
+    - '*.py'
+    - '*.md'
+    - '*.rst'
+    - '*.txt'
+    - '*.yml'
+    - '*.yaml'
+    - '*.json'
+    - '*.toml'
+    - '*.cff'
+    include_suffixes:
+    - .py
+    - .md
+    - .rst
+    - .txt
+    - .yml
+    - .yaml
+    - .json
+    - .toml
+    - .cff
+    max_length: '79'
+    url_prefixes:
+    - https://
+    - http://
+    - ftp://
+    - ftps://
+    - sftp://
+    - ssh://
+    - ws://
+    - wss://
+    - file://
+    - git://
+    - svn://
+    - 'mailto:'
+    - 'tel:'
+    - 'magnet:'
+    - 'torrent:'
+    - 'data:'
+    - 'urn:'
+  modules-need-tests:
+    exclude_prefixes:
+    - build
+    - dist
+    - node_modules
+    - tests
+    - devcovenant
+    force_include_globs:
+    - devcovenant/custom/**/*.py
+    include_suffixes:
+    - .py
+    mirror_roots:
+    - devcovenant/custom=>tests/devcovenant/custom
+    mirror_test_name_templates:
+    - python=>test_{stem}.py
+    - python=>{stem}_test.py
+    test_style_requirements:
+    - python=>python_unittest
+    tests_watch_dirs:
+    - tests
+    watch_dirs:
+    - tests
+  name-clarity:
+    exclude_globs:
+    - build/**
+    - dist/**
+    - node_modules/**
+    exclude_prefixes:
+    - build
+    - dist
+    - node_modules
+    - devcovenant
+    force_include_globs:
+    - devcovenant/custom/**/*.py
+    - tests/devcovenant/custom/**/*.py
+    include_suffixes:
+    - .py
+  no-print-outside-output-runtime:
+    sink_call_targets:
+    - python=>print
+    - python=>builtins.print
+  no-raw-errors:
+    broad_exception_waiver_between:
+    - DEVCOV_BROAD_BEGIN=>DEVCOV_BROAD_END
+    broad_exception_waiver_markers:
+    - DEVCOV_ALLOW_BROAD_ONCE
+    exclude_globs:
+    - build/**
+    - dist/**
+    - node_modules/**
+    exclude_prefixes:
+    - build
+    - dist
+    - node_modules
+    - devcovenant
+    forbid_bare_except: 'true'
+    forbid_broad_exception_handlers: 'true'
+    forbid_raise_exception: 'true'
+    forbid_silent_exception_pass: 'true'
+    force_include_globs:
+    - devcovenant/custom/**/*.py
+    - tests/devcovenant/custom/**/*.py
+    include_globs:
+    - '*.py'
+    include_suffixes:
+    - .py
+  security-scanner:
+    exclude_globs:
+    - tests/**
+    - '**/tests/**'
+    exclude_prefixes:
+    - devcovenant
+    force_include_globs:
+    - devcovenant/custom/**/*.py
+    - tests/devcovenant/custom/**/*.py
+    include_suffixes:
+    - .py
+    scanners:
+    - id: bandit
+      kind: bandit
+      config_file: bandit.yaml
+      include_suffixes:
+      - .py
+  tests-coverage:
+    assertion_signal_patterns:
+    - python=>\bassert\b
+    - python=>\bself\.assert[A-Za-z_]*\s*\(
+    exclude_prefixes:
+    - build
+    - dist
+    - node_modules
+    - tests
+    - devcovenant
+    force_include_globs:
+    - devcovenant/custom/**/*.py
+    include_suffixes:
+    - .py
+    symbol_assertion_window: '2'
+    symbol_kinds:
+    - function
+    - class
+    symbol_name_min_length: '3'
+    tautology_patterns:
+    - python=>^\s*assert\s+True\s*$
+    - python=>^\s*self\.assertTrue\s*\(\s*True\s*\)\s*$
+    tests_watch_dirs:
+    - tests
+    watch_dirs:
+    - tests
+  version-governance:
+    canonical_versions_required: 'false'
+    changelog_file: CHANGELOG.md
+    changelog_header_prefix: '## APRP Version'
+    enforce_bumping: 'true'
+    pep440_allow_dev_releases: 'true'
+    pep440_allow_post_releases: 'true'
+    pep440_allow_prereleases: 'true'
+    scheme: semver
+    version_file: VERSION
+  version-sync:
+    changelog_file: CHANGELOG.md
+    changelog_header_prefix: '## APRP Version'
+    role_extractors:
+    - docs=>project_version_line
+    - changelog=>changelog_header_version
+    - package_manifest=>manifest_project_version
+    role_legality_schemes:
+    - package_manifest=>pep440
+    target_role_files:
+    - docs=>README.md
+    - docs=>AGENTS.md
+    - docs=>CONTRIBUTING.md
+    - docs=>SPEC.md
+    - docs=>PLAN.md
+    - changelog=>CHANGELOG.md
+    - package_manifest=>pyproject.toml
+    target_roles:
+    - docs
+    - changelog
+    - package_manifest
+    version_file: VERSION
 
 # Human-owned subsection.
 

@@ -850,7 +850,8 @@ known or reconciled.
 
 ### 10.3 Shipping methods
 
-Shipping methods must be mapped explicitly between ERP, storefront, and courier.
+Shipping methods must be mapped explicitly between ERP, storefront, and
+courier.
 
 Ambiguous shipping methods must require operator review.
 

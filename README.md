@@ -1,4 +1,4 @@
-# APRP — Advanced Production Resource Planning
+# APRP
 **Doc ID:** README
 **Doc Type:** repo-readme
 **Project Version:** 0.4.0
@@ -61,9 +61,9 @@ broken integrations.
 APRP is a practical foundation for building serious operational systems on top
 of ERPNext/Frappe.
 
-It is designed for businesses that need ERPNext to act as the operational source
-of truth while storefronts, POS systems, courier tools, payment systems, and
-external services remain controlled integration surfaces.
+It is designed for businesses that need ERPNext to act as the operational
+source of truth while storefronts, POS systems, courier tools, payment
+systems, and external services remain controlled integration surfaces.
 
 APRP is intended to support implementation patterns such as:
 
@@ -88,19 +88,18 @@ APRP is not a finished SaaS product.
 
 APRP is not a universal one-click ERP.
 
-APRP is not a promise that every business process can be automated without first
-understanding it.
+APRP is not a promise that every business process can be automated without
+first understanding it.
 
 APRP is not a dashboard skin.
 
 APRP is not a spreadsheet replacement with nicer buttons.
 
-APRP is an extraction-stage framework built from real operational pressure and
-being generalized into a reusable public foundation.
+APRP is a public product, and this repository documents the product contract
+directly.
 
-The public repository is open from the start for transparency, but structure,
-naming, documentation, and boundaries are still being cleaned as the project is
-generalized.
+The repository structure, naming, documentation, and boundaries are maintained
+as part of that contract.
 
 ## Core Principles
 
@@ -132,18 +131,19 @@ validated, synchronized, reviewed, and recovered when something fails.
 
 Stock is not just a number.
 
-Stock has identity, movement, source, availability, uncertainty, and operational
-history.
+Stock has identity, movement, source, availability, uncertainty, and
+operational history.
 
 APRP prioritizes workflows that make inventory state visible and correctable
 instead of hiding ambiguity until it becomes expensive.
 
 ### Procurement must be structured
 
-Supplier relationships, supplier SKUs, purchase intent, intake, landed cost, and
-availability cannot remain informal forever.
+Supplier relationships, supplier SKUs, purchase intent, intake, landed cost,
+and availability cannot remain informal forever.
 
-APRP treats procurement as a first-class operational surface, not an afterthought.
+APRP treats procurement as a first-class operational surface, not an
+afterthought.
 
 ### Recovery is part of the product
 
