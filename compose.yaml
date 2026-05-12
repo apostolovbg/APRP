@@ -1,0 +1,309 @@
+# Canonical Docker stack for the APRP backend and its database cluster.
+#
+# The primary host runs the ERP runtime on `kuche.aprp.store`. The mirror
+# database member runs separately on `kotka.aprp.store` from compose.mirror.
+
+x-aprp-app-build: &aprp_app_build
+  context: .
+  dockerfile: Dockerfile
+x-aprp-app-image: &aprp_app_image aprp-app:latest
+
+services:
+  caddy:
+    build:
+      context: ./caddy
+    container_name: aprp-caddy
+    restart: unless-stopped
+    depends_on:
+      - backend
+      - websocket
+    ports:
+      - "80:80"
+    volumes:
+      - caddy-data:/data
+      - caddy-config:/config
+
+  db:
+    image: mariadb:10.11
+    restart: unless-stopped
+    env_file:
+      - ${APRP_COMPOSE_ENV_FILE:-.env.primary}
+    environment:
+      APRP_GALERA_NODE: db
+      APRP_GALERA_CLUSTER_NAME: ${APRP_GALERA_CLUSTER_NAME:-aprp_galera}
+      APRP_GALERA_CLUSTER_MEMBERS: ${APRP_GALERA_CLUSTER_MEMBERS:-}
+      APRP_GALERA_PRIMARY_HOST: ${APRP_GALERA_PRIMARY_HOST:-db}
+      APRP_GALERA_FORCE_BOOTSTRAP: ${APRP_GALERA_FORCE_BOOTSTRAP:-0}
+    volumes:
+      - db-data:/var/lib/mysql
+      - type: bind
+        source: ./ops/galera_mysqld_base.cnf
+        target: /etc/mysql/conf.d/aprp_galera_base.cnf
+        read_only: true
+      - type: bind
+        source: ./ops/mariadb_galera_entrypoint.sh
+        target: /usr/local/bin/galera-entrypoint.sh
+        read_only: true
+    entrypoint:
+      - /bin/bash
+      - /usr/local/bin/galera-entrypoint.sh
+    ports:
+      - "3306:3306"
+      - "4444:4444"
+      - "4567:4567"
+      - "4568:4568"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          out="$$(MYSQL_PWD="$$MYSQL_ROOT_PASSWORD" mariadb -uroot -Nse
+          "SHOW GLOBAL STATUS WHERE Variable_name IN
+          ('wsrep_ready','wsrep_cluster_status')")"
+          && printf '%s\n' "$$out" | grep -F 'wsrep_ready' | grep -q ON
+          && printf '%s\n' "$$out" | grep -F 'wsrep_cluster_status'
+          | grep -q Primary || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 48
+      start_period: 600s
+
+  proxysql:
+    image: proxysql/proxysql:2.6.3
+    restart: unless-stopped
+    env_file:
+      - ${APRP_COMPOSE_ENV_FILE:-.env.primary}
+    environment:
+      APRP_GALERA_PRIMARY_HOST: ${APRP_GALERA_PRIMARY_HOST:-db}
+      APRP_GALERA_MIRROR_HOST: ${APRP_GALERA_MIRROR_HOST:-}
+    entrypoint:
+      - /bin/bash
+      - /opt/aprp/proxysql_entrypoint.sh
+    depends_on:
+      db:
+        condition: service_healthy
+      garbd:
+        condition: service_started
+    volumes:
+      - proxysql-data:/var/lib/proxysql
+      - ./ops/proxysql_entrypoint.sh:/opt/aprp/proxysql_entrypoint.sh:ro
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          mysql -h127.0.0.1 -P6032
+          -u"$${PROXYSQL_ADMIN_USER}"
+          -p"$${PROXYSQL_ADMIN_PASSWORD}"
+          -e 'SELECT 1' || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 45s
+
+  garbd:
+    build:
+      context: ./garbd
+    image: aprp-garbd:${APP_IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      APRP_GALERA_CLUSTER_NAME: ${APRP_GALERA_CLUSTER_NAME:-aprp_galera}
+      APRP_GALERA_PRIMARY_HOST: ${APRP_GALERA_PRIMARY_HOST:-db}
+      APRP_GALERA_MIRROR_HOST: ${APRP_GALERA_MIRROR_HOST:-}
+    depends_on:
+      db:
+        condition: service_started
+    volumes:
+      - ./ops/garbd_entrypoint.sh:/usr/local/bin/aprp-garbd-entrypoint.sh:ro
+    entrypoint:
+      - /bin/bash
+      - /usr/local/bin/aprp-garbd-entrypoint.sh
+
+  redis-cache:
+    image: redis:7-alpine
+    command: redis-server --save "" --appendonly no
+    restart: unless-stopped
+
+  redis-queue:
+    image: redis:7-alpine
+    command: redis-server --save "" --appendonly no
+    restart: unless-stopped
+
+  redis-socketio:
+    image: redis:7-alpine
+    command: redis-server --save "" --appendonly no
+    restart: unless-stopped
+
+  backend:
+    build: *aprp_app_build
+    image: *aprp_app_image
+    working_dir: /home/frappe/frappe-bench/apps/aprp
+    command:
+      - bash
+      - ./ops/backend_entrypoint.sh
+      - bench
+      - serve
+      - --port
+      - "8000"
+      - --noreload
+      - --nothreading
+    env_file:
+      - ${APRP_COMPOSE_ENV_FILE:-.env.primary}
+    environment:
+      APRP_APP_NAME: aprp
+      SITE_NAME: ${SITE_NAME:-kuche.aprp.store}
+      FRAPPE_SITE_NAME_HEADER: kuche.aprp.store
+      FRAPPE_DEFAULT_SITE: kuche.aprp.store
+      DB_HOST: proxysql
+      DB_PORT: "6033"
+      BOOTSTRAP_DB_HOST: db
+      BOOTSTRAP_DB_PORT: "3306"
+      REDIS_CACHE: redis://redis-cache:6379
+      REDIS_QUEUE: redis://redis-queue:6379
+      REDIS_SOCKETIO: redis://redis-socketio:6379
+      PYTHONPATH: /home/frappe/frappe-bench/apps/aprp
+    depends_on:
+      proxysql:
+        condition: service_healthy
+      redis-cache:
+        condition: service_started
+      redis-queue:
+        condition: service_started
+      redis-socketio:
+        condition: service_started
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+      - assets:/home/frappe/frappe-bench/sites/assets
+      - backup-data:/backups
+      - ./:/home/frappe/frappe-bench/apps/aprp
+
+  websocket:
+    build: *aprp_app_build
+    image: *aprp_app_image
+    working_dir: /home/frappe/frappe-bench/apps/aprp
+    command:
+      - bash
+      - ./ops/socketio_entrypoint.sh
+    env_file:
+      - ${APRP_COMPOSE_ENV_FILE:-.env.primary}
+    environment:
+      SOCKETIO_PORT: 9000
+      SITE_NAME: ${SITE_NAME:-kuche.aprp.store}
+      FRAPPE_SITE_NAME_HEADER: kuche.aprp.store
+      FRAPPE_DEFAULT_SITE: kuche.aprp.store
+      DB_HOST: proxysql
+      DB_PORT: "6033"
+      REDIS_CACHE: redis://redis-cache:6379
+      REDIS_QUEUE: redis://redis-queue:6379
+      REDIS_SOCKETIO: redis://redis-socketio:6379
+      PYTHONPATH: /home/frappe/frappe-bench/apps/aprp
+    depends_on:
+      - backend
+      - redis-socketio
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+      - assets:/home/frappe/frappe-bench/sites/assets
+      - ./:/home/frappe/frappe-bench/apps/aprp
+
+  queue-default:
+    build: *aprp_app_build
+    image: *aprp_app_image
+    working_dir: /home/frappe/frappe-bench/apps/aprp
+    command: bench worker --queue default
+    env_file:
+      - ${APRP_COMPOSE_ENV_FILE:-.env.primary}
+    environment:
+      SITE_NAME: ${SITE_NAME:-kuche.aprp.store}
+      DB_HOST: proxysql
+      DB_PORT: "6033"
+      REDIS_CACHE: redis://redis-cache:6379
+      REDIS_QUEUE: redis://redis-queue:6379
+      REDIS_SOCKETIO: redis://redis-socketio:6379
+      PYTHONPATH: /home/frappe/frappe-bench/apps/aprp
+    depends_on:
+      redis-queue:
+        condition: service_started
+      proxysql:
+        condition: service_healthy
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+      - ./:/home/frappe/frappe-bench/apps/aprp
+
+  queue-short:
+    build: *aprp_app_build
+    image: *aprp_app_image
+    working_dir: /home/frappe/frappe-bench/apps/aprp
+    command: bench worker --queue short
+    env_file:
+      - ${APRP_COMPOSE_ENV_FILE:-.env.primary}
+    environment:
+      SITE_NAME: ${SITE_NAME:-kuche.aprp.store}
+      DB_HOST: proxysql
+      DB_PORT: "6033"
+      REDIS_CACHE: redis://redis-cache:6379
+      REDIS_QUEUE: redis://redis-queue:6379
+      REDIS_SOCKETIO: redis://redis-socketio:6379
+      PYTHONPATH: /home/frappe/frappe-bench/apps/aprp
+    depends_on:
+      redis-queue:
+        condition: service_started
+      proxysql:
+        condition: service_healthy
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+      - ./:/home/frappe/frappe-bench/apps/aprp
+
+  queue-long:
+    build: *aprp_app_build
+    image: *aprp_app_image
+    working_dir: /home/frappe/frappe-bench/apps/aprp
+    command: bench worker --queue long
+    env_file:
+      - ${APRP_COMPOSE_ENV_FILE:-.env.primary}
+    environment:
+      SITE_NAME: ${SITE_NAME:-kuche.aprp.store}
+      DB_HOST: proxysql
+      DB_PORT: "6033"
+      REDIS_CACHE: redis://redis-cache:6379
+      REDIS_QUEUE: redis://redis-queue:6379
+      REDIS_SOCKETIO: redis://redis-socketio:6379
+      PYTHONPATH: /home/frappe/frappe-bench/apps/aprp
+    depends_on:
+      redis-queue:
+        condition: service_started
+      proxysql:
+        condition: service_healthy
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+      - ./:/home/frappe/frappe-bench/apps/aprp
+
+  scheduler:
+    build: *aprp_app_build
+    image: *aprp_app_image
+    working_dir: /home/frappe/frappe-bench/apps/aprp
+    command: bench schedule
+    env_file:
+      - ${APRP_COMPOSE_ENV_FILE:-.env.primary}
+    environment:
+      SITE_NAME: ${SITE_NAME:-kuche.aprp.store}
+      DB_HOST: proxysql
+      DB_PORT: "6033"
+      REDIS_CACHE: redis://redis-cache:6379
+      REDIS_QUEUE: redis://redis-queue:6379
+      REDIS_SOCKETIO: redis://redis-socketio:6379
+      PYTHONPATH: /home/frappe/frappe-bench/apps/aprp
+    depends_on:
+      redis-queue:
+        condition: service_started
+      proxysql:
+        condition: service_healthy
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+      - ./:/home/frappe/frappe-bench/apps/aprp
+
+volumes:
+  caddy-config:
+  caddy-data:
+  db-data:
+  proxysql-data:
+  backup-data:
+  sites:
+  assets:

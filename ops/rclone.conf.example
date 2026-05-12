@@ -1,0 +1,5 @@
+# Copy this file to `ops/rclone.conf` and fill in real offsite credentials.
+[aprp-b2]
+type = b2
+account = example-account
+key = example-key

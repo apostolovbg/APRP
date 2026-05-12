@@ -207,3 +207,38 @@ Change operational state in the ERP/showcase surface
 Synchronize through a controlled boundary
 ↓
 Observe the storefront reflect the change
+```
+
+## Documentation
+
+Operational guidance lives in `docs/system.md`.
+It covers the primary host, the mirror host, site bootstrap, backup, restore,
+and recovery sequencing for the APRP runtime.
+
+## Deployment and Operations
+
+APRP is container-first.
+The primary ERP runtime is expected on `kuche.aprp.store`, and the mirror
+database member is expected on `kotka.aprp.store`.
+
+The current runtime slice uses Galera, ProxySQL, Redis, Caddy, and the APRP
+site bootstrap scripts to keep deployment repeatable.
+
+## Security and Public-Demo Boundaries
+
+APRP must not commit secrets, private data, or unrestricted admin access.
+Public demo surfaces should remain disposable and reviewable.
+
+## Project Status
+
+APRP is in beta.
+The repository is the product contract and the runtime implementation target.
+
+## Commercial Integration
+
+APRP is designed to support storefront, courier, POS, and procurement
+integrations without letting those systems become the operational authority.
+
+## Maintainer
+
+APRP is maintained by its contributors.

@@ -1,0 +1,49 @@
+# Compose stack for the APRP database mirror host.
+#
+# Run this on `kotka.aprp.store`. It only runs the Galera mirror member.
+
+services:
+  db-mirror:
+    image: mariadb:10.11
+    restart: unless-stopped
+    env_file:
+      - ${APRP_COMPOSE_ENV_FILE:-.env.mirror}
+    environment:
+      APRP_GALERA_NODE: db-mirror
+      APRP_GALERA_CLUSTER_NAME: ${APRP_GALERA_CLUSTER_NAME:-aprp_galera}
+      APRP_GALERA_CLUSTER_MEMBERS: ${APRP_GALERA_CLUSTER_MEMBERS:-}
+      APRP_GALERA_PRIMARY_HOST: >-
+        ${APRP_GALERA_PRIMARY_HOST:-kuche.aprp.store}
+      APRP_GALERA_FORCE_BOOTSTRAP: ${APRP_GALERA_FORCE_BOOTSTRAP:-0}
+    volumes:
+      - db-mirror-data:/var/lib/mysql
+      - ./ops/galera_mysqld_base.cnf:/etc/mysql/conf.d/aprp_galera_base.cnf:ro
+      - type: bind
+        source: ./ops/mariadb_galera_entrypoint.sh
+        target: /usr/local/bin/galera-entrypoint.sh
+        read_only: true
+    entrypoint:
+      - /bin/bash
+      - /usr/local/bin/galera-entrypoint.sh
+    ports:
+      - "3306:3306"
+      - "4444:4444"
+      - "4567:4567"
+      - "4568:4568"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          out="$$(MYSQL_PWD="$$MYSQL_ROOT_PASSWORD" mariadb -uroot -Nse
+          "SHOW GLOBAL STATUS WHERE Variable_name IN
+          ('wsrep_ready','wsrep_cluster_status')")"
+          && printf '%s\n' "$$out" | grep -F 'wsrep_ready' | grep -q ON
+          && printf '%s\n' "$$out" | grep -F 'wsrep_cluster_status'
+          | grep -q Primary || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 48
+      start_period: 600s
+
+volumes:
+  db-mirror-data:

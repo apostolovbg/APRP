@@ -1,0 +1,22 @@
+{
+	email ops@aprp.store
+}
+
+(common_aprp) {
+	encode gzip
+	@socket path /socket.io/*
+	reverse_proxy @socket websocket:9000
+	reverse_proxy backend:8000
+}
+
+http://aprp.store {
+	respond "APRP storefront is not deployed yet." 200
+}
+
+http://kuche.aprp.store {
+	import common_aprp
+}
+
+http://kotka.aprp.store {
+	respond "kotka.aprp.store hosts the APRP mirror database, not a public app." 200
+}

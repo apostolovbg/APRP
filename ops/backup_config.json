@@ -1,0 +1,31 @@
+{
+  "site": {
+    "name": "kuche.aprp.store",
+    "local_backup_dir": "/backups/aprp",
+    "bench_sites_root": "/home/frappe/frappe-bench/sites"
+  },
+  "timezone": "Europe/Sofia",
+  "retention": {
+    "keep_daily": 7
+  },
+  "offsite": {
+    "remote": "aprp-b2",
+    "rclone_conf": "ops/rclone.conf",
+    "bucket": "aprp-backup",
+    "prefix": "kuche",
+    "cap_bytes": 10737418240,
+    "target_percent": 90
+  },
+  "continuity": {
+    "alert_recipients": [
+      "ops@aprp.store"
+    ],
+    "max_backup_age_hours": 36,
+    "min_free_disk_percent": 5.0,
+    "alert_cooldown_minutes": 45,
+    "enable_db_ping": true,
+    "enable_disk_check": true,
+    "enable_offsite_stamp_check": false,
+    "enable_wsrep_probe": true
+  }
+}

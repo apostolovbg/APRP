@@ -1,0 +1,34 @@
+{
+  "site": {
+    "name": "kuche.aprp.store"
+  },
+  "git": {
+    "remote": "origin",
+    "branch": "main",
+    "sync_remote": true
+  },
+  "compose": {
+    "file": "compose.yaml",
+    "build_services": [
+      "backend",
+      "websocket",
+      "queue-default",
+      "queue-short",
+      "queue-long",
+      "scheduler",
+      "caddy",
+      "garbd"
+    ],
+    "restart_services": [
+      "db",
+      "garbd",
+      "proxysql",
+      "backend",
+      "websocket",
+      "queue-default",
+      "queue-short",
+      "queue-long",
+      "scheduler"
+    ]
+  }
+}

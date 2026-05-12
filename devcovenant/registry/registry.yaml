@@ -3746,6 +3746,12 @@ policies:
             lock_file: d8f44d7ed940cd713f4a8320796c2576f8c2a02e04c7cea02a14a81b09885cd6
             third_party_file: f9ac7ca29c4baf50d729b321b59f094b1be2c21cb19b202ca2c5be5ab32b7795
             licenses_dir: db5deb3a9d6b7d3d9bedf251eadbe5d4be8497aaf04f6f1d3121aa2742c1f980
+        package_runtime:
+          input_fingerprint: 75e9fcd11f33ac1387fd8c03b2561969246e56219846abc30f7b57b865e7c9f7
+          output_fingerprints:
+            lock_file: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+            third_party_file: 3c7d405f0dbe47a6c208f8714d0a2a91813ff52207d00ef466def6b9c9b921a6
+            licenses_dir: 655d447f683933b256dd359c8f035968c393f7cba46349d3a10dd9cd55d85708
   docstring-and-comment-coverage:
     enabled: true
     custom: false

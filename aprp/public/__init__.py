@@ -1,0 +1,1 @@
+"""APRP public assets package."""

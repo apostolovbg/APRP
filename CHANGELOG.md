@@ -62,6 +62,63 @@ Example:
 ## Version 0.4.0
 
 - 2026-05-12:
+  Change: Completed the APRP README with the remaining public sections and
+    closed the showcase example fence.
+  Why: Keep the public root document aligned with the documented section map
+    and the new runtime guide link.
+  Impact: APRP now presents a complete front door for the runtime and
+    documentation slice.
+  Files:
+  README.md
+  CHANGELOG.md
+
+- 2026-05-12:
+  Change: Added the APRP runtime stack scaffold, package-scoped dependency
+    artifacts, and the repo-owned bootstrap scripts.
+  Why: Build the primary and mirror container contract for `kuche.aprp.store`
+    and `kotka.aprp.store` without depending on the old pilot repository.
+  Impact: APRP can now bootstrap its runtime, mirror, deploy, and backup
+    surfaces from its own repo layout.
+  Files:
+  aprp/__init__.py
+  aprp/hooks.py
+  aprp/modules.txt
+  aprp/patches.txt
+  aprp/aprp/__init__.py
+  aprp/public/__init__.py
+  aprp/templates/__init__.py
+  aprp/templates/pages/__init__.py
+  aprp/licenses/README.md
+  aprp/licenses/THIRD_PARTY_LICENSES.md
+  aprp/runtime-requirements.lock
+  compose.yaml
+  compose.mirror.yaml
+  Dockerfile
+  caddy/Dockerfile
+  caddy/Caddyfile
+  garbd/Dockerfile
+  docs/system.md
+  ops/backend_entrypoint.sh
+  ops/backup.sh
+  ops/backup_config.json
+  ops/db_mirror_restore.sh
+  ops/deploy.sh
+  ops/deploy_config.json
+  ops/deploy_mirror.sh
+  ops/env.mirror.example
+  ops/env.primary.example
+  ops/garbd_entrypoint.sh
+  ops/galera_mysqld_base.cnf
+  ops/mariadb_galera_entrypoint.sh
+  ops/proxysql_entrypoint.sh
+  ops/rclone.conf.example
+  ops/site_setup.sh
+  ops/socketio_entrypoint.sh
+  tests/test_aprp_runtime.py
+  tests/test_hooks.py
+  .gitignore
+
+- 2026-05-12:
   Change: Added a neutral APRP baseline sanity test package so `unittest`
     discovers a real run target.
   Why: Prevent `devcovenant run` from failing on an empty test tree while

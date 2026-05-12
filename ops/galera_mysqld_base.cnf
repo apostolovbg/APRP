@@ -1,0 +1,13 @@
+# Shared MariaDB options for APRP Galera members.
+[mysqld]
+skip_name_resolve = 1
+binlog_format = ROW
+default_storage_engine = InnoDB
+innodb_autoinc_lock_mode = 2
+bind-address = 0.0.0.0
+# ERPNext `bench install-app` ships large DocType DDL/write-sets. Defaults can
+# surface Galera certification issues on single-primary + arbitrator stacks.
+# Raising the fragment ceiling and write-set caps keeps site setup stable.
+wsrep_trx_fragment_size = 2147483647
+wsrep_max_ws_rows = 0
+wsrep_max_ws_size = 2147483647
