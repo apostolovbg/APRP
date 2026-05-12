@@ -1304,7 +1304,7 @@ autogen_metadata_overlays:
   version-governance:
     canonical_versions_required: 'false'
     changelog_file: CHANGELOG.md
-    changelog_header_prefix: '## APRP Version'
+    changelog_header_prefix: '## Version'
     enforce_bumping: 'true'
     pep440_allow_dev_releases: 'true'
     pep440_allow_post_releases: 'true'
@@ -1313,7 +1313,7 @@ autogen_metadata_overlays:
     version_file: VERSION
   version-sync:
     changelog_file: CHANGELOG.md
-    changelog_header_prefix: '## APRP Version'
+    changelog_header_prefix: '## Version'
     role_extractors:
     - docs=>project_version_line
     - changelog=>changelog_header_version

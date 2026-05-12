@@ -17,6 +17,6 @@ assets: []
 policy_overlays:
   version-governance:
     scheme: semver
-    changelog_header_prefix: '## APRP Version'
+    changelog_header_prefix: '## Version'
   version-sync:
-    changelog_header_prefix: '## APRP Version'
+    changelog_header_prefix: '## Version'

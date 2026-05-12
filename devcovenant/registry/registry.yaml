@@ -1,7 +1,7 @@
 metadata:
   schema_version: 1
   registry_layout: single-root
-  policy_registry_input_hash: 2252c9ad9b75713122b61c628c6987f9cf56053368dbbe8d683cd19ca39b7d31
+  policy_registry_input_hash: 1e19a54715a81cdc4633ee1e285cf56418389fa28a57a4680b03c04a97b7c35f
 project-governance:
   project_name: APRP
   project_description: ERPNext-based infrastructure for businesses that outgrew spreadsheets,
@@ -10898,7 +10898,7 @@ policies:
       canonical_versions_required: 'false'
       version_file: VERSION
       changelog_file: CHANGELOG.md
-      changelog_header_prefix: '## APRP Version'
+      changelog_header_prefix: '## Version'
       ignored_prefixes: []
       semver_scope_tags_required: 'false'
       pep440_allow_prereleases: 'true'
@@ -11067,17 +11067,17 @@ policies:
           - ()
         profile_overlays:
           values:
-          - '## APRP Version'
+          - '## Version'
           behavior: replace
         autogen_overlays:
           values:
-          - '## APRP Version'
+          - '## Version'
           behavior: replace
           replaced_inherited_values:
-          - '## APRP Version'
+          - '## Version'
         effective:
           values:
-          - '## APRP Version'
+          - '## Version'
       ignored_prefixes:
         descriptor:
           values:
@@ -11272,7 +11272,7 @@ policies:
       canonical_versions_required: false
       version_file: VERSION
       changelog_file: CHANGELOG.md
-      changelog_header_prefix: '## APRP Version'
+      changelog_header_prefix: '## Version'
       ignored_prefixes: []
       semver_scope_tags_required: false
       pep440_allow_prereleases: true
@@ -11298,7 +11298,7 @@ policies:
       canonical_versions_required: false
       version_file: VERSION
       changelog_file: CHANGELOG.md
-      changelog_header_prefix: '## APRP Version'
+      changelog_header_prefix: '## Version'
       semver_scope_tags_required: false
       pep440_allow_prereleases: true
       pep440_allow_dev_releases: true
@@ -11362,7 +11362,7 @@ policies:
       target_role_globs: []
       target_role_dirs: []
       changelog_file: CHANGELOG.md
-      changelog_header_prefix: '## APRP Version'
+      changelog_header_prefix: '## Version'
       selector_roles:
       - target
       target_globs: []
@@ -11611,17 +11611,17 @@ policies:
           - ()
         profile_overlays:
           values:
-          - '## APRP Version'
+          - '## Version'
           behavior: replace
         autogen_overlays:
           values:
-          - '## APRP Version'
+          - '## Version'
           behavior: replace
           replaced_inherited_values:
-          - '## APRP Version'
+          - '## Version'
         effective:
           values:
-          - '## APRP Version'
+          - '## Version'
       selector_roles:
         descriptor:
           values:
@@ -11702,7 +11702,7 @@ policies:
       target_role_globs: []
       target_role_dirs: []
       changelog_file: CHANGELOG.md
-      changelog_header_prefix: '## APRP Version'
+      changelog_header_prefix: '## Version'
       selector_roles: &id102
       - target
       target_globs: []
@@ -11722,7 +11722,7 @@ policies:
       role_legality_schemes: *id100
       target_role_files: *id101
       changelog_file: CHANGELOG.md
-      changelog_header_prefix: '## APRP Version'
+      changelog_header_prefix: '## Version'
       selector_roles: *id102
     assets:
     - CHANGELOG.md
@@ -14500,9 +14500,9 @@ profiles:
     policy_overlays:
       version-governance:
         scheme: semver
-        changelog_header_prefix: '## APRP Version'
+        changelog_header_prefix: '## Version'
       version-sync:
-        changelog_header_prefix: '## APRP Version'
+        changelog_header_prefix: '## Version'
     source: custom
     path: devcovenant/custom/profiles/userproject
     assets_available: []

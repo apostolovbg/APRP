@@ -1871,7 +1871,7 @@ enforce_bumping: 'true'
 canonical_versions_required: 'false'
 version_file: VERSION
 changelog_file: CHANGELOG.md
-changelog_header_prefix: '## APRP Version'
+changelog_header_prefix: '## Version'
 ignored_prefixes: []
 semver_scope_tags_required: 'false'
 pep440_allow_prereleases: 'true'
@@ -1930,7 +1930,7 @@ target_role_files:
 target_role_globs: []
 target_role_dirs: []
 changelog_file: CHANGELOG.md
-changelog_header_prefix: '## APRP Version'
+changelog_header_prefix: '## Version'
 selector_roles:
 - target
 target_globs: []

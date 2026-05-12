@@ -57,7 +57,21 @@ Example:
 ```
 <!-- DEVCOV:END -->
 
-## APRP Version 0.4.0
+## Log changes here
+
+## Version 0.4.0
+
+- 2026-05-12:
+  Change: Added a neutral APRP baseline sanity test package so `unittest`
+    discovers a real run target.
+  Why: Prevent `devcovenant run` from failing on an empty test tree while
+    keeping the coverage APRP-only.
+  Impact: The gate workflow can record its required run without introducing
+    legacy identity checks.
+  Files:
+  tests/__init__.py
+  tests/test_aprp_baseline.py
+  CHANGELOG.md
 
 - 2026-05-12:
   Change: Rewrote the README overview to present APRP directly as the product.
