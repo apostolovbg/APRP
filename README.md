@@ -1,10 +1,9 @@
 # APRP — Advanced Production Resource Planning
 **Doc ID:** README  
 **Doc Type:** repo-readme  
-**Project Version:** 0.4.0  
-**Project Stage:** Public extraction / beta foundation  
-**Project Stance:** ERP-first, integration-disciplined, continuity-aware  
-**Last Updated:** 2026-05-12  
+**Project Version:** 0.4.0
+**Last Updated:** 2026-05-12
+**DevCovenant Version:** 1.0.1b5
 
 <!-- DEVCOV:BEGIN -->
 
