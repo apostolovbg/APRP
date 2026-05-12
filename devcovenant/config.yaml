@@ -1,0 +1,500 @@
+# -------------------------------------------------------------------
+# DevCovenant config template (review-required install baseline)
+# -------------------------------------------------------------------
+# This file is copied to `devcovenant/config.yaml` by `devcovenant install`.
+#
+# Read this file as the repository's operating contract:
+# - human-owned keys say what this repository wants;
+# - refresh-owned keys show what DevCovenant resolved/generated.
+#
+# Why install stops before deploy:
+# - install gives the repo a safe starting point;
+# - deploy turns the config into active managed docs,
+#   registries,
+#   and generated governance files;
+# - `install.config_reviewed: false` keeps deploy blocked until
+#   a
+#   human has checked that the starting config matches the repo.
+#
+# Typical first-time flow:
+# 1) run `devcovenant install`
+# 2) review this file
+# 3) set `install.config_reviewed: true`
+# 4) run `devcovenant deploy`
+# 5) prepare the repository's declared environment
+# 6) start normal work with
+#    `gate --open` -> `gate --verify` -> `run` -> `gate --close`
+# -------------------------------------------------------------------
+
+# -------------------------------------------------------------------
+# Scope control
+# -------------------------------------------------------------------
+
+# Human-owned section.
+
+# Whether this repository is in DevCovenant developer mode.
+# - false: normal user-repository scope (exclude DevCovenant implementation internals from ordinary repository scope)
+# - true: DevCovenant developer mode (govern the full DevCovenant implementation tree)
+
+developer_mode: false
+
+# -------------------------------------------------------------------
+# Profile activation
+# -------------------------------------------------------------------
+
+# Mixed-ownership section.
+
+# `profiles.active` is human-owned.
+
+# `profiles.generated` is refresh-owned diagnostic state.
+
+# Ordered profile list. `global` should stay first.
+
+# Add `github` when the repository wants a generated GitHub Actions workflow.
+
+# Add `python_venv` only when the repository explicitly opts into the builtin repo-local `.venv` contract.
+
+# Keep inherited values inherited. Add repo-specific behavior in a custom profile instead of recopied overlays.
+
+# Here, "inherited" means values from other active profiles.
+
+# A same-name custom profile is loaded and the builtin profile is ignored.
+
+# If the repository needs a starting custom profile, copy `devcovenant/builtin/profiles/userproject/` to `devcovenant/custom/profiles/userproject/` and edit it there.
+
+# Profiles contribute suffixes, assets, metadata overlays, and cleanup overlays.
+
+# Generated diagnostics include profile-level core path mappings.
+
+# Profiles do not activate policies. Policy activation is `policy_state` for normal toggles.
+
+# `severity: critical` policies remain enforced even when toggled false in `policy_state`.
+
+# Keep GitHub-only CI extensions in a separate optional GitHub-specific custom profile instead of the repo-identity profile.
+
+profiles:
+  active:
+  - global
+  - defaults
+  - devcovuser
+  - github
+  - python
+  - docs
+  generated:
+    file_suffixes: []
+    devcov_core_paths:
+    - devcovenant/core
+    - devcovenant/builtin
+    - devcovenant/licenses
+    - devcovenant/__init__.py
+    - devcovenant/__main__.py
+    - devcovenant/asset.py
+    - devcovenant/cli.py
+    - devcovenant/check.py
+    - devcovenant/clean.py
+    - devcovenant/gate.py
+    - devcovenant/run.py
+    - devcovenant/policy.py
+    - devcovenant/install.py
+    - devcovenant/deploy.py
+    - devcovenant/upgrade.py
+    - devcovenant/refresh.py
+    - devcovenant/uninstall.py
+    - devcovenant/undeploy.py
+    - devcovenant/runtime-requirements.lock
+    - devcovenant/registry
+
+# -------------------------------------------------------------------
+# Canonical paths
+# -------------------------------------------------------------------
+
+# Human-owned section.
+
+# Every key in `paths` is human-owned.
+
+# Runtime policy source parsed by the engine.
+
+# Generated local policy registry (hashes + diagnostics).
+
+# Runtime evidence files such as gate-status and workflow-session live here too.
+
+paths:
+  policy_definitions: AGENTS.md
+  registry_file: devcovenant/registry/registry.yaml
+  gate_status_file: devcovenant/registry/runtime/gate_status.json
+  workflow_session_file: devcovenant/registry/runtime/workflow_session.json
+
+# -------------------------------------------------------------------
+# Managed document controls
+# -------------------------------------------------------------------
+
+# Mixed-ownership section.
+
+# `doc_assets.autogen` is human-owned enabled-doc selection.
+
+# `doc_assets.user` is human-owned exclusion state.
+
+# `autogen` entries are managed-doc target paths, not a builtin optional-doc class.
+# Available descriptors come from the global asset root plus active profile asset roots.
+# Later active profiles override earlier profiles for the same target path.
+# Documents in `user` are excluded after `autogen` selection.
+# Managed block refresh still applies when markers are present.
+
+doc_assets:
+  autogen:
+  - AGENTS.md
+  - README.md
+  - CONTRIBUTING.md
+  - SPEC.md
+  - PLAN.md
+  - CHANGELOG.md
+  - devcovenant/README.md
+  user: []
+
+# -------------------------------------------------------------------
+# Install/deploy safety
+# -------------------------------------------------------------------
+
+# Mixed-ownership section.
+
+# `install.config_reviewed` is human-owned.
+
+# `install.import_managed_docs` is refresh-owned memory.
+
+# `install` seeds `config_reviewed: false`. Deploy stays blocked until a human finishes the config review.
+
+# Set this to true after review to allow `devcovenant deploy`.
+
+install:
+  config_reviewed: false
+  import_managed_docs:
+  - README.md
+  - SPEC.md
+
+# -------------------------------------------------------------------
+# Engine behavior
+# -------------------------------------------------------------------
+
+# Human-owned section.
+
+# Violations at or above fail_threshold fail the run.
+
+# Allowed levels: info, warning, error, critical.
+
+# auto_fix_enabled controls gate-managed policy auto-fix behavior.
+
+# `check` stays read-only.
+
+# logs_keep_last controls run-log retention (`0` keeps all runs).
+
+# pycache_prefix_enabled/pycache_prefix route DevCovenant-managed Python bytecode caches away from the repo tree (empty prefix = auto temp path).
+
+# file_suffixes and ignore_dirs define broad scan boundaries.
+
+engine:
+  fail_threshold: error
+  output_mode: verbose
+  tests_output_mode: verbose
+  logs_keep_last: 0
+  pycache_prefix_enabled: false
+  pycache_prefix: ''
+  auto_fix_enabled: false
+  file_suffixes:
+  - .md
+  - .rst
+  - .txt
+  - .yml
+  - .yaml
+  - .json
+  - .toml
+  ignore_dirs:
+  - .git
+  - .venv
+  - .python
+  - output
+  - logs
+  - build
+  - dist
+  - node_modules
+  - __pycache__
+  - .pytest_cache
+  - .ruff_cache
+  - .mypy_cache
+  - .tox
+  - .nox
+  - .hypothesis
+  - .cache
+  - .venv.lock
+
+# -------------------------------------------------------------------
+# Cleanup targets
+# -------------------------------------------------------------------
+
+# Human-owned section.
+
+# Additive cleanup targets merged after active profile clean_overlays.
+
+# Use this for repository-specific build/cache/runtime-registry/log junk beyond builtin profiles.
+
+# Protected entries are additive safety fences.
+
+# Runtime also protects engine-critical paths such as `.git`, the tracked registry docs, the logs README, the active clean run dir, and the managed environment roots resolved from managed-environment metadata.
+
+clean:
+  overlays:
+    build_dirs: []
+    build_globs: []
+    cache_dirs: []
+    cache_globs: []
+    runtime_registry_dirs: []
+    runtime_registry_globs: []
+    logs_dirs: []
+    logs_globs: []
+    protected_dirs: []
+    protected_globs: []
+  overrides: {}
+
+# -------------------------------------------------------------------
+# CI-and-test workflow generation
+# -------------------------------------------------------------------
+
+# Human-owned section.
+
+# Deep-merge patch applied to generated `.github/workflows/ci.yml`.
+
+# Activate the `github` profile to generate the standard GitHub Actions CI workflow.
+
+# The builtin github base bootstraps DevCovenant itself from the shipped `devcovenant/runtime-requirements.lock`, not from project dependency files.
+
+# Active profiles may also contribute reusable ci_and_test fragments.
+
+# Keep the github-owned base workflow generic.
+
+# Use config overlays only for repository-local CI adjustments.
+
+# Full replacement payload for generated CI-and-test workflow.
+
+# Use full overrides only when the repository deliberately takes complete ownership.
+
+ci_and_test:
+  overlays: {}
+  overrides: {}
+
+# -------------------------------------------------------------------
+# Pre-commit generation
+# -------------------------------------------------------------------
+
+# Human-owned section.
+
+# `overlays` are merged into generated pre-commit config.
+
+# `overrides` replace generated payload when non-empty.
+
+pre_commit:
+  overlays: {}
+  overrides: {}
+
+# -------------------------------------------------------------------
+# Integrity runtime contract
+# -------------------------------------------------------------------
+
+# Human-owned section.
+
+# Integrity watches are optional runtime knobs for the built-in descriptor/registry/gate checks.
+
+# Use them when specific directories or files should require a fresh gate-status update.
+
+integrity:
+  watch_dirs: []
+  watch_files: []
+
+# -------------------------------------------------------------------
+# Workflow runtime contract
+# -------------------------------------------------------------------
+
+# Human-owned section.
+
+# Workflow contract settings such as the canonical pre-commit command live here.
+
+# These are runtime contract settings, not policy toggles, so they do not belong under `policy_state`.
+
+workflow:
+  pre_commit_command: pre-commit run --all-files
+
+# -------------------------------------------------------------------
+# Project governance
+# -------------------------------------------------------------------
+
+# Human-owned section.
+
+# Repository lifecycle metadata rendered into managed docs, registry output, and changelog release flow.
+
+# `project_name` is the canonical public/project identity string.
+
+# DevCovenant derives normalized path tokens such as `{{ PROJECT_NAME_PATH }}` where package-safe paths need them.
+
+# Keep distribution/project identity in `project_name`; do not force Python import-package spelling there just to satisfy path syntax.
+
+# `project_name` and `project_description` are non-empty identity strings.
+
+# `stage` must be one of `allowed_stages`; the default set is prototype, alpha, beta, stable, deprecated, archived.
+
+# `maintenance_stance` must be one of `allowed_maintenance_stances`; the default set is active, maintenance, frozen, sunset.
+
+# `compatibility_policy` must be `backward-compatible`, `breaking-allowed`, `forward-only`, or `unspecified`.
+
+# Use `compatibility_policy` for compatibility promises, not for feature notes such as cross-platform support.
+
+# `backward-compatible` preserves the public contract; `breaking-allowed` makes compatibility optional; `forward-only` rejects legacy compatibility fallbacks.
+
+# `versioning_mode` must be `versioned` or `unversioned`.
+
+# `codename` and `build_identity` are optional free-form strings.
+
+# `versioning_mode: unversioned` renders the configured `unversioned_label` and uses `unreleased_heading`.
+
+# `unversioned_label`, `unreleased_heading`, and `changelog_file` are free-form strings; `changelog_file` is a repo-relative path.
+
+# When unversioned, the top visible changelog heading must match `unreleased_heading` exactly.
+
+project-governance:
+  project_name: Project Name
+  project_description: 'Describe the project this repository ships: what it does,
+    who it helps, and what problem it solves.'
+  copyright_notice: YEAR Legal Owner Name
+  stage: prototype
+  maintenance_stance: active
+  compatibility_policy: unspecified
+  versioning_mode: unversioned
+  unversioned_label: Unversioned
+  unreleased_heading: '## Unreleased'
+  changelog_file: CHANGELOG.md
+  allowed_stages:
+  - prototype
+  - alpha
+  - beta
+  - stable
+  - deprecated
+  - archived
+  allowed_maintenance_stances:
+  - active
+  - maintenance
+  - frozen
+  - sunset
+
+# -------------------------------------------------------------------
+# Policy activation and customization
+# -------------------------------------------------------------------
+
+# Human-owned section.
+
+# Human-owned booleans in a refresh-synchronized map.
+
+# Canonical policy activation map: {policy-id: true|false}.
+
+# Critical-severity policies remain enforced even when set to false here.
+
+# The shipped install baseline keeps `managed-environment` false until the repository enables a matching profile such as `python_venv`.
+
+policy_state:
+  managed-environment: false
+  raw-string-escapes: false
+  version-governance: false
+  version-sync: false
+
+# -------------------------------------------------------------------
+# Global ignore patterns
+# -------------------------------------------------------------------
+
+# Human-owned section.
+
+# Extra glob patterns excluded from CheckContext file collections.
+
+ignore:
+  patterns:
+  - devcovenant/config.yaml
+  - .vscode/**
+  - .idea/**
+  - '*.egg-info/**'
+  - pip-wheel-metadata/**
+  - .pytest_cache/**
+  - .ruff_cache/**
+  - .mypy_cache/**
+  - .tox/**
+  - .nox/**
+  - .hypothesis/**
+  - .coverage
+  - .coverage.*
+  - htmlcov/**
+  - devcovenant/logs/**
+  - devcovenant/registry/runtime/**
+
+# -------------------------------------------------------------------
+# Gitignore generation
+# -------------------------------------------------------------------
+
+# Human-owned section.
+
+# Extra entries appended to generated `.gitignore`.
+
+# Entries are applied before the preserved user block.
+
+# `overrides` replaces generated base/profile/os fragments entirely.
+
+gitignore:
+  overlays: []
+  overrides: []
+
+# -------------------------------------------------------------------
+# Metadata layers (resolution order matters)
+# -------------------------------------------------------------------
+
+# Mixed-ownership section.
+
+# `autogen_*` blocks below are refresh-owned.
+
+# `user_*` blocks below are human-owned.
+
+# Auto-generated metadata overlays written by refresh.
+
+# Overlay semantics: scalar values replace prior scalars.
+
+# Plain scalar lists append with de-duplication.
+
+# Mapping values merge by subkey.
+
+# Lists of mappings with stable `id` fields merge by `id`.
+
+# Keep one metadata key in one shape across layers.
+
+autogen_metadata_overlays: {}
+
+# Human-owned subsection.
+
+# User-owned overlays applied after autogen overlays.
+
+# Use the same metadata-key shape here as the inherited layer.
+
+user_metadata_overlays: {}
+
+# Refresh-owned subsection.
+
+# Auto-generated metadata overrides written by refresh.
+
+# Override semantics: full key replacement.
+
+# Do not hand-edit unless you intentionally own this layer.
+
+autogen_metadata_overrides: {}
+
+# Human-owned subsection.
+
+# User-owned overrides applied last (highest precedence).
+
+# Override semantics: full key replacement.
+
+# Shape: {policy-id: {metadata_key: scalar|list|mapping}}
+
+# Do not replace a mapping with ad-hoc sibling flat keys.
+
+user_metadata_overrides: {}
