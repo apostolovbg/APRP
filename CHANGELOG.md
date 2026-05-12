@@ -62,6 +62,17 @@ Example:
 ## Version 0.4.0
 
 - 2026-05-12:
+  Change: Rewrote PLAN.md to define APRP execution slices and working
+    order.
+  Why: Align implementation planning with runtime, mirror, deploy, and
+    verification work.
+  Impact: Enables APRP to carry a dependency-ordered plan without generic
+    placeholder text.
+  Files:
+  PLAN.md
+  CHANGELOG.md
+
+- 2026-05-12:
   Change: Completed the APRP README with the remaining public sections and
     closed the showcase example fence.
   Why: Keep the public root document aligned with the documented section map
