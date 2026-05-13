@@ -1,6 +1,5 @@
 # Compose stack for the APRP database mirror host.
-#
-# Run this on `kotka.aprp.store`. It only runs the Galera mirror member.
+# Mirror hostnames come from config, not from literals in this file.
 
 services:
   db-mirror:
@@ -10,11 +9,16 @@ services:
       - ${APRP_COMPOSE_ENV_FILE:-.env.mirror}
     environment:
       APRP_GALERA_NODE: db-mirror
-      APRP_GALERA_CLUSTER_NAME: ${APRP_GALERA_CLUSTER_NAME:-aprp_galera}
-      APRP_GALERA_CLUSTER_MEMBERS: ${APRP_GALERA_CLUSTER_MEMBERS:-}
+      APRP_GALERA_CLUSTER_NAME: >-
+        ${APRP_GALERA_CLUSTER_NAME:?APRP_GALERA_CLUSTER_NAME is required}
+      APRP_GALERA_CLUSTER_MEMBERS: >-
+        ${APRP_GALERA_CLUSTER_MEMBERS:?APRP_GALERA_CLUSTER_MEMBERS is
+        required}
       APRP_GALERA_PRIMARY_HOST: >-
-        ${APRP_GALERA_PRIMARY_HOST:-kuche.aprp.store}
-      APRP_GALERA_FORCE_BOOTSTRAP: ${APRP_GALERA_FORCE_BOOTSTRAP:-0}
+        ${APRP_GALERA_PRIMARY_HOST:?APRP_GALERA_PRIMARY_HOST is required}
+      APRP_GALERA_FORCE_BOOTSTRAP: >-
+        ${APRP_GALERA_FORCE_BOOTSTRAP:?APRP_GALERA_FORCE_BOOTSTRAP is
+        required}
     volumes:
       - db-mirror-data:/var/lib/mysql
       - ./ops/galera_mysqld_base.cnf:/etc/mysql/conf.d/aprp_galera_base.cnf:ro
@@ -25,11 +29,8 @@ services:
     entrypoint:
       - /bin/bash
       - /usr/local/bin/galera-entrypoint.sh
-    ports:
-      - "3306:3306"
-      - "4444:4444"
-      - "4567:4567"
-      - "4568:4568"
+    networks:
+      - mirror-net
     healthcheck:
       test:
         - CMD-SHELL
@@ -47,3 +48,6 @@ services:
 
 volumes:
   db-mirror-data:
+
+networks:
+  mirror-net:

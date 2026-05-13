@@ -34,10 +34,10 @@ backup_init() {
     return 0
   fi
 
-  local script_dir root_dir config_file_value config_file config_json
+  local script_dir root_dir config_file_value config_file
   script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
   root_dir="$(cd "${script_dir}/.." && pwd)"
-  config_file_value="${BACKUP_CONFIG_FILE:-ops/backup_config.json}"
+  config_file_value="${APRP_CONFIG_FILE:-ops/opsconfig.yaml}"
   config_file="$(
     backup_resolve_repo_path "${root_dir}" "${config_file_value}"
   )"
@@ -49,58 +49,9 @@ backup_init() {
 
   backup_require_command python3
 
-  config_json="$(
-    python3 - "${config_file}" <<'PY'
-import json
-import os
-import shlex
-import sys
-
-config_path = sys.argv[1]
-data = json.loads(open(config_path, encoding="utf-8").read())
-
-site = data.get("site", {})
-retention = data.get("retention", {})
-offsite = data.get("offsite", {})
-
-def expand(value: object, default: str | None = None) -> str | None:
-    token = default if value is None else str(value)
-    if token is None:
-        return None
-    return os.path.expandvars(os.path.expanduser(token))
-
-def emit(name: str, value: object) -> None:
-    if value is None:
-        return
-    print(f"{name}={shlex.quote(str(value))}")
-
-emit("BACKUP_SITE_NAME", site.get("name", "kuche.aprp.store"))
-emit(
-    "BACKUP_LOCAL_BACKUP_DIR",
-    expand(site.get("local_backup_dir"), "/backups/aprp"),
-)
-emit(
-    "BACKUP_BENCH_SITES_ROOT",
-    expand(
-        site.get("bench_sites_root"),
-        "/home/frappe/frappe-bench/sites",
-    ),
-)
-emit("BACKUP_TZ", data.get("timezone", "UTC"))
-emit("BACKUP_KEEP_DAILY", retention.get("keep_daily", 7))
-emit("BACKUP_RCLONE_REMOTE", offsite.get("remote", ""))
-emit(
-    "BACKUP_RCLONE_CONF",
-    expand(offsite.get("rclone_conf"), "ops/rclone.conf"),
-)
-emit("BACKUP_B2_BUCKET", offsite.get("bucket", ""))
-emit("BACKUP_B2_PREFIX", offsite.get("prefix", "aprp"))
-emit("BACKUP_B2_CAP_BYTES", offsite.get("cap_bytes", 10737418240))
-emit("BACKUP_B2_TARGET_PERCENT", offsite.get("target_percent", 90))
-emit("BACKUP_B2_TARGET_BYTES", offsite.get("target_bytes"))
-PY
+  eval "$(
+    python3 "${script_dir}/opsconfig.py" backup --config "${config_file}"
   )"
-  eval "${config_json}"
 
   backup_require_command bench
   backup_require_command git
@@ -385,7 +336,7 @@ backup_sync_session_to_offsite() {
   fi
 
   if [[ -z "${BACKUP_RCLONE_REMOTE}" || -z "${BACKUP_B2_BUCKET}" ]]; then
-    echo "B2 backup settings are missing from ops/backup_config.json." >&2
+    echo "B2 backup settings are missing from ops/opsconfig.yaml." >&2
     return 1
   fi
 

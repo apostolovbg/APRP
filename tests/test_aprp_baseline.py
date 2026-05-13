@@ -5,19 +5,20 @@ from pathlib import Path
 
 
 class TestAprpBaseline(unittest.TestCase):
-    """Verify the public APRP docs and version baseline stay coherent."""
+    """Verify the APRP docs and version baseline stay coherent."""
 
     def test_readme_and_spec_share_the_public_brand(self):
-        """Ensure the public docs present APRP consistently."""
+        """Ensure the repo docs present APRP consistently."""
         readme = Path("README.md").read_text(encoding="utf-8")
         spec = Path("SPEC.md").read_text(encoding="utf-8")
 
         self.assertIn("APRP", readme)
         self.assertIn("APRP", spec)
-        self.assertIn("aprp.store", readme)
-        self.assertIn("kuche.aprp.store", readme)
-        self.assertIn("aprp.store", spec)
-        self.assertIn("kuche.aprp.store", spec)
+        self.assertIn("ops/opsconfig.yaml", readme)
+        self.assertIn("ops/opsconfig.yaml", spec)
+        self.assertIn("Ops Configuration", spec)
+        self.assertIn("ops/opsconfig.yaml.example", spec)
+        self.assertNotIn("ops/demo_config.json", spec)
 
     def test_version_anchor_is_present(self):
         """Ensure the repo version anchor is available for governance sync."""

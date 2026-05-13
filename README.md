@@ -2,7 +2,7 @@
 **Doc ID:** README
 **Doc Type:** repo-readme
 **Project Version:** 0.4.0
-**Last Updated:** 2026-05-12
+**Last Updated:** 2026-05-13
 **DevCovenant Version:** 1.0.1b5
 
 <!-- DEVCOV:BEGIN -->
@@ -18,10 +18,10 @@
 3. [What APRP Is Not](#what-aprp-is-not)
 4. [Core Principles](#core-principles)
 5. [Runtime Model](#runtime-model)
-6. [Showcase Stack](#showcase-stack)
+6. [Runtime Stack](#runtime-stack)
 7. [Documentation](#documentation)
 8. [Deployment and Operations](#deployment-and-operations)
-9. [Security and Public-Demo Boundaries](#security-and-public-demo-boundaries)
+9. [Security and Access Boundaries](#security-and-access-boundaries)
 10. [Project Status](#project-status)
 11. [Commercial Integration](#commercial-integration)
 12. [Maintainer](#maintainer)
@@ -55,6 +55,12 @@ APRP is built on the belief that a business should know where its truth lives.
 
 That truth should not live in someone's memory, a spreadsheet tab, and three
 broken integrations.
+
+All non-secret runtime configuration lives in `ops/opsconfig.yaml`.
+The `ops/env.primary.example` and `ops/env.mirror.example` files are for
+secrets and machine-local auth only.
+The same YAML file also carries the internal service hostnames, ports,
+and URLs used by Compose and bootstrap.
 
 ## What APRP Is
 
@@ -182,52 +188,45 @@ The intended model is:
 - external systems are integrated through controlled adapters and reviewable
   synchronization paths.
 
-The ERP backend and public storefront must remain conceptually separate even
-when they are demonstrated together.
+The ERP backend and storefront must remain conceptually separate when
+they are integrated.
 
-## Showcase Stack
+## Runtime Stack
 
-The public APRP showcase is planned around:
+The current APRP baseline is the generalized ERP/ops framework:
 
-- `aprp.store` as the public storefront;
-- `kuche.aprp.store` as the ERP/showcase backend surface;
-- Bulgarian-first storefront assumptions;
-- free WordPress/WooCommerce-compatible components where possible;
-- Econt and Speedy integration targets;
-- ERP-to-storefront synchronization proof;
-- disposable demo state for public interaction where feasible.
+- a config-driven backend host;
+- a config-driven mirror host;
+- deterministic site bootstrap from the tracked config shape;
+- repeatable deploy, backup, and recovery scripts;
+- backend-first runtime checks;
+- config-first runtime wiring for every non-secret setting.
 
-The showcase goal is not to expose a real production ERP to anonymous users.
-
-The goal is to demonstrate cause and effect:
-
-```text
-Change operational state in the ERP/showcase surface
-↓
-Synchronize through a controlled boundary
-↓
-Observe the storefront reflect the change
-```
+User-viewable storefront rollout work belongs in a later plan after
+this baseline is complete.
 
 ## Documentation
 
 Operational guidance lives in `docs/system.md`.
-It covers the primary host, the mirror host, site bootstrap, backup, restore,
-and recovery sequencing for the APRP runtime.
+It covers the backend host, the mirror host, site bootstrap, backup,
+restore, and recovery sequencing for the APRP runtime.
 
 ## Deployment and Operations
 
 APRP is container-first.
-The primary ERP runtime is expected on `kuche.aprp.store`, and the mirror
-database member is expected on `kotka.aprp.store`.
+The primary ERP runtime is expected on the configured backend host, and the
+mirror database member is expected on the configured mirror host.
+
+The repo-owned deploy and backup scripts load `ops/opsconfig.yaml` before they
+call Compose or the backup tools.
 
 The current runtime slice uses Galera, ProxySQL, Redis, Caddy, and the APRP
 site bootstrap scripts to keep deployment repeatable.
 
-## Security and Public-Demo Boundaries
+## Security and Access Boundaries
 
 APRP must not commit secrets, private data, or unrestricted admin access.
-Public demo surfaces should remain disposable and reviewable.
+Public-facing surfaces must remain scoped and reviewable.
 
 ## Project Status
 

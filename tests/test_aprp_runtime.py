@@ -6,6 +6,8 @@ import subprocess
 import unittest
 from pathlib import Path
 
+import yaml
+
 import aprp
 
 
@@ -20,23 +22,205 @@ class TestAprpRuntime(unittest.TestCase):
         )
 
     def test_runtime_files_refer_to_the_aprp_hosts(self):
-        """Ensure the primary and mirror hostnames are present."""
+        """Ensure runtime files use config-driven hostnames."""
         runtime_text = "\n".join(
             [
+                Path("ops/backend_entrypoint.sh").read_text(encoding="utf-8"),
+                Path("ops/site_setup.sh").read_text(encoding="utf-8"),
+                Path("ops/opsconfig.py").read_text(encoding="utf-8"),
+                Path("ops/opsconfig.yaml.example").read_text(encoding="utf-8"),
+                Path("ops/deploy_mirror.sh").read_text(encoding="utf-8"),
+                Path("ops/db_mirror_restore.sh").read_text(encoding="utf-8"),
                 Path("compose.yaml").read_text(encoding="utf-8"),
                 Path("compose.mirror.yaml").read_text(encoding="utf-8"),
                 Path("caddy/Caddyfile").read_text(encoding="utf-8"),
-                Path("ops/deploy_config.json").read_text(encoding="utf-8"),
-                Path("ops/backup_config.json").read_text(encoding="utf-8"),
                 Path("docs/system.md").read_text(encoding="utf-8"),
             ]
         )
 
-        self.assertIn("aprp.store", runtime_text)
-        self.assertIn("kuche.aprp.store", runtime_text)
-        self.assertIn("kotka.aprp.store", runtime_text)
+        self.assertNotIn("aprp.store", runtime_text)
+        self.assertNotIn("kuche.aprp.store", runtime_text)
+        self.assertNotIn("kotka.aprp.store", runtime_text)
+        self.assertIn("APRP_BACKEND_HOST", runtime_text)
+        self.assertIn("APRP_CONTACT_EMAIL", runtime_text)
+        self.assertIn("APRP_BACKEND_SITE_NAME", runtime_text)
         self.assertIn("APRP_GALERA_NODE", runtime_text)
+        self.assertIn("APRP_GALERA_CLUSTER_MEMBERS", runtime_text)
+        self.assertIn("APRP_GALERA_MIRROR_HOST", runtime_text)
+        self.assertIn("BOOTSTRAP_DB_HOST", runtime_text)
         self.assertIn("APRP_APP_NAME", runtime_text)
+        self.assertIn("DB_HOST", runtime_text)
+        self.assertIn("DB_PORT", runtime_text)
+        self.assertIn("REDIS_CACHE", runtime_text)
+        self.assertIn("REDIS_QUEUE", runtime_text)
+        self.assertIn("REDIS_SOCKETIO", runtime_text)
+        self.assertIn("SOCKETIO_PORT", runtime_text)
+        self.assertIn("DEPLOY_GIT_REMOTE", runtime_text)
+        self.assertIn("BACKUP_RCLONE_REMOTE", runtime_text)
+        self.assertIn("mirror-net", runtime_text)
+        self.assertIn("db-mirror-data", runtime_text)
+        self.assertIn("mirror-reseed", runtime_text)
+        self.assertIn("mirror-rejoin", runtime_text)
+        self.assertIn("Strict-Transport-Security", runtime_text)
+        self.assertIn("reverse_proxy backend:8000", runtime_text)
+        self.assertFalse(Path("ops/deploy_config.json").exists())
+        self.assertFalse(Path("ops/backup_config.json").exists())
+
+    def test_opsconfig_example_is_structured(self):
+        """Ensure the tracked ops config example keeps repo-specific shape."""
+        ops_config = yaml.safe_load(
+            Path("ops/opsconfig.yaml.example").read_text(encoding="utf-8")
+        )
+
+        self.assertIsInstance(ops_config, dict)
+        for key in [
+            "profile",
+            "app_name",
+            "backend_host",
+            "mirror_host",
+            "backend_site_name",
+            "contact_email",
+            "storefront_platform",
+            "commerce_platform",
+            "db_host",
+            "db_port",
+            "redis_cache_url",
+            "redis_queue_url",
+            "redis_socketio_url",
+            "socketio_port",
+            "galera_cluster_name",
+            "galera_cluster_members",
+            "galera_primary_host",
+            "galera_mirror_host",
+            "galera_force_bootstrap",
+            "bootstrap_db_host",
+            "bootstrap_db_port",
+            "deploy_git_remote",
+            "deploy_git_branch",
+            "deploy_sync_remote",
+            "deploy_compose_file",
+            "deploy_build_services",
+            "deploy_restart_services",
+            "backup_local_backup_dir",
+            "backup_bench_sites_root",
+            "backup_timezone",
+            "backup_keep_daily",
+            "backup_remote",
+            "backup_rclone_conf",
+            "backup_bucket",
+            "backup_prefix",
+            "backup_cap_bytes",
+            "backup_target_percent",
+            "backup_target_bytes",
+            "backup_alert_recipients",
+            "backup_max_backup_age_hours",
+            "backup_min_free_disk_percent",
+            "backup_alert_cooldown_minutes",
+            "backup_enable_db_ping",
+            "backup_enable_disk_check",
+            "backup_enable_offsite_stamp_check",
+            "backup_enable_wsrep_probe",
+        ]:
+            self.assertIn(key, ops_config)
+        for key in [
+            "app_name",
+            "backend_host",
+            "mirror_host",
+            "backend_site_name",
+            "contact_email",
+            "storefront_platform",
+            "commerce_platform",
+            "db_host",
+            "galera_cluster_name",
+            "galera_primary_host",
+            "galera_mirror_host",
+            "bootstrap_db_host",
+            "deploy_git_remote",
+            "deploy_git_branch",
+            "deploy_compose_file",
+            "backup_local_backup_dir",
+            "backup_bench_sites_root",
+            "backup_timezone",
+            "backup_rclone_conf",
+            "backup_bucket",
+            "backup_prefix",
+            "redis_cache_url",
+            "redis_queue_url",
+            "redis_socketio_url",
+        ]:
+            self.assertIsInstance(ops_config[key], str)
+            self.assertTrue(ops_config[key])
+        for key in ["db_port", "socketio_port", "bootstrap_db_port"]:
+            self.assertIsInstance(ops_config[key], int)
+            self.assertGreater(ops_config[key], 0)
+        for key in [
+            "galera_cluster_members",
+            "deploy_build_services",
+            "deploy_restart_services",
+            "backup_alert_recipients",
+        ]:
+            self.assertIsInstance(ops_config[key], list)
+            self.assertTrue(ops_config[key])
+
+    def test_opsconfig_instance_is_ignored(self):
+        """Ensure the instance config stays local to each installation."""
+        gitignore = Path(".gitignore").read_text(encoding="utf-8")
+
+        self.assertIn("ops/opsconfig.yaml", gitignore)
+
+    def test_opsconfig_instance_matches_example_shape(self):
+        """Ensure the local config keeps the tracked example shape."""
+        instance_path = Path("ops/opsconfig.yaml")
+        if not instance_path.exists():
+            self.skipTest("Local opsconfig instance is not present.")
+
+        example = yaml.safe_load(
+            Path("ops/opsconfig.yaml.example").read_text(encoding="utf-8")
+        )
+        instance = yaml.safe_load(instance_path.read_text(encoding="utf-8"))
+
+        self.assertEqual(set(example.keys()), set(instance.keys()))
+
+    def test_opsconfig_helper_exports_shell_assignments(self):
+        """Ensure the renderer turns the YAML config into shell exports."""
+        primary = subprocess.run(
+            [
+                "python3",
+                "ops/opsconfig.py",
+                "primary",
+                "--config",
+                "ops/opsconfig.yaml.example",
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout
+        backup = subprocess.run(
+            [
+                "python3",
+                "ops/opsconfig.py",
+                "backup",
+                "--config",
+                "ops/opsconfig.yaml.example",
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout
+
+        self.assertIn("export APRP_BACKEND_HOST=", primary)
+        self.assertIn("export APRP_BACKEND_SITE_NAME=", primary)
+        self.assertIn("export SITE_NAME=", primary)
+        self.assertIn("export APRP_CONTACT_EMAIL=", primary)
+        self.assertIn("export APRP_APP_NAME=", primary)
+        self.assertIn("export DB_HOST=", primary)
+        self.assertIn("export DB_PORT=", primary)
+        self.assertIn("export REDIS_CACHE=", primary)
+        self.assertIn("export REDIS_QUEUE=", primary)
+        self.assertIn("export REDIS_SOCKETIO=", primary)
+        self.assertIn("export SOCKETIO_PORT=", primary)
+        self.assertIn("export BACKUP_SITE_NAME=", backup)
+        self.assertIn("export BACKUP_RCLONE_REMOTE=", backup)
 
     def test_hooks_module_exposes_aprp_metadata(self):
         """Ensure the Frappe hooks module exposes the APRP app contract."""
@@ -50,6 +234,15 @@ class TestAprpRuntime(unittest.TestCase):
             hooks.app_description,
         )
 
+    def test_backend_entrypoint_bootstraps_site_on_startup(self):
+        """Ensure startup runs the site bootstrap helper before serving."""
+        entrypoint = Path("ops/backend_entrypoint.sh").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("site_setup.sh", entrypoint)
+        self.assertIn('exec "$@"', entrypoint)
+
     def test_shell_scripts_parse(self):
         """Ensure the runtime shell scripts remain valid Bash."""
         scripts = [
@@ -59,8 +252,8 @@ class TestAprpRuntime(unittest.TestCase):
             "ops/mariadb_galera_entrypoint.sh",
             "ops/garbd_entrypoint.sh",
             "ops/site_setup.sh",
-            "ops/deploy.sh",
             "ops/deploy_mirror.sh",
+            "ops/deploy.sh",
             "ops/db_mirror_restore.sh",
             "ops/backup.sh",
         ]

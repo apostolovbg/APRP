@@ -6,7 +6,7 @@
 **Maintenance Stance:** active
 **Compatibility Policy:** forward-only
 **Versioning Mode:** versioned
-**Last Updated:** 2026-05-12
+**Last Updated:** 2026-05-13
 **DevCovenant Version:** 1.0.1b5
 
 <!-- DEVCOV:BEGIN -->
@@ -24,27 +24,41 @@ integration, infrastructure, security, and operational rules for **APRP**.
 APRP is ERPNext-based infrastructure for businesses that outgrew
 spreadsheets, improvisation, and fragile integrations.
 
-The public storefront is:
+APRP's HTTPS, storefront integration, deploy, backup, and mirror
+recovery capabilities are first-class product targets.
 
-```text
-aprp.store
-````
+## Ops Configuration
 
-The ERP/showcase backend surface is:
+APRP framework behavior stays address-agnostic.
 
-```text
-kuche.aprp.store
-```
+All non-secret installation settings live in `ops/opsconfig.yaml`.
+The repo-owned scripts translate that YAML file into the shell
+environment they need for Compose, deploy, backup, and recovery.
+That YAML file carries the internal service hostnames, ports, and URLs
+used by the runtime stack.
+
+The installation-specific config shape is tracked in
+`ops/opsconfig.yaml.example`.
+
+Operators copy that file to an untracked `ops/opsconfig.yaml` instance
+file and edit the same keys for the installation.
+
+The tracked example and the local instance file share the same keys and
+sections.
+
+Any installation that matches that tracked shape must be smoke-testable.
+
+Hardcoded hostnames and public URLs do not belong in compose files or
+other non-config artifacts.
+
+Untracked environment files remain reserved for secrets and
+machine-local auth only.
 
 In this specification:
 
 * **ERP** means the ERPNext/Frappe system running APRP.
 * **Storefront** means the public WordPress/WooCommerce sales surface.
-* **Showcase** means the public APRP demonstration environment.
 * **Operator** means an authenticated person performing ERP-side work.
-* **Visitor** means a public showcase user without a real ERP account.
-* **Disposable session** means temporary visitor state stored through browser
-  cookies and safe server-side demo state.
 
 APRP is not a dashboard skin.
 
@@ -59,9 +73,14 @@ procurement truth, integration truth, and recovery truth must live.
 * This file is not a roadmap.
 * This file does not describe migration history.
 * This file does not describe temporary implementation steps.
+* APRP behavior is generalized and config-driven.
+* All non-secret configuration lives in `ops/opsconfig.yaml`.
+* Any installation that matches the tracked config shape must be
+  smoke-testable.
 * Decisions are locked by default.
 * Changes to locked behavior require explicit maintainer approval.
-* Public demo behavior must never weaken production security assumptions.
+* Public-facing behavior must never weaken production security
+  assumptions.
 
 ## 1. Product Profile, Goals, and Principles
 
@@ -71,8 +90,6 @@ procurement truth, integration truth, and recovery truth must live.
 * Full name: Advanced Production Resource Planning.
 * Product type: ERPNext-based operational framework.
 * Primary platform: ERPNext/Frappe.
-* Primary public showcase domain: `aprp.store`.
-* Primary ERP/showcase backend domain: `kuche.aprp.store`.
 * Primary language posture: Bulgarian-first.
 * Secondary language posture: English-compatible.
 * Primary target users:
@@ -91,7 +108,7 @@ procurement truth, integration truth, and recovery truth must live.
 * Timezone baseline: Europe/Sofia.
 * Currency baseline:
 
-  * BGN for Bulgarian storefront and public demo behavior;
+  * BGN for Bulgarian storefront behavior;
   * EUR-compatible accounting and reporting where required.
 
 ### 1.2 Product goals
@@ -106,7 +123,7 @@ APRP must provide a reusable ERPNext-based framework for:
 * POS and offline-sales ingestion patterns;
 * courier and COD workflow modelling;
 * backup, restore, deploy, and continuity discipline;
-* public demonstration without exposing real administration.
+* storefront integration without exposing real administration.
 
 APRP must help a business answer:
 
@@ -134,6 +151,11 @@ APRP must help a business answer:
 * Business-specific behavior must stay isolated from the generic framework.
 * Deployment and recovery are part of the product.
 * A system that cannot be restored is not production-ready.
+* Runtime wiring must come from tracked config and local secrets, not
+  hardcoded host assumptions.
+* HTTPS, storefront routing, deploy, backup, and mirror recovery are
+  first-class APRP targets.
+* Public web entrypoints must use HTTPS with secure cookies and HSTS.
 
 ## 2. Authority Boundaries
 
@@ -217,23 +239,27 @@ The APRP system consists of:
 * POS ingestion adapters;
 * backup and restore scripts;
 * deployment scripts;
-* public demo/session layer.
+* storefront integration layer.
 
 ### 3.2 Runtime surfaces
 
 Required runtime surfaces:
 
 ```text
-aprp.store
-kuche.aprp.store
+configured-storefront-host
+configured-backend-host
+configured-mirror-host
 ```
 
-`aprp.store` is the public storefront.
+`configured-storefront-host` is the storefront surface when the
+installation enables one.
 
-`kuche.aprp.store` is the ERP/showcase backend surface.
+`configured-backend-host` is the ERP surface.
 
-The ERP backend may expose controlled public demo functionality, but must not
-expose unrestricted ERP administration to anonymous visitors.
+`configured-mirror-host` is the mirror database member.
+
+These surfaces are first-class targets and must be driven by config,
+not hardcoded addresses in compose files or other non-config artifacts.
 
 ### 3.3 Repository path contract
 
@@ -250,11 +276,14 @@ unless explicitly configured otherwise.
 
 APRP is container-first.
 
-Local, staging, showcase, and production-like deployments should use the same
+Local, staging, and production-like deployments should use the same
 containerized assumptions where feasible.
 
 The system must avoid hidden machine-specific setup that cannot be documented,
 replayed, or inspected.
+
+Compose files and other non-config artifacts must not hardcode
+deployment hostnames, mirror members, or public URLs.
 
 ## 4. Core Modules
 
@@ -386,18 +415,20 @@ Minimum accounting support includes:
 * adjustment records;
 * monthly review surfaces.
 
-### 4.8 Public showcase
+### 4.8 Storefront integration
 
-The public showcase module demonstrates APRP behavior without exposing real
-business data or unrestricted ERP access.
+The storefront module covers APRP behavior without exposing
+unrestricted ERP access.
 
-The showcase must support:
+The storefront must support:
 
 * visible ERP-to-storefront cause and effect;
+* safe public browsing and checkout behavior;
 * temporary visitor state where feasible;
-* resettable demo data;
+* resettable public session state where configured;
 * safe actions only;
 * clear cookie/session disclosure;
+* HTTPS-only public entrypoints;
 * no real account creation for visitors;
 * no production secrets;
 * no real supplier/customer data.
@@ -494,7 +525,7 @@ Location types may include:
 * damaged;
 * returned;
 * quarantine;
-* demo.
+* display.
 
 ### 5.5 Stock Intake Session
 
@@ -767,15 +798,15 @@ Storefront data entering ERP must be validated and logged.
 The public storefront must support Bulgarian-first operation.
 
 English support may be added where feasible, but Bulgarian storefront behavior
-is the baseline for the public showcase.
+is the baseline for the storefront.
 
 ### 8.5 Free-stack constraint
 
-The initial public storefront should prefer free or low-cost WordPress and
+The initial storefront should prefer free or low-cost WordPress and
 WooCommerce-compatible components.
 
 Paid plugins may be supported later but must not be required for the initial
-public showcase unless explicitly approved.
+storefront unless explicitly approved.
 
 ## 9. POS and Blackout Recovery
 
@@ -868,66 +899,35 @@ Examples:
 * COD mismatch;
 * payout mismatch.
 
-## 11. Public Showcase Rules
+## 11. Storefront and Entrypoint Rules
 
-### 11.1 Showcase purpose
+### 11.1 Storefront boundary
 
-The public showcase exists to demonstrate APRP behavior clearly and safely.
+The storefront exists to present APRP-controlled product and order
+state.
 
-It must show that operational ERP state can drive public storefront behavior.
+It must not expose unrestricted ERP administration.
 
-### 11.2 Disposable sessions
+Any public entrypoints must be driven by config and kept separate from
+operator surfaces.
 
-Public visitors may receive disposable demo sessions.
+### 11.2 Session and state safety
 
-Disposable sessions must:
+Public-facing session state, when configured, must be temporary,
+resettable, and clearable without affecting ERP truth.
 
-* use browser cookies;
-* avoid real account creation;
-* avoid real ERP admin access;
-* hold only temporary demo state;
-* be clearable by cookie deletion;
-* expire automatically where feasible;
-* never expose production data.
+Public-facing actions must not depend on real business data unless the
+installation explicitly enables that behavior for controlled testing.
 
-Suggested cookie notice:
+### 11.3 Transport security
 
-```text
-This showcase uses a disposable demo session stored in your browser cookies.
-Changes you make are temporary, isolated, and may be cleared at any time.
-No real account is created and no production business data is used.
-```
+The storefront and any other public entrypoints must be HTTPS-only.
 
-### 11.3 Safe public actions
+HTTP requests must redirect to HTTPS.
 
-Public visitor actions may include controlled operations such as:
+Cookies for public-facing sessions must be secure and protected.
 
-* changing demo stock quantity;
-* toggling demo availability;
-* editing demo product display fields;
-* triggering a demo sync;
-* creating a fake intake session;
-* resolving a fake barcode;
-* resetting the visitor's demo state.
-
-Public visitor actions must not include:
-
-* unrestricted ERP Desk access;
-* system settings access;
-* user administration;
-* real database export;
-* secret viewing;
-* destructive server actions;
-* access to production credentials.
-
-### 11.4 Demo isolation
-
-Demo state should be isolated per visitor where feasible.
-
-If shared demo state is used, it must be resettable and clearly marked as
-shared.
-
-No real business data may be used in public demo flows.
+HSTS must be enabled for public entrypoints.
 
 ## 12. Security Rules
 
@@ -947,20 +947,22 @@ The repository must not contain:
 * private commercial documents;
 * production host secrets.
 
-Only templates, examples, and fake demo values may be committed.
+Only templates, examples, and fake example values may be committed.
 
 ### 12.2 Access control
 
-Production and showcase administration must require authenticated operator
-access.
+Production administration must require authenticated operator access.
 
-Anonymous users must only reach explicitly public demo surfaces.
+Any public-facing storefront access must remain scoped to the surfaces
+explicitly configured for that installation.
+
+Anonymous users must never reach unrestricted ERP administration.
 
 Role and permission rules must prefer least privilege.
 
-### 12.3 Public demo blast radius
+### 12.3 Public-facing blast radius
 
-Public demo functionality must be designed so that abuse cannot damage:
+Public-facing functionality must be designed so that abuse cannot damage:
 
 * production ERP state;
 * production storefront state;
@@ -974,8 +976,8 @@ Public demo functionality must be designed so that abuse cannot damage:
 
 Important actions must be logged.
 
-Integration failures, stock corrections, purchase intake, and public demo
-mutations must leave enough trace to diagnose behavior.
+Integration failures, stock corrections, purchase intake, and public-
+facing mutations must leave enough trace to diagnose behavior.
 
 ## 13. Continuity, Backup, and Restore
 
@@ -1038,6 +1040,11 @@ The baseline mirror model is:
 * health checks;
 * operator-visible state.
 
+The same contract must support additional mirror members from config
+without changing the product rules.
+
+The framework must accept additional members from config.
+
 A mirror does not replace backups.
 
 Backups and mirrors solve different failure modes.
@@ -1069,9 +1076,14 @@ Deployment must leave an operator-visible result.
 Runtime configuration must come from environment files, host secrets, or
 approved secret stores.
 
+Non-secret runtime configuration must come from `ops/opsconfig.yaml`.
+
 Tracked examples may exist.
 
 Tracked live secrets must not exist.
+
+GitHub-hosted secrets may be used only for optional remote orchestration;
+local installs must remain usable with host-managed config and secrets.
 
 ### 14.3 Post-deploy checks
 
@@ -1084,6 +1096,20 @@ Post-deploy checks should include:
 * integration health;
 * backup trigger or backup freshness check;
 * error-log review.
+
+### 14.4 Automation wrappers
+
+`ci.yml` remains DevCovenant-managed.
+
+Any non-CI GitHub workflows must be generated wrappers around repo-owned
+scripts.
+
+Deploy, backup, and mirror bootstrap logic must live in repo-owned scripts so
+the wrappers cannot drift.
+
+Operational secrets should live on the deployment host or a self-hosted
+runner when orchestration needs them; GitHub is not the default secret
+store for APRP operations.
 
 ## 15. Testing and Validation
 
@@ -1101,17 +1127,21 @@ Test behavior should cover:
 * POS ingestion logic;
 * courier adapter boundaries;
 * backup/restore script syntax;
-* public demo safety boundaries.
+* generalized config and secret smoke tests;
+* public-facing safety boundaries.
 
-### 15.2 Validation before public demo
+### 15.2 Validation before public-facing rollout
 
-Before public demo use, APRP must validate:
+Before public-facing rollout, APRP must validate:
 
 * no real secrets are committed;
 * no private data is committed;
 * public visitors cannot access admin surfaces;
-* demo mutations are safe;
-* demo state can be reset;
+* HTTPS is enforced on public entrypoints;
+* the generalized install passes smoke tests against the tracked config
+  shape;
+* any public-facing installation profile passes only after the
+  generalized install smoke tests succeed;
 * storefront sync proof works;
 * backup and restore documentation exists.
 
@@ -1126,17 +1156,14 @@ Required documentation:
 * `docs/system.md` for infrastructure and operations;
 * `docs/inventory.md` for stock workflows;
 * `docs/purchasing.md` for procurement workflows;
-* `docs/storefront.md` for storefront integration;
 * `docs/pos.md` for POS ingestion and blackout recovery;
 * `docs/couriers.md` for Econt/Speedy and courier adapters;
-* `docs/security.md` for secrets, roles, and public-demo boundaries;
-* `docs/showcase.md` for `aprp.store` and `kuche.aprp.store`.
 
 Documentation must distinguish:
 
 * framework behavior;
 * adapter behavior;
-* showcase behavior;
+* storefront behavior;
 * production behavior;
 * future optional extensions.
 
@@ -1150,8 +1177,8 @@ Documentation must distinguish:
 * Integrations must be logged.
 * Courier/COD state must be explicit.
 * POS blackout recovery must be reviewable.
-* Public demo users must not receive unrestricted ERP access.
-* Public demo state must not contain real business data.
+* Public-facing users must not receive unrestricted ERP access.
+* Public-facing state must not contain real business data.
 * Secrets must not be committed.
 * Backups must be restorable.
 * Deployment must be reproducible.

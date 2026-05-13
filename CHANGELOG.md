@@ -6,7 +6,7 @@
 **Maintenance Stance:** active
 **Compatibility Policy:** forward-only
 **Versioning Mode:** versioned
-**Last Updated:** 2026-05-12
+**Last Updated:** 2026-05-13
 **DevCovenant Version:** 1.0.1b5
 
 <!-- DEVCOV:BEGIN -->
@@ -61,6 +61,278 @@ Example:
 
 ## Version 0.4.0
 
+- 2026-05-13:
+  Change: Removed the demo/public-showcase surface, rewrote the plan and
+    spec toward the generalized ERP/ops baseline, and simplified the
+    runtime to backend-first config-driven routing.
+  Why: Aligned APRP with the installable system baseline and deferred
+    user-viewable storefront rollout to a later plan.
+  Impact: Documented the backend/mirror framework baseline without the
+    demo landing page/docs; the current docs, tests, and runtime code
+    now describe the generalized backend/mirror framework only.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  README.md
+  SPEC.md
+  caddy/Caddyfile
+  caddy/Dockerfile
+  caddy/public/index.html
+  compose.yaml
+  docs/security.md
+  docs/showcase.md
+  docs/storefront.md
+  docs/system.md
+  ops/opsconfig.py
+  ops/opsconfig.yaml
+  ops/opsconfig.yaml.example
+  tests/test_aprp_baseline.py
+  tests/test_aprp_runtime.py
+  tests/test_opsconfig.py
+  tests/test_public_showcase.py
+
+- 2026-05-13:
+  Change: Implemented Slice 4 storefront and public routing with a
+    config-driven HTTPS landing page, reviewer hand-off, and safe
+    public surface tests.
+  Why: Preserved APRP's config-first boundary while preventing
+    hardcoded hostnames and public ERP admin exposure.
+  Impact: Locked in a public showcase page, config-driven reviewer
+    login routing, and docs/tests for the safe public surface.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  README.md
+  SPEC.md
+  caddy/Caddyfile
+  caddy/Dockerfile
+  caddy/public/index.html
+  compose.yaml
+  docs/security.md
+  docs/showcase.md
+  docs/storefront.md
+  docs/system.md
+  ops/opsconfig.py
+  ops/opsconfig.yaml
+  ops/opsconfig.yaml.example
+  tests/test_aprp_runtime.py
+  tests/test_opsconfig.py
+  tests/test_public_showcase.py
+
+- 2026-05-13:
+  Change: Marked Slice 3 done in PLAN.md after centralizing APRP's
+    non-secret runtime config in `ops/opsconfig.yaml` and adding the
+    renderer smoke tests.
+  Why: Record completion of the generalized config contract before the
+    next runtime slice starts.
+  Impact: APRP now records the tracked ops config example and the
+    untracked instance file as the completed generalized wiring slice.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+
+- 2026-05-13:
+  Change: Centralized APRP's non-secret runtime configuration in
+    `ops/opsconfig.yaml`, added a dedicated renderer test, and rewired
+    the runtime surfaces to consume the exported config values.
+  Why: Consolidate the config-first runtime contract into one tracked
+    source of truth while keeping secrets in separate env files.
+  Impact: APRP now derives its public, internal, deploy, backup, and
+    mirror wiring from the example-plus-instance config pair instead of
+    split JSON files and hardcoded runtime defaults.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  README.md
+  SPEC.md
+  compose.mirror.yaml
+  compose.yaml
+  docs/system.md
+  ops/backup.sh
+  ops/backup_config.json
+  ops/deploy.sh
+  ops/deploy_config.json
+  ops/deploy_mirror.sh
+  ops/env.mirror.example
+  ops/env.primary.example
+  ops/opsconfig.py
+  ops/opsconfig.yaml
+  ops/opsconfig.yaml.example
+  ops/site_setup.sh
+  tests/test_aprp_runtime.py
+  tests/test_opsconfig.py
+
+- 2026-05-13:
+  Change: Centralized APRP's non-secret runtime configuration in
+    `ops/opsconfig.yaml`, added the YAML renderer, and rewired the
+    runtime surfaces to consume the exported config values.
+  Why: Consolidate the config-first runtime contract into one tracked
+    source of truth while keeping secrets in separate env files.
+  Impact: APRP now derives its public, internal, deploy, and backup
+    wiring from the example-plus-instance config pair instead of split
+    JSON files and hardcoded runtime defaults.
+  Files:
+  CHANGELOG.md
+  README.md
+  SPEC.md
+  PLAN.md
+  compose.yaml
+  docs/system.md
+  ops/deploy.sh
+  ops/opsconfig.py
+  ops/opsconfig.yaml.example
+  tests/test_aprp_runtime.py
+
+- 2026-05-13:
+  Change: Removed concrete host literals from compose, Caddy, runtime,
+    and doc surfaces, and switched the public edge to config-driven
+    host variables.
+  Why: Ensure APRP stays config-first so non-config files remain
+    reusable across installations instead of carrying a one-off demo
+    address set.
+  Impact: APRP now normalizes host routing and enforces the generalized
+    host contract in docs and tests.
+  Files:
+  CHANGELOG.md
+  README.md
+  aprp/hooks.py
+  caddy/Caddyfile
+  compose.mirror.yaml
+  compose.yaml
+  ops/backup.sh
+  ops/backup_config.json
+  ops/deploy.sh
+  ops/deploy_config.json
+  ops/deploy_mirror.sh
+  ops/env.mirror.example
+  ops/env.primary.example
+  ops/site_setup.sh
+  tests/test_aprp_baseline.py
+  tests/test_aprp_runtime.py
+
+- 2026-05-13:
+  Change: Reworked PLAN.md and SPEC.md to mark HTTPS, storefront,
+    reviewer access, deploy, backup, and mirror recovery as first-class
+    APRP targets and to forbid hardcoded hostnames in compose or other
+    non-config files.
+  Why: Aligned APRP with a config-first framework model so the public
+    surfaces are product behavior, not demo-only wiring.
+  Impact: APRP now documents config-only host wiring, first-class
+    public surfaces, and a concrete profile that stays last in the
+    validation order.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  SPEC.md
+
+- 2026-05-13:
+  Change: Rewrote PLAN.md around generalized config-driven runtime slices
+    and updated SPEC.md for smoke-tested installs and optional GitHub
+    wrappers.
+  Why: Aligned APRP with a framework-first model where local config and
+    secrets define the install and the concrete demo remains the final
+    operational check.
+  Impact: APRP now documents smoke-testable generalized wiring,
+    host-managed secrets by default, and a demo-last validation path.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  SPEC.md
+
+- 2026-05-12:
+  Change: Updated PLAN.md and SPEC.md around HTTPS public demo access,
+    reviewer demo scope, and generated workflow wrappers.
+  Why: Aligned the repo docs with a user-testable storefront demo and
+    repo-owned operator scripts instead of a hidden-account model.
+  Impact: Added HTTPS-only public entrypoints, scoped reviewer access,
+    and generated non-CI workflow wrappers to the docs.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  SPEC.md
+
+- 2026-05-12:
+  Change: Replaced the temporary demo config with a tracked ops config
+    example and updated the docs and plan around the instance config
+    shape.
+  Why: Aligned APRP's concrete-installation model with a tracked
+    example file and an untracked local config file.
+  Impact: APRP now documents `ops/opsconfig.yaml.example` as the repo
+    contract while keeping installation-specific values local.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  SPEC.md
+  docs/system.md
+  ops/opsconfig.yaml.example
+  tests/test_aprp_baseline.py
+  tests/test_aprp_runtime.py
+  .gitignore
+  ops/demo_config.json
+
+- 2026-05-12:
+  Change: Added a tracked concrete-demo profile and rewrote future plan
+    and spec slices around config-driven hostnames.
+  Why: Aligned APRP's future work with a reusable framework layer
+    instead of hardcoded demo addresses.
+  Impact: Enabled future slices to consume `ops/demo_config.json` for
+    repo-specific demo settings, and the runtime tests cover that
+    tracked profile.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  SPEC.md
+  ops/demo_config.json
+  tests/test_aprp_runtime.py
+
+- 2026-05-12:
+  Change: Implemented the APRP mirror host on its own network and
+    recovery commands.
+  Why: Aligned mirror lifecycle and rebuild steps with the primary
+    stack.
+  Impact: APRP now documents and tests mirror restore, reseed, and
+    rejoin paths independently.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  compose.mirror.yaml
+  docs/system.md
+  ops/db_mirror_restore.sh
+  ops/deploy_mirror.sh
+  tests/test_aprp_runtime.py
+
+- 2026-05-12:
+  Change: Revised PLAN.md to clear the remaining line-length warnings.
+  Why: Aligned the execution ledger with the repository's documented
+    line-length policy.
+  Impact: Enabled the plan to pass DevCovenant checks without warning
+    noise.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+
+- 2026-05-12:
+  Change: Implemented the APRP backend startup path through
+    `ops/site_setup.sh`.
+  Why: Aligned local and deploy startup with the same deterministic site
+    setup contract.
+  Impact: Enabled fresh backend volumes to reach a ready site before
+    `bench serve`.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  docs/system.md
+  ops/backend_entrypoint.sh
+  tests/test_aprp_runtime.py
+
+- 2026-05-12:
+  Change: Marked Slice 0 done in PLAN.md after validating APRP docs.
+  Why: Align the execution ledger with the finished debranding pass.
+  Impact: Record Slice 0 completion without widening repo scope.
+  Files:
+  PLAN.md
+  CHANGELOG.md
+
 - 2026-05-12:
   Change: Rewrote PLAN.md to define APRP execution slices and working
     order.
@@ -86,8 +358,9 @@ Example:
 - 2026-05-12:
   Change: Added the APRP runtime stack scaffold, package-scoped dependency
     artifacts, and the repo-owned bootstrap scripts.
-  Why: Build the primary and mirror container contract for `kuche.aprp.store`
-    and `kotka.aprp.store` without depending on the old pilot repository.
+  Why: Build the primary and mirror container contract for the configured
+    backend and mirror hosts without depending on the old pilot
+    repository.
   Impact: APRP can now bootstrap its runtime, mirror, deploy, and backup
     surfaces from its own repo layout.
   Files:

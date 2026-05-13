@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 # Backend entrypoint for the APRP ERP container.
+# It bootstraps the APRP site before handing off to the requested bench
+# command so a fresh volume can reach a ready state on startup.
 
 set -euo pipefail
 
@@ -8,6 +10,8 @@ node_bin="$(echo /home/frappe/.nvm/versions/node/*/bin)"
 
 export PATH="${node_bin}:${PATH}"
 cd "${bench_dir}"
+
+bash /home/frappe/frappe-bench/apps/aprp/ops/site_setup.sh
 
 if ! python - <<'PY'
 import json

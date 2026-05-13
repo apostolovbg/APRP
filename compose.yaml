@@ -1,12 +1,11 @@
 # Canonical Docker stack for the APRP backend and its database cluster.
-#
-# The primary host runs the ERP runtime on `kuche.aprp.store`. The mirror
-# database member runs separately on `kotka.aprp.store` from compose.mirror.
+# Hostnames are supplied by config, not hardcoded here.
 
 x-aprp-app-build: &aprp_app_build
   context: .
   dockerfile: Dockerfile
 x-aprp-app-image: &aprp_app_image aprp-app:latest
+x-aprp-site-name: &aprp_site_name ${SITE_NAME:?SITE_NAME is required}
 
 services:
   caddy:
@@ -14,11 +13,15 @@ services:
       context: ./caddy
     container_name: aprp-caddy
     restart: unless-stopped
+    environment:
+      APRP_BACKEND_HOST: ${APRP_BACKEND_HOST:?APRP_BACKEND_HOST is required}
+      APRP_CONTACT_EMAIL: ${APRP_CONTACT_EMAIL:?APRP_CONTACT_EMAIL is required}
     depends_on:
       - backend
       - websocket
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - caddy-data:/data
       - caddy-config:/config
@@ -30,10 +33,16 @@ services:
       - ${APRP_COMPOSE_ENV_FILE:-.env.primary}
     environment:
       APRP_GALERA_NODE: db
-      APRP_GALERA_CLUSTER_NAME: ${APRP_GALERA_CLUSTER_NAME:-aprp_galera}
-      APRP_GALERA_CLUSTER_MEMBERS: ${APRP_GALERA_CLUSTER_MEMBERS:-}
-      APRP_GALERA_PRIMARY_HOST: ${APRP_GALERA_PRIMARY_HOST:-db}
-      APRP_GALERA_FORCE_BOOTSTRAP: ${APRP_GALERA_FORCE_BOOTSTRAP:-0}
+      APRP_GALERA_CLUSTER_NAME: >-
+        ${APRP_GALERA_CLUSTER_NAME:?APRP_GALERA_CLUSTER_NAME is required}
+      APRP_GALERA_CLUSTER_MEMBERS: >-
+        ${APRP_GALERA_CLUSTER_MEMBERS:?APRP_GALERA_CLUSTER_MEMBERS is
+        required}
+      APRP_GALERA_PRIMARY_HOST: >-
+        ${APRP_GALERA_PRIMARY_HOST:?APRP_GALERA_PRIMARY_HOST is required}
+      APRP_GALERA_FORCE_BOOTSTRAP: >-
+        ${APRP_GALERA_FORCE_BOOTSTRAP:?APRP_GALERA_FORCE_BOOTSTRAP is
+        required}
     volumes:
       - db-data:/var/lib/mysql
       - type: bind
@@ -73,8 +82,10 @@ services:
     env_file:
       - ${APRP_COMPOSE_ENV_FILE:-.env.primary}
     environment:
-      APRP_GALERA_PRIMARY_HOST: ${APRP_GALERA_PRIMARY_HOST:-db}
-      APRP_GALERA_MIRROR_HOST: ${APRP_GALERA_MIRROR_HOST:-}
+      APRP_GALERA_PRIMARY_HOST: >-
+        ${APRP_GALERA_PRIMARY_HOST:?APRP_GALERA_PRIMARY_HOST is required}
+      APRP_GALERA_MIRROR_HOST: >-
+        ${APRP_GALERA_MIRROR_HOST:?APRP_GALERA_MIRROR_HOST is required}
     entrypoint:
       - /bin/bash
       - /opt/aprp/proxysql_entrypoint.sh
@@ -105,9 +116,12 @@ services:
     image: aprp-garbd:${APP_IMAGE_TAG:-latest}
     restart: unless-stopped
     environment:
-      APRP_GALERA_CLUSTER_NAME: ${APRP_GALERA_CLUSTER_NAME:-aprp_galera}
-      APRP_GALERA_PRIMARY_HOST: ${APRP_GALERA_PRIMARY_HOST:-db}
-      APRP_GALERA_MIRROR_HOST: ${APRP_GALERA_MIRROR_HOST:-}
+      APRP_GALERA_CLUSTER_NAME: >-
+        ${APRP_GALERA_CLUSTER_NAME:?APRP_GALERA_CLUSTER_NAME is required}
+      APRP_GALERA_PRIMARY_HOST: >-
+        ${APRP_GALERA_PRIMARY_HOST:?APRP_GALERA_PRIMARY_HOST is required}
+      APRP_GALERA_MIRROR_HOST: >-
+        ${APRP_GALERA_MIRROR_HOST:?APRP_GALERA_MIRROR_HOST is required}
     depends_on:
       db:
         condition: service_started
@@ -148,17 +162,17 @@ services:
     env_file:
       - ${APRP_COMPOSE_ENV_FILE:-.env.primary}
     environment:
-      APRP_APP_NAME: aprp
-      SITE_NAME: ${SITE_NAME:-kuche.aprp.store}
-      FRAPPE_SITE_NAME_HEADER: kuche.aprp.store
-      FRAPPE_DEFAULT_SITE: kuche.aprp.store
-      DB_HOST: proxysql
-      DB_PORT: "6033"
-      BOOTSTRAP_DB_HOST: db
-      BOOTSTRAP_DB_PORT: "3306"
-      REDIS_CACHE: redis://redis-cache:6379
-      REDIS_QUEUE: redis://redis-queue:6379
-      REDIS_SOCKETIO: redis://redis-socketio:6379
+      APRP_APP_NAME: ${APRP_APP_NAME:?APRP_APP_NAME is required}
+      SITE_NAME: *aprp_site_name
+      FRAPPE_SITE_NAME_HEADER: *aprp_site_name
+      FRAPPE_DEFAULT_SITE: *aprp_site_name
+      DB_HOST: ${DB_HOST:?DB_HOST is required}
+      DB_PORT: ${DB_PORT:?DB_PORT is required}
+      BOOTSTRAP_DB_HOST: ${BOOTSTRAP_DB_HOST:?BOOTSTRAP_DB_HOST is required}
+      BOOTSTRAP_DB_PORT: ${BOOTSTRAP_DB_PORT:?BOOTSTRAP_DB_PORT is required}
+      REDIS_CACHE: ${REDIS_CACHE:?REDIS_CACHE is required}
+      REDIS_QUEUE: ${REDIS_QUEUE:?REDIS_QUEUE is required}
+      REDIS_SOCKETIO: ${REDIS_SOCKETIO:?REDIS_SOCKETIO is required}
       PYTHONPATH: /home/frappe/frappe-bench/apps/aprp
     depends_on:
       proxysql:
@@ -185,15 +199,15 @@ services:
     env_file:
       - ${APRP_COMPOSE_ENV_FILE:-.env.primary}
     environment:
-      SOCKETIO_PORT: 9000
-      SITE_NAME: ${SITE_NAME:-kuche.aprp.store}
-      FRAPPE_SITE_NAME_HEADER: kuche.aprp.store
-      FRAPPE_DEFAULT_SITE: kuche.aprp.store
-      DB_HOST: proxysql
-      DB_PORT: "6033"
-      REDIS_CACHE: redis://redis-cache:6379
-      REDIS_QUEUE: redis://redis-queue:6379
-      REDIS_SOCKETIO: redis://redis-socketio:6379
+      SOCKETIO_PORT: ${SOCKETIO_PORT:?SOCKETIO_PORT is required}
+      SITE_NAME: *aprp_site_name
+      FRAPPE_SITE_NAME_HEADER: *aprp_site_name
+      FRAPPE_DEFAULT_SITE: *aprp_site_name
+      DB_HOST: ${DB_HOST:?DB_HOST is required}
+      DB_PORT: ${DB_PORT:?DB_PORT is required}
+      REDIS_CACHE: ${REDIS_CACHE:?REDIS_CACHE is required}
+      REDIS_QUEUE: ${REDIS_QUEUE:?REDIS_QUEUE is required}
+      REDIS_SOCKETIO: ${REDIS_SOCKETIO:?REDIS_SOCKETIO is required}
       PYTHONPATH: /home/frappe/frappe-bench/apps/aprp
     depends_on:
       - backend
@@ -211,12 +225,12 @@ services:
     env_file:
       - ${APRP_COMPOSE_ENV_FILE:-.env.primary}
     environment:
-      SITE_NAME: ${SITE_NAME:-kuche.aprp.store}
-      DB_HOST: proxysql
-      DB_PORT: "6033"
-      REDIS_CACHE: redis://redis-cache:6379
-      REDIS_QUEUE: redis://redis-queue:6379
-      REDIS_SOCKETIO: redis://redis-socketio:6379
+      SITE_NAME: *aprp_site_name
+      DB_HOST: ${DB_HOST:?DB_HOST is required}
+      DB_PORT: ${DB_PORT:?DB_PORT is required}
+      REDIS_CACHE: ${REDIS_CACHE:?REDIS_CACHE is required}
+      REDIS_QUEUE: ${REDIS_QUEUE:?REDIS_QUEUE is required}
+      REDIS_SOCKETIO: ${REDIS_SOCKETIO:?REDIS_SOCKETIO is required}
       PYTHONPATH: /home/frappe/frappe-bench/apps/aprp
     depends_on:
       redis-queue:
@@ -235,12 +249,12 @@ services:
     env_file:
       - ${APRP_COMPOSE_ENV_FILE:-.env.primary}
     environment:
-      SITE_NAME: ${SITE_NAME:-kuche.aprp.store}
-      DB_HOST: proxysql
-      DB_PORT: "6033"
-      REDIS_CACHE: redis://redis-cache:6379
-      REDIS_QUEUE: redis://redis-queue:6379
-      REDIS_SOCKETIO: redis://redis-socketio:6379
+      SITE_NAME: *aprp_site_name
+      DB_HOST: ${DB_HOST:?DB_HOST is required}
+      DB_PORT: ${DB_PORT:?DB_PORT is required}
+      REDIS_CACHE: ${REDIS_CACHE:?REDIS_CACHE is required}
+      REDIS_QUEUE: ${REDIS_QUEUE:?REDIS_QUEUE is required}
+      REDIS_SOCKETIO: ${REDIS_SOCKETIO:?REDIS_SOCKETIO is required}
       PYTHONPATH: /home/frappe/frappe-bench/apps/aprp
     depends_on:
       redis-queue:
@@ -259,12 +273,12 @@ services:
     env_file:
       - ${APRP_COMPOSE_ENV_FILE:-.env.primary}
     environment:
-      SITE_NAME: ${SITE_NAME:-kuche.aprp.store}
-      DB_HOST: proxysql
-      DB_PORT: "6033"
-      REDIS_CACHE: redis://redis-cache:6379
-      REDIS_QUEUE: redis://redis-queue:6379
-      REDIS_SOCKETIO: redis://redis-socketio:6379
+      SITE_NAME: *aprp_site_name
+      DB_HOST: ${DB_HOST:?DB_HOST is required}
+      DB_PORT: ${DB_PORT:?DB_PORT is required}
+      REDIS_CACHE: ${REDIS_CACHE:?REDIS_CACHE is required}
+      REDIS_QUEUE: ${REDIS_QUEUE:?REDIS_QUEUE is required}
+      REDIS_SOCKETIO: ${REDIS_SOCKETIO:?REDIS_SOCKETIO is required}
       PYTHONPATH: /home/frappe/frappe-bench/apps/aprp
     depends_on:
       redis-queue:
@@ -283,12 +297,12 @@ services:
     env_file:
       - ${APRP_COMPOSE_ENV_FILE:-.env.primary}
     environment:
-      SITE_NAME: ${SITE_NAME:-kuche.aprp.store}
-      DB_HOST: proxysql
-      DB_PORT: "6033"
-      REDIS_CACHE: redis://redis-cache:6379
-      REDIS_QUEUE: redis://redis-queue:6379
-      REDIS_SOCKETIO: redis://redis-socketio:6379
+      SITE_NAME: *aprp_site_name
+      DB_HOST: ${DB_HOST:?DB_HOST is required}
+      DB_PORT: ${DB_PORT:?DB_PORT is required}
+      REDIS_CACHE: ${REDIS_CACHE:?REDIS_CACHE is required}
+      REDIS_QUEUE: ${REDIS_QUEUE:?REDIS_QUEUE is required}
+      REDIS_SOCKETIO: ${REDIS_SOCKETIO:?REDIS_SOCKETIO is required}
       PYTHONPATH: /home/frappe/frappe-bench/apps/aprp
     depends_on:
       redis-queue:

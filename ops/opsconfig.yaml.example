@@ -1,0 +1,70 @@
+# Example APRP ops configuration.
+# Copy this file to `ops/opsconfig.yaml` and edit the values for the
+# installation.
+
+profile: aprp-example
+app_name: aprp
+backend_host: backend.example.invalid
+mirror_host: mirror.example.invalid
+backend_site_name: backend.example.invalid
+contact_email: ops@example.invalid
+storefront_platform: wordpress
+commerce_platform: woocommerce
+db_host: proxysql
+db_port: 6033
+redis_cache_url: redis://redis-cache:6379
+redis_queue_url: redis://redis-queue:6379
+redis_socketio_url: redis://redis-socketio:6379
+socketio_port: 9000
+galera_cluster_name: aprp_galera
+galera_cluster_members:
+  - backend.example.invalid
+  - mirror.example.invalid
+galera_primary_host: backend.example.invalid
+galera_mirror_host: mirror.example.invalid
+galera_force_bootstrap: false
+bootstrap_db_host: db
+bootstrap_db_port: 3306
+deploy_git_remote: origin
+deploy_git_branch: main
+deploy_sync_remote: true
+deploy_compose_file: compose.yaml
+deploy_build_services:
+  - backend
+  - websocket
+  - queue-default
+  - queue-short
+  - queue-long
+  - scheduler
+  - caddy
+  - garbd
+deploy_restart_services:
+  - db
+  - garbd
+  - proxysql
+  - backend
+  - websocket
+  - queue-default
+  - queue-short
+  - queue-long
+  - scheduler
+backup_local_backup_dir: /backups/aprp
+backup_bench_sites_root: /home/frappe/frappe-bench/sites
+backup_timezone: Europe/Sofia
+backup_keep_daily: 7
+backup_remote: aprp-b2
+backup_rclone_conf: ops/rclone.conf
+backup_bucket: aprp-backup
+backup_prefix: backend
+backup_cap_bytes: 10737418240
+backup_target_percent: 90
+backup_target_bytes: null
+backup_alert_recipients:
+  - ops@example.invalid
+backup_max_backup_age_hours: 36
+backup_min_free_disk_percent: 5.0
+backup_alert_cooldown_minutes: 45
+backup_enable_db_ping: true
+backup_enable_disk_check: true
+backup_enable_offsite_stamp_check: false
+backup_enable_wsrep_probe: true

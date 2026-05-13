@@ -10,7 +10,9 @@ Usage: ./ops/db_mirror_restore.sh <command>
   cluster-status   Show wsrep status from the local db service (primary stack).
   mirror-status    Show wsrep status from db-mirror (set COMPOSE_FILE=compose.
                    mirror.yaml on the mirror host; APRP_DB_SERVICE=db-mirror).
-  print-rebuild    Print the manual rebuild procedure (no host changes).
+  mirror-restore   Print the mirror restore procedure (no host changes).
+  mirror-reseed    Print the mirror reseed procedure (no host changes).
+  mirror-rejoin    Print the mirror rejoin procedure (no host changes).
   wipe-primary     DANGER: document only — prints steps; set
                    APRP_CONFIRM_DATADIR_WIPE=1 to print wipe commands.
 EOF
@@ -32,19 +34,36 @@ run_sql_status() {
       "SHOW GLOBAL STATUS WHERE Variable_name LIKE '\''wsrep_%'\''"'
 }
 
-print_rebuild() {
+print_mirror_restore() {
   cat <<'EOF'
-Rebuild primary from surviving mirror (operator procedure)
-----------------------------------------------------------
-1) Stop ERP writers: on the primary host, `docker compose stop backend` (and
-   queue/websocket/scheduler as needed) so no writes race recovery.
-2) Confirm mirror host `db-mirror` is SYNCED (run `./ops/db_mirror_restore.sh
-   mirror-status` there with COMPOSE_FILE=compose.mirror.yaml).
-3) Snapshot policy: prefer SST/Galera donor/joiner flows.
-4) When mysqld is healthy, `./ops/deploy.sh` then verify ProxySQL and ERP.
+Restore mirror from a backup session
+------------------------------------
+1) Restore the database/session bundle with `./ops/backup.sh restore`.
+2) Start the mirror stack with `./ops/deploy_mirror.sh`.
+3) Verify `./ops/db_mirror_restore.sh mirror-status` reports wsrep ready.
+EOF
+}
 
-Always reconcile site files with `./ops/backup.sh restore` when restoring rows
-alone is insufficient.
+print_mirror_reseed() {
+  cat <<'EOF'
+Reseed mirror from the primary source of truth
+---------------------------------------------
+1) Stop the mirror stack with `docker compose -f compose.mirror.yaml down`.
+2) Remove the mirror volume with `docker compose -f compose.mirror.yaml down
+   -v` if the datadir must be rebuilt from scratch.
+3) Relaunch the mirror stack with `./ops/deploy_mirror.sh`.
+4) Verify `./ops/db_mirror_restore.sh mirror-status` reports wsrep ready.
+EOF
+}
+
+print_mirror_rejoin() {
+  cat <<'EOF'
+Rejoin mirror after a reseed or restore
+--------------------------------------
+1) Restart the mirror stack with `./ops/deploy_mirror.sh`.
+2) Wait for `./ops/db_mirror_restore.sh mirror-status` to report ready.
+3) If the primary host needs a rebuild, restore site files separately with
+   `./ops/backup.sh restore` before bringing ERP services back up.
 EOF
 }
 
@@ -75,8 +94,14 @@ case "${cmd}" in
     export APRP_DB_SERVICE="${APRP_DB_SERVICE:-db-mirror}"
     run_sql_status
     ;;
-  print-rebuild)
-    print_rebuild
+  mirror-restore)
+    print_mirror_restore
+    ;;
+  mirror-reseed)
+    print_mirror_reseed
+    ;;
+  mirror-rejoin)
+    print_mirror_rejoin
     ;;
   wipe-primary)
     wipe_primary_docs

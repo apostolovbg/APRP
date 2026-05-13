@@ -84,5 +84,6 @@ $RECYCLE.BIN/
 
 # --- User entries (preserved) ---
 
+ops/opsconfig.yaml
 
 # --- End user entries ---
