@@ -193,17 +193,18 @@ they are integrated.
 
 ## Runtime Stack
 
-The current APRP baseline is the generalized ERP/ops framework:
+The current APRP baseline is the generalized ERP/ops framework.
+The next plan phase builds the product layer on top of it:
 
-- a config-driven backend host;
-- a config-driven mirror host;
-- deterministic site bootstrap from the tracked config shape;
-- repeatable deploy, backup, and recovery scripts;
-- backend-first runtime checks;
-- config-first runtime wiring for every non-secret setting.
+- core master data and permissions;
+- multi-location stock and packaging;
+- procurement and cashflow planning;
+- blind storefront synchronization;
+- POS and Datecs fiscalization;
+- courier, COD, and returns workflows;
+- config-first installation rehearsal.
 
-Concrete storefront exposure work belongs in a later plan after this
-baseline is complete.
+Public publication is a later validation step, not the product target.
 
 ## Documentation
 

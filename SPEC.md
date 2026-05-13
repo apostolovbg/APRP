@@ -21,11 +21,15 @@ integration, infrastructure, security, and operational rules for **APRP**.
 
 **APRP** stands for **Advanced Production Resource Planning**.
 
-APRP is ERPNext-based infrastructure for businesses that outgrew
+APRP is ERPNext-based operational software for businesses that outgrew
 spreadsheets, improvisation, and fragile integrations.
 
 APRP's HTTPS, storefront integration, deploy, backup, and mirror
 recovery capabilities are first-class product targets.
+
+APRP must support one blind WooCommerce storefront, multiple physical
+locations, packaging relations, POS and Datecs fiscalization,
+couriers, COD, and recoverable operations.
 
 ## Ops Configuration
 
@@ -113,15 +117,18 @@ procurement truth, integration truth, and recovery truth must live.
 
 ### 1.2 Product goals
 
-APRP must provide a reusable ERPNext-based framework for:
+APRP must provide a reusable ERPNext-based operational system for:
 
 * product and inventory control;
+* packaging and pack-family structure;
+* multi-location warehouse and stock policy;
 * supplier and procurement structure;
 * barcode-aware stock intake;
 * unresolved barcode handling;
 * storefront synchronization;
 * POS and offline-sales ingestion patterns;
-* courier and COD workflow modelling;
+* courier, COD, and returns workflow modelling;
+* cashflow and salary planning surfaces;
 * backup, restore, deploy, and continuity discipline;
 * storefront integration without exposing real administration.
 
@@ -143,7 +150,12 @@ APRP must help a business answer:
 * APRP custom logic lives in an ERPNext/Frappe custom app.
 * ERP is the operational source of truth.
 * Storefronts are public sales surfaces, not the business brain.
+* One blind storefront and multiple offline locations are first-class
+  operational shapes.
+* Packaging, warehouse policy, and location policy must stay explicit.
 * POS systems are sales capture surfaces, not the inventory authority.
+* POS and Datecs are capture and fiscalization surfaces, not inventory
+  truth.
 * Couriers are fulfillment/payment partners, not accounting truth.
 * Integrations must be explicit, reviewable, and recoverable.
 * Data integrity is preferred over convenience.
@@ -156,6 +168,25 @@ APRP must help a business answer:
 * HTTPS, storefront routing, deploy, backup, and mirror recovery are
   first-class APRP targets.
 * Public web entrypoints must use HTTPS with secure cookies and HSTS.
+
+### 1.4 Operational scope
+
+APRP must support:
+
+* one blind WooCommerce storefront that reads ERP truth;
+* multiple physical locations with explicit warehouses and permissions;
+* packaging relations across unit, box, case, and pack-family shapes;
+* POS and Datecs fiscalization for in-store and web sales where
+  applicable;
+* couriers, COD, tracking, payout, and returns as explicit ERP flows;
+* procurement, cashflow, and salary planning as first-class operational
+  surfaces;
+* installable, config-first operation from tracked config plus secrets.
+
+ERP owns authoritative stock, procurement, accounting, and recovery
+truth.
+
+Storefronts, POS systems, and couriers are execution surfaces.
 
 ## 2. Authority Boundaries
 

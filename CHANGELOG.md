@@ -62,6 +62,22 @@ Example:
 ## Version 0.4.0
 
 - 2026-05-13:
+  Change: Rewrote PLAN.md for the product implementation phase and
+    re-centered README.md, SPEC.md, and the baseline test on the real
+    ERP system scope.
+  Why: Moved APRP from demo-shaped execution notes to a full
+    installable product plan for inventory, procurement, storefront,
+    POS, and courier flows.
+  Impact: APRP now documents the next phase as a real ERP system build
+    instead of a storefront publication sequence.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  README.md
+  SPEC.md
+  tests/test_aprp_baseline.py
+
+- 2026-05-13:
   Change: Added generalized install validation tests for config
     variants and repo hygiene, and prepared the baseline freeze in
     PLAN.md.
