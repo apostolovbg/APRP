@@ -62,6 +62,31 @@ Example:
 ## Version 0.4.0
 
 - 2026-05-13:
+  Change: Revised PLAN.md to describe APRP as production-grade and
+    demo-ready instead of demo-grade.
+  Why: The plan needs to match the explicit product goal and the
+    current execution direction.
+  Impact: The active plan now states the production-grade goal while
+    keeping demo readiness as part of the same release target.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+
+- 2026-05-13:
+  Change: Validated the rewritten PLAN.md, restored the missing
+    Overview heading, and kept multi-location support visible in the new
+    execution plan.
+  Why: DevCovenant gate-close checks required a fresh session entry and
+    the plan needed the expected documentation structure plus the
+    existing multi-location product cue.
+  Impact: PLAN.md now satisfies the doc-quality check for an Overview
+    section and preserves the multi-location baseline expected by the
+    repo tests.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+
+- 2026-05-13:
   Change: Added the APRP courier, COD, and return contract, docs, and
     tests for shipment capability profiles, delivery events, and
     reconciliation summaries.
