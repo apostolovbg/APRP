@@ -1130,9 +1130,9 @@ Test behavior should cover:
 * generalized config and secret smoke tests;
 * public-facing safety boundaries.
 
-### 15.2 Validation before public-facing rollout
+### 15.2 Validation before public exposure
 
-Before public-facing rollout, APRP must validate:
+Before public exposure, APRP must validate:
 
 * no real secrets are committed;
 * no private data is committed;

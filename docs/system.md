@@ -96,6 +96,15 @@ Restore from a local session, a single SQL file, or an offsite session with:
 ./ops/backup.sh restore [SESSION_DIR|SQL_FILE|REMOTE_SESSION]
 ```
 
+## Automation wrappers
+
+`ops/render_workflows.py` generates the non-CI GitHub workflow wrappers
+under `.github/workflows/`.
+
+The generated wrappers are thin entrypoints for self-hosted runners or
+host-managed checkouts. They call the repo-owned deploy, backup, mirror,
+and recovery scripts directly. `ci.yml` remains DevCovenant-managed.
+
 ## Recovery
 
 Use the mirror only as a database continuity layer.

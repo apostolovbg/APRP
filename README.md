@@ -202,8 +202,8 @@ The current APRP baseline is the generalized ERP/ops framework:
 - backend-first runtime checks;
 - config-first runtime wiring for every non-secret setting.
 
-User-viewable storefront rollout work belongs in a later plan after
-this baseline is complete.
+Concrete storefront exposure work belongs in a later plan after this
+baseline is complete.
 
 ## Documentation
 
@@ -219,6 +219,10 @@ mirror database member is expected on the configured mirror host.
 
 The repo-owned deploy and backup scripts load `ops/opsconfig.yaml` before they
 call Compose or the backup tools.
+
+Non-CI GitHub workflows are generated wrappers around those repo-owned
+scripts. They are intended for self-hosted runners or host-managed
+checkouts, while `ci.yml` stays DevCovenant-managed.
 
 The current runtime slice uses Galera, ProxySQL, Redis, Caddy, and the APRP
 site bootstrap scripts to keep deployment repeatable.

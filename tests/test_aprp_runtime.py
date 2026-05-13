@@ -29,11 +29,24 @@ class TestAprpRuntime(unittest.TestCase):
                 Path("ops/site_setup.sh").read_text(encoding="utf-8"),
                 Path("ops/opsconfig.py").read_text(encoding="utf-8"),
                 Path("ops/opsconfig.yaml.example").read_text(encoding="utf-8"),
+                Path("ops/render_workflows.py").read_text(encoding="utf-8"),
                 Path("ops/deploy_mirror.sh").read_text(encoding="utf-8"),
                 Path("ops/db_mirror_restore.sh").read_text(encoding="utf-8"),
                 Path("compose.yaml").read_text(encoding="utf-8"),
                 Path("compose.mirror.yaml").read_text(encoding="utf-8"),
                 Path("caddy/Caddyfile").read_text(encoding="utf-8"),
+                Path(".github/workflows/deploy.yml").read_text(
+                    encoding="utf-8"
+                ),
+                Path(".github/workflows/backup.yml").read_text(
+                    encoding="utf-8"
+                ),
+                Path(".github/workflows/mirror.yml").read_text(
+                    encoding="utf-8"
+                ),
+                Path(".github/workflows/recovery.yml").read_text(
+                    encoding="utf-8"
+                ),
                 Path("docs/system.md").read_text(encoding="utf-8"),
             ]
         )
@@ -61,6 +74,14 @@ class TestAprpRuntime(unittest.TestCase):
         self.assertIn("db-mirror-data", runtime_text)
         self.assertIn("mirror-reseed", runtime_text)
         self.assertIn("mirror-rejoin", runtime_text)
+        self.assertIn("workflow_dispatch", runtime_text)
+        self.assertIn("self-hosted", runtime_text)
+        self.assertIn("aprp-primary", runtime_text)
+        self.assertIn("aprp-mirror", runtime_text)
+        self.assertIn("./ops/deploy.sh", runtime_text)
+        self.assertIn("./ops/backup.sh", runtime_text)
+        self.assertIn("./ops/deploy_mirror.sh", runtime_text)
+        self.assertIn("./ops/db_mirror_restore.sh", runtime_text)
         self.assertIn("Strict-Transport-Security", runtime_text)
         self.assertIn("reverse_proxy backend:8000", runtime_text)
         self.assertFalse(Path("ops/deploy_config.json").exists())

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Canonical repo-owned deploy command for the APRP primary host.
-# GitHub-hosted workflow signals this host over SSH and runs it locally.
+# Thin GitHub workflow wrappers can invoke this on the target host checkout.
 # It syncs the host checkout, restarts the Compose services, prepares the
 # APRP site, runs migrations inside the backend container, prepares the shared
 # backup volume, and then triggers a post-deploy backup from the same runtime.

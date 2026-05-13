@@ -46,8 +46,8 @@ Keep slices dependency-ordered, concrete, and current.
   other non-config artifacts.
 - `ci.yml` stays DevCovenant-managed; non-CI GitHub workflows are
   generated wrappers around repo-owned scripts.
-- User-viewable storefront rollout work belongs in a later plan after
-  the generalized framework baseline is complete.
+- Concrete storefront exposure work belongs in a later plan after the
+  generalized framework baseline is complete.
 - The immediate target is to finish the debranding surface, then the
   generalized runtime, then the mirror, then the tracked ops config
   example, then deploy and recovery, then generated workflow wrappers,
@@ -182,7 +182,7 @@ Keep slices dependency-ordered, concrete, and current.
    - Future runtime, storefront, deploy, and recovery steps consume the
      config shape instead of hardcoded strings.
    - Smoke tests prove that APRP works with a valid generic config
-     before any later storefront rollout is introduced.
+     before any later storefront exposure is introduced.
 
 5. [done] Slice 4 - Wire storefront integration with scoped access.
    Depends on:
@@ -236,7 +236,7 @@ Keep slices dependency-ordered, concrete, and current.
    - Recovery paths are documented and repeatable.
    - Local operation works without GitHub-hosted operational secrets.
 
-7. [not done] Slice 6 - Validate the concrete operational profile and
+7. [done] Slice 6 - Validate the concrete operational profile and
    freeze the baseline.
    Depends on:
    - Slices 0-5

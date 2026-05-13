@@ -62,6 +62,45 @@ Example:
 ## Version 0.4.0
 
 - 2026-05-13:
+  Change: Added generalized install validation tests for config
+    variants and repo hygiene, and prepared the baseline freeze in
+    PLAN.md.
+  Why: Proved APRP accepts arbitrary valid config profiles while
+    keeping banned identity strings and secret markers out of repo
+    surfaces.
+  Impact: APRP now has a smoke test for variant opsconfig rendering
+    and a hygiene scan that guards the system-first baseline.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  tests/test_install_validation.py
+
+- 2026-05-13:
+  Change: Added repo-owned workflow wrapper generation for deploy,
+    backup, mirror, and recovery and synchronized the tracked wrapper
+    files with the bootstrap scripts.
+  Why: Kept non-CI GitHub orchestration thin, optional, and aligned
+    with the repo-owned execution path.
+  Impact: APRP now ships generated wrappers for the operational jobs,
+    validates them in tests, and documents the host-managed workflow
+    contract.
+  Files:
+  CHANGELOG.md
+  README.md
+  PLAN.md
+  SPEC.md
+  docs/system.md
+  ops/deploy.sh
+  ops/render_workflows.py
+  .github/workflows/backup.yml
+  .github/workflows/deploy.yml
+  .github/workflows/mirror.yml
+  .github/workflows/recovery.yml
+  tests/test_aprp_runtime.py
+  tests/test_render_workflows.py
+  tests/test_workflow_wrappers.py
+
+- 2026-05-13:
   Change: Removed the demo/public-showcase surface, rewrote the plan and
     spec toward the generalized ERP/ops baseline, and simplified the
     runtime to backend-first config-driven routing.
