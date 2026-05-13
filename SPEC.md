@@ -316,6 +316,30 @@ replayed, or inspected.
 Compose files and other non-config artifacts must not hardcode
 deployment hostnames, mirror members, or public URLs.
 
+### 3.5 Core contract surfaces
+
+The first explicit APRP contract surfaces are:
+
+* `aprp.aprp.core_contract` for product, supplier, customer, location,
+  warehouse policy, tax profile, price list, workspace, and permission
+  definitions.
+* `aprp.aprp.inventory_contract` for pack-family, warehouse-policy,
+  intake-session, unresolved-barcode, stock-operation, and safety-gate
+  definitions.
+* `aprp.aprp.purchasing_contract` for release-forecast,
+  procurement-profile, purchase-liability, cashflow-plan, and
+  accounting-summary definitions.
+* `aprp.aprp.pos_contract` for receipt-line, fiscal-receipt, replay,
+  and blackout-summary definitions.
+* `aprp.aprp.storefront_contract` for catalog-row, order-line,
+  reservation, and sync-summary definitions.
+* `docs/inventory.md` for inventory-facing rules and navigation.
+* `docs/purchasing.md` for supplier-facing rules and navigation.
+* `docs/pos.md` for receipt capture and blackout replay rules.
+* `docs/storefront.md` for storefront sync and order-flow rules.
+* `docs/accounting.md` for monthly review and period-lock rules.
+* Permission domains are operator, staff, and location-scoped users.
+
 ## 4. Core Modules
 
 ### 4.1 Catalog
@@ -355,6 +379,17 @@ Stock is not only a number.
 
 Stock has source, location, uncertainty, movement, and operational history.
 
+Inventory policy must keep per-location fulfillment, reserve, and intake
+warehouses explicit.
+
+Pack families must keep unit, box, and case tiers explicit.
+
+Barcode-first intake must stage unknown scans until the operator maps them to
+known items.
+
+Publishing and selling must stop when stock data is missing, inconsistent, or
+uncertain.
+
 ### 4.3 Purchasing
 
 The purchasing module covers:
@@ -370,9 +405,16 @@ The purchasing module covers:
 * charges;
 * procurement notes;
 * supplier reliability metadata.
+* release forecasts;
+* procurement profiles;
+* purchase liabilities;
+* cashflow plans;
+* monthly accounting summaries.
 
 Procurement must be structured enough that the business can see what was
 ordered, what arrived, what is missing, and what changed.
+Release forecasts feed procurement profiles and cashflow planning, not
+product identity.
 
 ### 4.4 Sales
 
@@ -406,10 +448,14 @@ The POS ingestion module covers:
 * replay queue;
 * operator review.
 
+The POS contract lives in `aprp.aprp.pos_contract`.
+
 POS ingestion must support recovery from periods where the storefront or ERP
 was unavailable, while preserving auditability.
 
 ### 4.6 Couriers
+
+The courier contract lives in `aprp.aprp.courier_contract`.
 
 The courier module covers:
 
@@ -424,19 +470,26 @@ The courier module covers:
 
 Initial courier targets:
 
-* Econt;
-* Speedy.
+* Speedy;
+* Econt.
 
 Courier adapters must isolate courier-specific behavior from the generic APRP
-core.
+core and stay capability-based for domestic and international delivery,
+office pickup, address delivery, store pickup, COD, tracking, pickup
+requests, and returns.
 
 ### 4.7 Accounting support
 
 APRP provides operational accounting support, not a replacement for legal
 accounting review.
 
+The accounting and procurement summary contract lives in
+`aprp.aprp.purchasing_contract`.
+
 Minimum accounting support includes:
 
+* release forecasts, procurement profiles, purchase liabilities,
+  cashflow plans, and monthly accounting summaries;
 * purchase totals;
 * sales totals;
 * payment state;
@@ -444,12 +497,16 @@ Minimum accounting support includes:
 * courier payout state;
 * VAT-relevant exports where configured;
 * adjustment records;
-* monthly review surfaces.
+* monthly review surfaces and period-lock readiness.
 
 ### 4.8 Storefront integration
 
 The storefront module covers APRP behavior without exposing
 unrestricted ERP access.
+
+The storefront contract lives in `aprp.aprp.storefront_contract` and
+models public catalog rows, imported orders, explicit reservations, and
+sync summaries.
 
 The storefront must support:
 
@@ -789,8 +846,8 @@ Operators must be able to see:
 
 The storefront is a public sales surface.
 
-The storefront must receive product, price, stock, and availability state from
-ERP-controlled workflows.
+The storefront must receive product, price, stock, availability, and
+publication state from ERP-controlled workflows.
 
 Humans should not use the storefront as the primary product-management system
 when ERP authority exists.
@@ -806,6 +863,7 @@ ERP-to-storefront synchronization may include:
 * category mapping;
 * image mapping;
 * availability state;
+* publication state;
 * shipping class;
 * tax class.
 
@@ -823,6 +881,8 @@ Storefront-to-ERP synchronization may include:
 * refund events.
 
 Storefront data entering ERP must be validated and logged.
+Imported orders must hand reservation work back to ERP before stock is
+consumed or released.
 
 ### 8.4 Bulgarian-first storefront
 
@@ -845,6 +905,8 @@ storefront unless explicitly approved.
 
 APRP must support POS ingestion patterns for offline or in-store sales.
 
+The POS replay contract lives in `aprp.aprp.pos_contract`.
+
 POS ingestion must capture:
 
 * receipt reference;
@@ -855,6 +917,9 @@ POS ingestion must capture:
 * totals;
 * operator review state.
 
+Datecs and other fiscal export references must stay explicit and
+replayable.
+
 ### 9.2 Blackout recovery
 
 A blackout is a period where ERP, storefront, POS, courier, or integration
@@ -863,6 +928,8 @@ connectivity is unavailable or unreliable.
 APRP must support replay or review of sales captured during blackout periods.
 
 Blackout recovery must prefer correctness over silent automation.
+Blackout replay must keep receipts, replay entries, fiscal references,
+and mismatch state reviewable before posting.
 
 ### 9.3 Replay queue
 
@@ -890,8 +957,8 @@ Replay states:
 
 Initial courier targets:
 
-* Econt;
-* Speedy.
+* Speedy;
+* Econt.
 
 Other couriers may be added through adapters.
 
@@ -909,6 +976,10 @@ COD orders must track:
 
 COD collection must not be treated as settled revenue until the payout state is
 known or reconciled.
+
+Courier-event ingestion must keep returned events visible and may settle
+delivered COD, release reservations on confirmed returns, and post return
+fees as expenses when the installation enables those flows.
 
 ### 10.3 Shipping methods
 
@@ -938,6 +1009,8 @@ The storefront exists to present APRP-controlled product and order
 state.
 
 It must not expose unrestricted ERP administration.
+Customer orders and cancellations must enter ERP through explicit,
+logged sync paths.
 
 Any public entrypoints must be driven by config and kept separate from
 operator surfaces.
@@ -1187,6 +1260,8 @@ Required documentation:
 * `docs/system.md` for infrastructure and operations;
 * `docs/inventory.md` for stock workflows;
 * `docs/purchasing.md` for procurement workflows;
+* `docs/storefront.md` for storefront sync and order flow;
+* `docs/accounting.md` for monthly accounting review;
 * `docs/pos.md` for POS ingestion and blackout recovery;
 * `docs/couriers.md` for Econt/Speedy and courier adapters;
 

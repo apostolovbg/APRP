@@ -129,3 +129,15 @@ When a recovery happens:
 3. run `bench --site <backend site name from ops/opsconfig.yaml> migrate`;
 4. bring the primary services back up;
 5. verify the backend host responses.
+
+## Installation rehearsal
+
+A fresh install must work from `ops/opsconfig.yaml` plus local secrets.
+
+The same config profile feeds the repo-owned rehearsal path:
+
+1. render the shell exports with `python3 ops/opsconfig.py primary`;
+2. run `./ops/deploy.sh`;
+3. run `./ops/backup.sh backup`;
+4. run `./ops/deploy_mirror.sh`;
+5. verify `./ops/db_mirror_restore.sh mirror-status`.

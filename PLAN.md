@@ -28,8 +28,8 @@ Keep slices dependency-ordered, concrete, and current.
   commerce and inventory-heavy businesses.
 - The runtime baseline already passes smoke tests; this plan covers the
   next phase of product implementation on top of that baseline.
-- APRP is not a demo. Public publication and showcase work are later
-  validation steps, not the product definition.
+- Public publication and showcase work are later validation steps, not
+  the product definition.
 - The product must support one blind WooCommerce storefront, multiple
   physical locations, packaging relations, POS and Datecs fiscalization,
   couriers, COD, and recoverable operations.
@@ -63,15 +63,16 @@ Keep slices dependency-ordered, concrete, and current.
   completed slice.
 
 ## Execution Slices
-1. [not done] Slice 1 - Model the ERP business core.
+1. [done] Slice 1 - Model the ERP business core.
    Depends on:
    - runtime baseline
    Surfaces:
    - app doctypes and permissions
    - workspace and module config
+   - aprp/aprp/core_contract.py
    - docs/inventory.md
    - docs/purchasing.md
-   Work to do:
+   Scope:
    - Define stable product, supplier, customer, location, warehouse,
      tax, and price-list models.
    - Keep ERPNext-native module and workspace navigation explicit.
@@ -81,15 +82,21 @@ Keep slices dependency-ordered, concrete, and current.
    - core business objects exist and are explicit in the app;
    - product identity and operator permissions are represented cleanly;
    - the system can describe one business with multiple locations.
-2. [not done] Slice 2 - Build inventory, packaging, and location policy.
+   Implemented:
+   - aprp/aprp/core_contract.py
+   - docs/inventory.md
+   - docs/purchasing.md
+   - tests/test_aprp_core_contract.py
+2. [done] Slice 2 - Build inventory, packaging, and location policy.
    Depends on:
    - Slice 1
    Surfaces:
    - stock doctypes
    - packaging logic
    - warehouse policy
+   - aprp/aprp/inventory_contract.py
    - docs/inventory.md
-   Work to do:
+   Scope:
    - Implement per-location warehouses and explicit fulfillment,
      reserve, and intake policy.
    - Keep sealed and open pack state explicit at unit, box, and case
@@ -102,16 +109,22 @@ Keep slices dependency-ordered, concrete, and current.
    - multi-location stock is explicit;
    - pack families and reservations are first-class;
    - per-location policy drives fulfillment and intake.
-3. [not done] Slice 3 - Add procurement, release forecasting, and
-   cashflow hooks.
+   Implemented:
+   - aprp/aprp/inventory_contract.py
+   - docs/inventory.md
+   - tests/test_aprp_inventory_contract.py
+3. [done] Slice 3 - Add procurement, release forecasting, and cashflow
+   hooks.
    Depends on:
    - Slices 1 and 2
    Surfaces:
    - procurement doctypes
    - accounting hooks
+   - aprp/aprp/purchasing_contract.py
    - docs/purchasing.md
    - docs/accounting.md
-   Work to do:
+   - tests/test_aprp_purchasing_contract.py
+   Scope:
    - Turn supplier feeds and release signals into procurement profiles.
    - Carry supplier liabilities, landed cost, and salary planning into
      ERP-facing accounting surfaces.
@@ -122,14 +135,21 @@ Keep slices dependency-ordered, concrete, and current.
    - procurement informs stock planning and cashflow;
    - liabilities and release risk are explicit;
    - the accounting surfaces can consume the same operational data.
-4. [not done] Slice 4 - Synchronize the blind storefront and order flow.
+   Implemented:
+   - aprp/aprp/purchasing_contract.py
+   - docs/accounting.md
+   - docs/purchasing.md
+   - tests/test_aprp_purchasing_contract.py
+4. [done] Slice 4 - Synchronize the blind storefront and order flow.
    Depends on:
    - Slices 1, 2, and 3
    Surfaces:
    - storefront integration
    - order sync
+   - aprp/aprp/storefront_contract.py
    - docs/storefront.md
-   Work to do:
+   - tests/test_aprp_storefront_contract.py
+   Scope:
    - Keep the storefront as a sales surface only.
    - Sync product, price, stock, availability, and publication state
      from ERP.
@@ -142,7 +162,11 @@ Keep slices dependency-ordered, concrete, and current.
    - the storefront reads from ERP truth;
    - orders and reservations flow back to ERP;
    - storefront administrators cannot bypass ERP authority.
-5. [not done] Slice 5 - Capture POS, fiscalization, and blackout
+   Implemented:
+   - aprp/aprp/storefront_contract.py
+   - docs/storefront.md
+   - tests/test_aprp_storefront_contract.py
+5. [done] Slice 5 - Capture POS, fiscalization, and blackout
    recovery.
    Depends on:
    - Slices 1, 2, 3, and 4
@@ -150,8 +174,10 @@ Keep slices dependency-ordered, concrete, and current.
    - POS adapters
    - Datecs integration
    - offline recovery
+   - aprp/aprp/pos_contract.py
    - docs/pos.md
-   Work to do:
+   - tests/test_aprp_pos_contract.py
+   Scope:
    - Support Datecs fiscalization and POS capture paths.
    - Keep offline sales replayable when ERP is unreachable.
    - Make blackout mode bounded, auditable, and recoverable.
@@ -160,11 +186,16 @@ Keep slices dependency-ordered, concrete, and current.
    - physical and virtual POS capture land in ERP;
    - offline receipts can be replayed;
    - blackout recovery is documented and exercised.
-6. [not done] Slice 6 - Wire couriers, COD, returns, and installation
+   Implemented:
+   - aprp/aprp/pos_contract.py
+   - docs/pos.md
+   - tests/test_aprp_pos_contract.py
+6. [done] Slice 6 - Wire couriers, COD, returns, and installation
    rehearsal.
    Depends on:
    - Slices 1, 2, 3, 4, and 5
    Surfaces:
+   - aprp/aprp/courier_contract.py
    - courier adapters
    - shipping rules
    - install validation
@@ -178,12 +209,17 @@ Keep slices dependency-ordered, concrete, and current.
      secrets.
    - Run deploy, backup, restore, and mirror drills against the product
      model.
-   - Treat any future public demo or showcase work as a separate plan.
+   - Treat any future public-facing showcase work as a separate plan.
    Done when:
    - courier events update ERP truth;
    - COD and returns stay auditable;
    - a concrete install can be rehearsed end-to-end from config-only
      setup.
+   Implemented:
+   - aprp/aprp/courier_contract.py
+   - docs/couriers.md
+   - docs/system.md
+   - tests/test_aprp_courier_contract.py
 
 ## Validation Routine
 - Verify tests pass for the active slice.

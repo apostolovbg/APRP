@@ -46,7 +46,7 @@ It focuses on:
 - supplier SKU and purchasing structure;
 - goods intake and unresolved barcode workflows;
 - storefront/POS synchronization patterns;
-- courier, payment, and reconciliation workflows;
+- courier, COD, returns, and reconciliation workflows;
 - backup, restore, deployment, and continuity discipline;
 - clear separation between ERP truth, storefront presentation, and external
   integration surfaces.
@@ -204,13 +204,21 @@ The next plan phase builds the product layer on top of it:
 - courier, COD, and returns workflows;
 - config-first installation rehearsal.
 
-Public publication is a later validation step, not the product target.
+Public storefront rollout is a later validation step; the product itself
+already includes the blind storefront contract.
 
 ## Documentation
 
 Operational guidance lives in `docs/system.md`.
 It covers the backend host, the mirror host, site bootstrap, backup,
 restore, and recovery sequencing for the APRP runtime.
+
+Inventory modeling lives in `docs/inventory.md`.
+Purchasing modeling lives in `docs/purchasing.md`.
+POS modeling lives in `docs/pos.md`.
+Courier modeling lives in `docs/couriers.md`.
+Storefront modeling lives in `docs/storefront.md`.
+Accounting modeling lives in `docs/accounting.md`.
 
 ## Deployment and Operations
 

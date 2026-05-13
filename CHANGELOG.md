@@ -62,6 +62,129 @@ Example:
 ## Version 0.4.0
 
 - 2026-05-13:
+  Change: Added the APRP courier, COD, and return contract, docs, and
+    tests for shipment capability profiles, delivery events, and
+    reconciliation summaries.
+  Why: Aligned the final product slice with courier adapters and the
+    config-first installation rehearsal contract.
+  Impact: APRP now documents and tests courier capability routing,
+    shipment review state, and fresh-install rehearsal guidance.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  README.md
+  SPEC.md
+  aprp/aprp/__init__.py
+  aprp/aprp/courier_contract.py
+  docs/couriers.md
+  docs/system.md
+  tests/test_aprp_baseline.py
+  tests/test_aprp_courier_contract.py
+
+- 2026-05-13:
+  Change: Added the APRP POS and blackout-replay contract, guide, and
+    tests for receipt capture, fiscal references, and replay summaries.
+  Why: Aligned the POS slice with the generalized ERP product contract
+    and the recoverable sales-capture boundary.
+  Impact: APRP now documents and tests POS capture rows, fiscal
+    references, replay batches, and blackout summary state.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  README.md
+  SPEC.md
+  aprp/aprp/__init__.py
+  aprp/aprp/pos_contract.py
+  docs/pos.md
+  tests/test_aprp_baseline.py
+  tests/test_aprp_pos_contract.py
+
+- 2026-05-13:
+  Change: Added the APRP storefront synchronization contract, guide,
+    and tests for catalog publication, checkout ingestion, and ERP
+    reservation handoff.
+  Why: Aligned the blind storefront slice with the generalized ERP
+    product boundary and the actual order-flow contract.
+  Impact: APRP now documents and tests storefront sync rows, imported
+    orders, reservation batches, and the storefront safety summary.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  README.md
+  SPEC.md
+  aprp/aprp/__init__.py
+  aprp/aprp/storefront_contract.py
+  docs/storefront.md
+  tests/test_aprp_baseline.py
+  tests/test_aprp_storefront_contract.py
+
+- 2026-05-13:
+  Change: Added the APRP purchasing and accounting contract, docs,
+    and tests for release forecasting, liabilities, and cashflow.
+  Why: Aligned the procurement slice with the generalized ERP product
+    contract and the monthly accounting review surface.
+  Impact: APRP now supports tested procurement-to-accounting models
+    and documents them in the product docs.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  README.md
+  SPEC.md
+  aprp/aprp/__init__.py
+  aprp/aprp/purchasing_contract.py
+  docs/accounting.md
+  docs/purchasing.md
+  tests/test_aprp_baseline.py
+  tests/test_aprp_purchasing_contract.py
+
+- 2026-05-13:
+  Change: Added a customer master-data line to docs/inventory.md.
+  Why: Aligned the inventory guide with the core-contract test and the
+    shared customer master-data surface.
+  Impact: APRP inventory docs now cover the same contract tokens that
+    the slice tests expect.
+  Files:
+  CHANGELOG.md
+  docs/inventory.md
+
+- 2026-05-13:
+  Change: Added the APRP inventory contract module, expanded the
+    inventory guide, and added tests for pack families, intake, policy,
+    and safety gates.
+  Why: Defined explicit inventory, packaging, and location-policy
+    surfaces so stock moves, reservations, and intake stay reviewable.
+  Impact: APRP now has a tested inventory contract that can block unsafe
+    selling and keep multi-location stock explicit.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  SPEC.md
+  aprp/aprp/__init__.py
+  aprp/aprp/inventory_contract.py
+  docs/inventory.md
+  tests/test_aprp_inventory_contract.py
+
+- 2026-05-13:
+  Change: Added the APRP core contract module, inventory and purchasing
+    docs, and baseline tests for the business model.
+  Why: Defined the next product slices around explicit product,
+    supplier, customer, location, warehouse policy, tax, and
+    price-list surfaces.
+  Impact: APRP now has a documented and test-checked core business model
+    that future inventory and procurement work can extend.
+  Files:
+  CHANGELOG.md
+  README.md
+  SPEC.md
+  PLAN.md
+  aprp/aprp/__init__.py
+  aprp/aprp/core_contract.py
+  docs/inventory.md
+  docs/purchasing.md
+  tests/test_aprp_baseline.py
+  tests/test_aprp_core_contract.py
+
+- 2026-05-13:
   Change: Rewrote PLAN.md for the product implementation phase and
     re-centered README.md, SPEC.md, and the baseline test on the real
     ERP system scope.
