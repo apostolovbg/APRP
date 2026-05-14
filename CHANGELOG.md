@@ -62,6 +62,17 @@ Example:
 ## Version 0.4.0
 
 - 2026-05-14:
+  Change: Updated the active plan baseline date for the current gate
+    session.
+  Why: Kept the plan metadata synchronized with the newly replaced
+    PLAN.md content.
+  Impact: Close checks can validate the current plan revision without
+    stale header drift.
+  Files:
+  PLAN.md
+  CHANGELOG.md
+
+- 2026-05-14:
   Change: Added the release summary doc and release-gate coverage.
   Why: Aligned the product docs and validation surfaces with the
     1.0.0 release candidate checkpoint.

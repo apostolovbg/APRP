@@ -14,462 +14,595 @@ This opening section is managed by DevCovenant.
 Use `PLAN.md` to track active implementation work below this block.
 <!-- DEVCOV:END -->
 
+Use this plan to track active implementation work.
+
+Keep slices dependency-ordered, concrete, current, and runtime-focused.
+
+## Table of Contents
+
+1. [Overview](#overview)
+2. [How Slices Are Executed](#how-slices-are-executed)
+3. [Execution Slices](#execution-slices)
+4. [Validation Routine](#validation-routine)
+
 ## Overview
 
-APRP must move from an alpha foundation into a working,
-production-grade and demo-ready ERPNext-based operational system.
+* APRP is a config-driven ERPNext operational system for Bulgarian
+  commerce, inventory, procurement, storefront, POS, courier, and COD
+  workflows.
+* The current repository is a governed beta foundation. It has real
+  contracts, DocType surfaces, services, tests, docs, and ops assets.
+* This plan exists to make the beta marker true as a usable SaaS-style
+  product, not merely a strong codebase.
+* The target is **1.0.0 beta-SaaS readiness**.
+* Beta-SaaS readiness means APRP can be installed, configured, shown,
+  operated, backed up, restored, validated, and quoted for real business
+  integration work.
+* The system must support ERP-owned truth, one blind WooCommerce
+  storefront, multi-location physical sites, packaging relations, POS
+  and fiscal capture boundaries, courier adapters, COD, returns, demo
+  mode, and recoverable operations.
+* Public endpoints, demo domains, mirror members, and environment
+  addresses belong in tracked config or local instance config, not in
+  reusable runtime code.
+* Non-secret runtime config stays in `ops/opsconfig.yaml`.
+* Secrets stay outside the repository.
+* Repo-owned scripts remain the contract for install, deploy, backup,
+  restore, mirror, health checks, and release rehearsal.
+* Public documentation must be sharp, honest, and free of private
+  implementation history.
+* APRP must be able to support a public storefront, a controlled ERP
+  showcase, and a commercial call-to-action for full business integration
+  quotes.
+
+Beta-SaaS readiness does not mean unrestricted public self-service
+production onboarding.
+
+Beta-SaaS readiness does mean a serious operator can install the system,
+run a showcase, demonstrate ERP-to-storefront cause and effect, and start
+paid implementation work from a reproducible base.
+
+## How Slices Are Executed
+
+* Each slice means a complete implementation pass, not a note.
+* Each slice must leave code, tests, docs, and changelog evidence where
+  behavior changed.
+* Do not mark a slice done unless the relevant checks support it.
+* Do not treat contract-only behavior as runtime completion.
+* Do not polish UI before install, runtime, and validation work.
+* Do not add secrets, database dumps, private keys, private data, or
+  real credentials.
+* Do not publish previous-business identity, private history, or
+  implementation narrative.
+* Do not hardcode public hostnames in reusable runtime code.
+* Concrete installation settings belong in tracked `ops/` config or
+  local instance config.
+* Repo-owned scripts translate `ops/opsconfig.yaml` into the shell
+  environment before runtime, deploy, backup, restore, or mirror work.
+* Public showcase behavior must never weaken production security
+  assumptions.
+* Anonymous visitors must not receive unrestricted ERP administration.
+* Simulators are acceptable for beta if adapter boundaries are clear and
+  real credentials are not required in tests.
+* Use `CHANGELOG.md` to record slice outcomes when behavior,
+  documentation, or governance changes.
+* Use the configured local governance workflow around each completed
+  slice.
+* Keep every slice small enough to review, but complete enough to run.
+
+## Execution Slices
+
+1. [open] Slice 1 - Rebaseline the current beta.
+
+   Depends on:
+
+   * current repository state
+
+   Surfaces:
+
+   * `README.md`
+   * `SPEC.md`
+   * `PLAN.md`
+   * `CHANGELOG.md`
+   * `pyproject.toml`
+   * `aprp/`
+   * `tests/`
+   * `docs/`
+   * `ops/`
+   * CI configuration
+
+   Scope:
+
+   * Inspect the current repo after the first full implementation pass.
+   * Identify what is runtime-real, simulated, shell-only, or
+     documentation-only.
+   * Align project stage as beta across public docs.
+   * Replace overclaims with beta-SaaS language.
+   * Ensure no private implementation history appears in public docs.
+   * Ensure public hostnames live in config or approved public docs only.
+   * Ensure no private data or real secrets are present.
+   * Ensure the current test count and limitations are documented
+     honestly.
+
+   Done when:
+
+   * the repo has a clear beta baseline;
+   * public docs no longer overclaim production maturity;
+   * known limitations are explicit;
+   * hygiene checks pass;
+   * the next runtime slice is selected.
+
+2. [open] Slice 2 - Prove fresh ERPNext installation.
+
+   Depends on:
+
+   * Slice 1
+
+   Surfaces:
+
+   * app metadata
+   * hooks
+   * modules
+   * patches
+   * fixtures
+   * DocType JSON
+   * workspace records
+   * install tests
+   * install docs
+
+   Scope:
 
-## Mission
-
-APRP must move from an alpha foundation into a working,
-production-grade and demo-ready ERPNext-based operational system.
-
-The target is **1.0.0 production-grade and demo-ready completion**.
-
-The runtime model must still support multi-location operations.
-
-For this plan, production-grade and demo-ready completion means:
-
-* the ERPNext app installs cleanly;
-* core APRP business objects exist as real Frappe surfaces;
-* adapter boundaries exist for storefront, POS, couriers, and accounting;
-* at least one ERP-to-storefront proof path works;
-* proof data can be created safely;
-* deployment, backup, restore, and health-check flows are documented;
-* public documentation is honest and sellable;
-* no secrets, private data, or legacy identity are present.
-
-APRP is not allowed to remain only contracts and documentation.
-
-The contracts must become runtime behavior.
-
-## Definition of 1.0.0
-
-APRP reaches 1.0.0 when it can support a credible client-facing
-production and demo conversation.
-
-1.0.0 requires:
-
-* installable ERPNext/Frappe app package;
-* real DocType definitions for the core operational model;
-* role and permission fixtures;
-* workspace or module navigation;
-* validated hooks and app metadata;
-* adapter interfaces for storefront, POS, couriers, and accounting;
-* at least one working storefront/showcase sync path;
-* safe demo data generation;
-* safe public showcase assumptions;
-* deploy, backup, restore, and health-check scripts;
-* tests passing from a clean checkout where local dependencies allow;
-* public hygiene checks passing;
-* README, SPEC, PLAN, and docs aligned.
-
-1.0.0 does not require:
-
-* paid billing;
-* full multi-tenant automation;
-* support-desk workflows;
-* real courier credentials in the repo;
-* real payment credentials in the repo;
-* unrestricted anonymous ERP access;
-* every possible adapter fully implemented.
-
-1.0.0 must be strong enough that the maintainer can screenshare the ERP,
-show the storefront, explain the architecture, and quote full business
-integration work.
-
-## Execution Rules
-
-* Work dependency-first.
-* Build runtime reality before polishing language.
-* Do not mark a slice done unless checks support it.
-* Do not treat contract-only code as runtime completion.
-* Do not commit real secrets.
-* Do not commit real environment files.
-* Do not commit database dumps.
-* Do not commit private keys.
-* Do not commit supplier, customer, or private business data.
-* Do not commit legacy project identity.
-* Do not expose unrestricted ERP administration to anonymous visitors.
-* Prefer a thin working vertical slice over broad unfinished scaffolding.
-* Public docs must describe APRP as its own product.
-* Keep product identity sharp, but honest.
-
-## Priority Order
-
-If time or tool budget runs out, prioritize:
-
-1. Installable ERPNext/Frappe app.
-2. Real DocTypes and fixtures.
-3. Storefront/showcase sync proof.
-4. Adapter interfaces and simulators.
-5. Ops validation and restore confidence.
-6. Documentation cleanup.
-7. UI polish.
-
-A working thin vertical proof beats a wide unfinished platform.
-
-## Slice 0 — Reality Check
-
-**Status:** done
-
-Inspect the current repository and produce a gap map.
-
-The gap map must state:
-
-* what is already runtime-real;
-* what is contract-only;
-* what is missing;
-* what is unsafe;
-* what is overclaimed;
-* what must be done first.
-
-Done when:
-
-* the gap map exists in the working summary;
-* the next implementation slice is selected;
-* no public claims are made beyond current reality.
-
-## Slice 1 — Installable ERPNext App
-
-**Status:** done
-
-Make APRP a real installable ERPNext/Frappe app.
-
-Required surfaces:
-
-* app metadata;
-* hooks;
-* modules;
-* patches file if needed;
-* module definition;
-* workspace or navigation where useful;
-* fixtures where useful;
-* install/import validation tests.
-
-Minimum DocType families:
-
-* APRP Product Profile;
-* APRP Supplier SKU Mapping;
-* APRP Location Policy;
-* APRP Intake Session;
-* APRP Intake Line;
-* APRP Unresolved Barcode;
-* APRP Storefront Sync Batch;
-* APRP Storefront Sync Event;
-* APRP POS Receipt;
-* APRP POS Replay Batch;
-* APRP Courier Adapter;
-* APRP Courier Shipment;
-* APRP Courier Event;
-* APRP Integration Log.
-
-Done when:
-
-* app imports successfully;
-* hooks load successfully;
-* required DocType JSON files exist;
-* module or workspace structure exists;
-* tests cover app surfaces;
-* tests pass where dependencies allow.
-
-## Slice 2 — Runtime Services
-
-**Status:** done
-
-Turn contract modules into runtime service helpers.
-
-Required capabilities:
-
-* create or update product profile from APRP contract data;
-* validate product publishability;
-* create supplier SKU mapping;
-* open intake session;
-* add intake line;
-* detect unresolved barcode;
-* post safe intake session;
-* block unsafe intake session;
-* write integration log entries.
-
-Done when:
-
-* contracts connect to runtime services;
-* safe and unsafe paths are tested;
-* no service requires live external credentials;
-* tests pass.
-
-## Slice 3 — Storefront Sync Proof
-
-**Status:** done
-
-Build the first commercially visible proof path.
-
-Required capabilities:
-
-* generic storefront adapter interface;
-* WooCommerce-compatible adapter shell;
-* local simulator adapter;
-* product sync payload;
-* stock sync payload;
-* availability sync payload;
-* sync batch creation;
-* sync event logging;
-* order ingest boundary;
-* sample product data.
-
-Done when:
-
-* at least one storefront sync path works without real credentials;
-* simulated adapter tests pass;
-* sync failures are logged;
-* unsafe products are blocked from publication;
-* docs explain the proof behavior.
-
-## Slice 4 — POS and Blackout Replay
-
-**Status:** done
-
-Build the POS ingestion and recovery boundary.
-
-Required capabilities:
-
-* generic POS adapter interface;
-* fiscal receipt capture boundary;
-* simulator adapter;
-* receipt validation;
-* receipt-line mapping;
-* replay batch creation;
-* replay state machine;
-* unsafe replay blocking;
-* operator-review state.
-
-Done when:
-
-* POS receipt tests pass;
-* unknown products or barcodes enter review;
-* unsafe replay does not silently mutate stock;
-* docs explain blackout recovery.
-
-## Slice 5 — Courier Adapter System
-
-**Status:** done
-
-Build courier integration boundaries.
-
-Required capabilities:
-
-* generic courier adapter interface;
-* simulator adapter;
-* Econt-compatible adapter shell;
-* Speedy-compatible adapter shell;
-* shipment draft creation;
-* shipment validation;
-* tracking reference capture;
-* COD state tracking;
-* return state tracking;
-* courier event logging.
-
-Done when:
-
-* courier simulator tests pass;
-* adapter shells require no real credentials;
-* COD state is explicit;
-* return state is explicit;
-* docs explain credential configuration without committing secrets.
-
-## Slice 6 — Accounting and Cashflow Support
-
-**Status:** done
-
-Build operational accounting support surfaces.
-
-Required capabilities:
-
-* purchase summary;
-* supplier liability summary;
-* sales summary by payment state;
-* COD settlement summary;
-* courier fee summary;
-* accountant-reviewable export payload.
-
-Done when:
-
-* accounting support tests pass;
-* docs state that APRP supports operational review;
-* docs do not claim APRP replaces legal accounting review.
-
-## Slice 7 — Ops Validation
-
-**Status:** done
-
-Harden deployment, backup, restore, mirror, and health-check assumptions.
-
-Required capabilities:
-
-* primary environment example;
-* mirror environment example;
-* compose validation where Docker is available;
-* deploy script syntax validation;
-* backup script syntax validation;
-* restore script syntax validation;
-* health-check documentation;
-* production preflight checklist.
-
-Done when:
-
-* ops tests pass;
-* scripts pass syntax checks;
-* compose files validate where Docker is available;
-* docs match actual scripts;
-* no secrets are committed.
-
-## Slice 8 — Safe Showcase Mode
-
-**Status:** done
-
-Build the safe demonstration layer.
-
-Required capabilities:
-
-* demo data generation;
-* demo reset path;
-* demo-only record marking;
-* controlled demo actions;
-* no unrestricted anonymous ERP access;
-* cookie/disposable-session language;
-* screenshare demo checklist;
-* public demo checklist.
-
-Done when:
-
-* safe demo data can be generated or clearly documented;
-* public demo boundaries are explicit;
-* demo state cannot mix with production state;
-* showcase docs exist;
-* tests cover implemented demo safety behavior.
-
-## Slice 9 — Public Documentation
-
-**Status:** done
-
-Align public docs with actual behavior.
-
-Required docs:
-
-* install guide;
-* local development guide;
-* showcase guide;
-* storefront integration guide;
-* courier adapter guide;
-* POS and blackout guide;
-* backup and restore guide;
-* security and public-demo guide.
-
-Done when:
-
-* docs match current code;
-* alpha status is honest;
-* known limitations are explicit;
-* commercial integration CTA exists;
-* no legacy identity appears;
-* public hygiene checks pass.
-
-## Slice 10 — Release Candidate Gate
-
-**Status:** done
-
-Prepare 1.0.0 production-grade and demo-ready release.
-
-Required checks:
-
-* Python tests pass where dependencies allow.
-* Python files compile.
-* Shell scripts pass syntax checks.
-* Compose files validate where Docker is available.
-* Tooling checks pass where installed.
-* Secret scan passes.
-* Private-data scan passes.
-* Legacy-identity scan passes.
-* Version and changelog are aligned.
-* Known limitations are documented.
-
-Done when:
-
-* release summary exists;
-* all runnable checks pass;
-* blocked checks are documented honestly;
-* no secrets are committed;
-* no private data is committed;
-* no legacy identity remains.
+   * Verify APRP installs as a real ERPNext/Frappe app.
+   * Fix app metadata, hooks, module definitions, and fixtures as
+     needed.
+   * Ensure DocType JSON files are valid and loadable.
+   * Add or fix workspace/module navigation.
+   * Add install validation tests that do not depend on live secrets.
+   * Document the exact local install path.
+
+   Done when:
+
+   * a fresh bench-style install path is documented;
+   * app imports are clean;
+   * hooks load cleanly;
+   * required DocTypes exist and validate;
+   * install tests pass where local dependencies allow;
+   * failure modes are documented honestly.
+
+3. [open] Slice 3 - Harden the ERP business runtime.
+
+   Depends on:
+
+   * Slice 2
+
+   Surfaces:
+
+   * product profile services
+   * supplier SKU services
+   * location policy services
+   * intake services
+   * unresolved barcode services
+   * integration log services
+   * permission fixtures
+   * tests
+
+   Scope:
+
+   * Connect contract objects to real runtime service behavior.
+   * Ensure product publishability checks are enforced.
+   * Ensure unsafe stock cannot become sellable.
+   * Ensure unknown barcodes enter review state.
+   * Ensure intake sessions can open, receive lines, block unsafe
+     posting, and post safe data.
+   * Ensure integration logs are written consistently.
+   * Ensure permission domains support operator, staff, and admin
+     responsibilities.
+
+   Done when:
+
+   * core runtime services operate against real or testable Frappe
+     surfaces;
+   * unsafe paths are tested;
+   * publish-blocking behavior is tested;
+   * integration logging is tested;
+   * permissions are represented clearly.
+
+4. [open] Slice 4 - Make adapter architecture real.
+
+   Depends on:
+
+   * Slice 3
+
+   Surfaces:
+
+   * storefront adapters
+   * POS adapters
+   * courier adapters
+   * accounting exporters
+   * adapter registry
+   * adapter config
+   * simulator implementations
+   * tests
+
+   Scope:
+
+   * Consolidate adapter boundaries into a predictable plugin-style
+     structure.
+   * Provide simulator adapters for tests and showcase flows.
+   * Provide WooCommerce, fiscal-capture, Econt-compatible, and
+     Speedy-compatible shells without requiring live credentials.
+   * Ensure each adapter exposes capabilities, validation, execution,
+     and error reporting.
+   * Ensure adapter failures write integration log entries.
+   * Ensure adapter config is environment-driven.
+
+   Done when:
+
+   * adapter interfaces are stable;
+   * simulators pass tests;
+   * real adapter shells exist without embedded credentials;
+   * adapter capability reporting works;
+   * adapter failures are logged;
+   * docs explain how adapters are configured.
+
+5. [open] Slice 5 - Deliver ERP-to-storefront proof.
+
+   Depends on:
+
+   * Slices 3 and 4
+
+   Surfaces:
+
+   * storefront sync services
+   * WooCommerce adapter shell
+   * storefront simulator
+   * product sync batches
+   * stock sync batches
+   * availability sync
+   * order ingest boundary
+   * showcase data
+   * storefront docs
+
+   Scope:
+
+   * Create the first visible proof path from ERP truth to storefront
+     state.
+   * Sync product, price, stock, and availability through a simulator.
+   * Keep WooCommerce support credential-free in tests.
+   * Ensure incomplete or unsafe products are blocked from sync.
+   * Ensure sync success, skip, warning, and failure states are logged.
+   * Define the storefront as blind presentation, not source of truth.
+   * Provide demo records that prove cause and effect.
+
+   Done when:
+
+   * simulated ERP-to-storefront sync works;
+   * sync payloads are testable;
+   * unsafe publication is blocked;
+   * sync events are logged;
+   * order ingest boundary exists;
+   * docs explain how the public storefront is connected.
+
+6. [open] Slice 6 - Deliver POS and blackout recovery beta.
+
+   Depends on:
+
+   * Slices 3 and 4
+
+   Surfaces:
+
+   * POS receipt services
+   * fiscal capture adapter shell
+   * POS simulator
+   * replay batches
+   * blackout state machine
+   * stock mutation guards
+   * POS docs
+
+   Scope:
+
+   * Accept POS receipt payloads through a simulator.
+   * Represent fiscal receipt references without requiring live
+     hardware credentials.
+   * Map receipt lines to products where possible.
+   * Put unknown products or barcodes into review state.
+   * Queue replayable events.
+   * Replay safe events.
+   * Block unsafe replay.
+   * Keep blackout recovery auditable.
+
+   Done when:
+
+   * POS simulator tests pass;
+   * safe replay works;
+   * unsafe replay is blocked;
+   * unknown identities enter review;
+   * stock is not silently mutated;
+   * blackout docs match runtime behavior.
+
+7. [open] Slice 7 - Deliver courier and COD beta.
+
+   Depends on:
+
+   * Slices 3 and 4
+
+   Surfaces:
+
+   * courier services
+   * courier simulator
+   * Econt-compatible shell
+   * Speedy-compatible shell
+   * shipment records
+   * courier events
+   * COD state
+   * return state
+   * courier docs
+
+   Scope:
+
+   * Create shipment drafts from ERP order data.
+   * Validate shipment payloads before submission.
+   * Submit through simulator in tests.
+   * Record tracking references.
+   * Track COD as pending, confirmed, failed, or reconciled.
+   * Track returns and failed delivery states.
+   * Ensure courier fee and payout states are visible.
+   * Keep real credentials outside the repo.
+
+   Done when:
+
+   * courier simulator tests pass;
+   * Econt-compatible and Speedy-compatible shells exist;
+   * shipment lifecycle is explicit;
+   * COD lifecycle is explicit;
+   * returns are explicit;
+   * docs explain live credential setup safely.
+
+8. [open] Slice 8 - Deliver accounting and quote-support surfaces.
+
+   Depends on:
+
+   * Slices 3, 5, 6, and 7
+
+   Surfaces:
+
+   * purchasing summaries
+   * supplier liability summaries
+   * sales summaries
+   * COD summaries
+   * courier fee summaries
+   * export payloads
+   * accounting docs
+   * sales-demo docs
+
+   Scope:
+
+   * Provide operational accounting summaries.
+   * Provide supplier liability views.
+   * Provide sales summaries by payment state.
+   * Provide COD pending and settled summaries.
+   * Provide courier fee summaries.
+   * Provide accountant-reviewable export payloads.
+   * Provide quote-support talking points based on system data.
+   * State clearly that APRP supports operational review and does not
+     replace legal accounting judgement.
+
+   Done when:
+
+   * accounting support tests pass;
+   * export payloads are deterministic;
+   * COD and courier summaries are covered;
+   * docs are clear about accounting boundaries;
+   * sales-demo material is factual.
+
+9. [open] Slice 9 - Build safe showcase mode.
+
+   Depends on:
+
+   * Slices 3, 5, and 7
+
+   Surfaces:
+
+   * demo data services
+   * showcase reset services
+   * demo-only markers
+   * public demo docs
+   * cookie notice
+   * screenshare checklist
+   * public CTA copy
+
+   Scope:
+
+   * Create safe demo data generation.
+   * Create demo reset logic.
+   * Mark demo-only records explicitly.
+   * Keep demo records separate from production records.
+   * Support controlled demo actions where feasible.
+   * Avoid unrestricted anonymous ERP access.
+   * Add disposable-session language for public demo surfaces.
+   * Add a screenshare demo checklist.
+   * Add a public quote call-to-action.
+
+   Done when:
+
+   * demo data can be generated;
+   * demo data can be reset;
+   * demo records are identifiable;
+   * public demo boundaries are documented;
+   * cookie language exists;
+   * screenshare checklist exists;
+   * the CTA is present and not overclaimed.
+
+10. [open] Slice 10 - Turn ops into beta-SaaS operations.
+
+    Depends on:
+
+    * Slices 2 through 9
+
+    Surfaces:
+
+    * `ops/opsconfig.yaml`
+    * ops config examples
+    * deploy scripts
+    * backup scripts
+    * restore scripts
+    * mirror scripts
+    * health checks
+    * compose files
+    * system docs
+    * CI
+
+    Scope:
+
+    * Validate config rendering.
+    * Validate primary runtime configuration.
+    * Validate mirror configuration where Docker is available.
+    * Validate deploy script syntax and dry-run behavior where possible.
+    * Validate backup script syntax and dry-run behavior where possible.
+    * Validate restore script syntax and dry-run behavior where possible.
+    * Add a production preflight checklist.
+    * Add a restore rehearsal checklist.
+    * Add health-check commands.
+    * Fix CI environment configuration so repository checks are meaningful.
+
+    Done when:
+
+    * ops tests pass;
+    * shell scripts pass syntax checks;
+    * compose files validate where Docker is available;
+    * CI config is reproducible;
+    * backup and restore docs match scripts;
+    * mirror status is described honestly;
+    * no secrets are committed.
+
+11. [open] Slice 11 - Harden SaaS security boundaries.
+
+    Depends on:
+
+    * Slices 2 through 10
+
+    Surfaces:
+
+    * permissions
+    * roles
+    * public demo boundaries
+    * environment config
+    * secret handling
+    * CI secret assumptions
+    * security docs
+    * release checks
+
+    Scope:
+
+    * Verify least-privilege role assumptions.
+    * Ensure public demo users cannot reach admin surfaces.
+    * Ensure demo actions cannot damage production state.
+    * Ensure secrets are not stored in tracked files.
+    * Ensure CI does not require production secrets.
+    * Ensure live adapter credentials are local or platform-provided.
+    * Add security checklist for beta operators.
+    * Add release hygiene checks for private data and unwanted identity.
+
+    Done when:
+
+    * security docs match runtime behavior;
+    * permission tests exist where feasible;
+    * public demo risks are documented;
+    * secret handling is explicit;
+    * hygiene checks pass;
+    * release checklist includes security gates.
+
+12. [open] Slice 12 - Prepare beta-SaaS public release.
+
+    Depends on:
+
+    * Slices 1 through 11
+
+    Surfaces:
+
+    * README
+    * SPEC
+    * PLAN
+    * CHANGELOG
+    * docs
+    * release docs
+    * CI
+    * tests
+    * public repo metadata
+
+    Scope:
+
+    * Align all public docs with real beta behavior.
+    * Keep the stage as beta.
+    * Remove alpha wording unless used historically in changelog.
+    * Replace production-grade wording with beta-SaaS wording unless a
+      claim is proven.
+    * Ensure docs do not imply unsupported self-service billing,
+      tenant automation, or production support desk workflows.
+    * Ensure the public repo description and CTA are aligned.
+    * Ensure changelog records the beta-SaaS readiness push.
+    * Produce a release candidate summary.
+
+    Done when:
+
+    * public docs are aligned;
+    * known limitations are documented;
+    * release summary exists;
+    * CI status is known;
+    * tests pass where dependencies allow;
+    * hygiene checks pass;
+    * 1.0.0 beta-SaaS readiness can be stated honestly.
 
 ## Validation Routine
 
-For every slice:
+* Verify tests pass for the active slice.
+* Verify Python files compile.
+* Verify shell scripts pass syntax checks.
+* Verify generated artifacts synchronize after refresh.
+* Verify docs and changelog are updated where behavior changed.
+* Verify install rehearsals work against smoke-tested config profiles.
+* Verify hardcoded hostnames and public URLs do not remain in reusable
+  runtime code.
+* Verify public endpoints live in config or approved public docs only.
+* Verify real secrets, credentials, dumps, keys, and private data are
+  absent.
+* Verify unwanted previous-business identity is absent.
+* Verify simulator tests cover adapter behavior without live credentials.
+* Verify public demo behavior cannot expose unrestricted ERP
+  administration.
+* Verify backup, restore, and mirror assumptions are documented honestly.
+* Verify CI configuration is reproducible and does not depend on local
+  machine state.
+* Verify configured governance checks pass after each slice closes.
+* If Docker, ERPNext, Frappe, or live vendor credentials are unavailable,
+  record that honestly instead of claiming success.
 
-* open the appropriate local workflow gate if required;
-* make the smallest complete implementation pass;
-* add or update tests;
-* run relevant tests;
-* update docs only to match actual behavior;
-* run hygiene checks after copied or generalized material;
-* do not claim completion unless validation supports it.
+Minimum validation after a slice:
 
-Minimum validation:
-
-* run Python tests;
+* run the Python test suite;
 * compile Python files;
-* check shell scripts;
-* run configured repository tooling.
+* check shell script syntax;
+* run configured repository checks;
+* inspect public docs touched by the slice;
+* update `CHANGELOG.md` when behavior changed.
 
-Additional validation where available:
+Release validation before 1.0.0 beta-SaaS readiness:
 
-* validate Docker Compose files;
-* validate mirror Compose files;
-* validate adapter simulator tests;
-* validate install/import checks.
-
-## Public Hygiene Rules
-
-The repository must contain no:
-
-* real secrets;
-* real credentials;
-* real environment files;
-* database dumps;
-* private keys;
-* customer data;
-* supplier data;
-* private business data;
-* legacy project identity;
-* private implementation history.
-
-Legacy identity checks should be performed using a local or tooling-level
-denylist.
-
-The denylist itself should not be published if it contains private or unwanted
-terms.
-
-## Release Gate
-
-APRP may be called **1.0.0 production-grade and demo-ready** only when:
-
-* ERPNext app structure is real;
-* required DocTypes exist;
-* adapter interfaces exist;
-* at least one storefront/showcase sync proof works;
-* safe demo data exists or is scripted;
-* ops scripts are validated as far as possible;
-* backup and restore paths are documented;
-* public docs are honest;
-* tests pass where dependencies allow;
-* hygiene checks pass;
-* no secrets are committed;
-* no private data is committed;
-* no legacy identity remains.
-
-The 1.0.0 release should support this sales sentence:
-
-> APRP is an ERPNext-based operational framework for businesses that outgrew
-> spreadsheets, improvisation, and fragile integrations. The showcase
-> demonstrates ERP-owned inventory, procurement, storefront/POS, courier, and
-> continuity patterns. Full business integration is quoted separately.
+* fresh install path documented;
+* core DocTypes validated;
+* service tests passing;
+* adapter simulator tests passing;
+* storefront sync proof passing;
+* POS replay tests passing;
+* courier/COD tests passing;
+* accounting summary tests passing;
+* demo data path tested;
+* ops scripts syntax-checked;
+* compose files validated where possible;
+* CI status known;
+* security checklist complete;
+* public documentation aligned;
+* known limitations documented;
+* no secrets committed;
+* no private data committed;
+* no unwanted previous-business identity committed.
