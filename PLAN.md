@@ -45,10 +45,18 @@ Keep slices dependency-ordered, concrete, current, and runtime-focused.
 * Public endpoints, demo domains, mirror members, and environment
   addresses belong in tracked config or local instance config, not in
   reusable runtime code.
+* The proof installation uses the ERP host role; the mirror
+  configuration may include one or more mirror hosts (cluster
+  members); the storefront host is a first-class external integration
+  target.
+* Those roles may be co-located on one host during proof installs or
+  deployed separately later without changing the contract.
 * Non-secret runtime config stays in `ops/opsconfig.yaml`.
 * Secrets stay outside the repository.
 * Repo-owned scripts remain the contract for install, deploy, backup,
   restore, mirror, health checks, and release rehearsal.
+* Public certificates are issued per hostname with DNS-01 ACME using
+  certbot and manual TXT records, with untracked DNS credentials.
 * Public documentation must be sharp, honest, and free of private
   implementation history.
 * APRP must be able to support a public storefront, a controlled ERP
@@ -92,7 +100,7 @@ paid implementation work from a reproducible base.
 
 ## Execution Slices
 
-1. [open] Slice 1 - Rebaseline the current beta.
+1. [done] Slice 1 - Rebaseline the current beta.
 
    Depends on:
 
@@ -456,10 +464,12 @@ paid implementation work from a reproducible base.
 
     * Validate config rendering.
     * Validate primary runtime configuration.
-    * Validate mirror configuration where Docker is available.
-    * Validate deploy script syntax and dry-run behavior where possible.
-    * Validate backup script syntax and dry-run behavior where possible.
-    * Validate restore script syntax and dry-run behavior where possible.
+   * Validate mirror configuration where Docker is available.
+   * Validate DNS-01 certificate issuance for the ERP host, mirror
+     cluster members, and storefront host profiles.
+   * Validate deploy script syntax and dry-run behavior where possible.
+   * Validate backup script syntax and dry-run behavior where possible.
+   * Validate restore script syntax and dry-run behavior where possible.
     * Add a production preflight checklist.
     * Add a restore rehearsal checklist.
     * Add health-check commands.
@@ -467,13 +477,15 @@ paid implementation work from a reproducible base.
 
     Done when:
 
-    * ops tests pass;
-    * shell scripts pass syntax checks;
-    * compose files validate where Docker is available;
-    * CI config is reproducible;
-    * backup and restore docs match scripts;
-    * mirror status is described honestly;
-    * no secrets are committed.
+   * ops tests pass;
+   * shell scripts pass syntax checks;
+   * compose files validate where Docker is available;
+   * DNS-01 issuance is documented for arbitrary operator-owned
+     hostnames;
+   * CI config is reproducible;
+   * backup and restore docs match scripts;
+   * mirror status is described honestly;
+   * no secrets are committed.
 
 11. [open] Slice 11 - Harden SaaS security boundaries.
 
@@ -498,10 +510,11 @@ paid implementation work from a reproducible base.
     * Ensure public demo users cannot reach admin surfaces.
     * Ensure demo actions cannot damage production state.
     * Ensure secrets are not stored in tracked files.
-    * Ensure CI does not require production secrets.
-    * Ensure live adapter credentials are local or platform-provided.
-    * Add security checklist for beta operators.
-    * Add release hygiene checks for private data and unwanted identity.
+   * Ensure CI does not require production secrets.
+   * Ensure live adapter credentials are local or platform-provided.
+   * Ensure DNS API tokens stay outside tracked files.
+   * Add security checklist for beta operators.
+   * Add release hygiene checks for private data and unwanted identity.
 
     Done when:
 
@@ -599,10 +612,11 @@ Release validation before 1.0.0 beta-SaaS readiness:
 * demo data path tested;
 * ops scripts syntax-checked;
 * compose files validated where possible;
-* CI status known;
-* security checklist complete;
-* public documentation aligned;
-* known limitations documented;
-* no secrets committed;
+   * CI status known;
+   * security checklist complete;
+   * DNS-01 certificate issuance documented;
+   * public documentation aligned;
+   * known limitations documented;
+   * no secrets committed;
 * no private data committed;
 * no unwanted previous-business identity committed.

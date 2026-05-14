@@ -41,6 +41,17 @@ environment they need for Compose, deploy, backup, and recovery.
 That YAML file carries the internal service hostnames, ports, and URLs
 used by the runtime stack.
 
+APRP uses three first-class public deployment roles:
+
+* ERP host for the primary operational runtime and proof installation;
+* mirror hosts (cluster members) for database continuity;
+* storefront host for the external WordPress/WooCommerce sales surface.
+
+Those roles may share one physical host during a proof install or run
+on separate hosts later. The config shape must work in both cases.
+A WordPress/WooCommerce installation on any server must be able to
+connect to APRP on any server through the same contract.
+
 The installation-specific config shape is tracked in
 `ops/opsconfig.yaml.example`.
 
@@ -57,6 +68,14 @@ other non-config artifacts.
 
 Untracked environment files remain reserved for secrets and
 machine-local auth only.
+
+Public certificates are issued per hostname with DNS-01 ACME. Operators
+may request certificates for each role-specific hostname or
+user-owned domain with certbot and manual TXT records, without using
+wildcard assumptions.
+
+The DNS-01 procedure itself is documented in `docs/system.md` and
+`docs/security.md`.
 
 In this specification:
 
@@ -281,7 +300,7 @@ Required runtime surfaces:
 ```text
 configured-storefront-host
 configured-backend-host
-configured-mirror-host
+configured-mirror-hosts
 ```
 
 `configured-storefront-host` is the storefront surface when the
@@ -289,7 +308,7 @@ installation enables one.
 
 `configured-backend-host` is the ERP surface.
 
-`configured-mirror-host` is the mirror database member.
+`configured-mirror-hosts` are the mirror database members.
 
 These surfaces are first-class targets and must be driven by config,
 not hardcoded addresses in compose files or other non-config artifacts.
@@ -316,7 +335,7 @@ The system must avoid hidden machine-specific setup that cannot be documented,
 replayed, or inspected.
 
 Compose files and other non-config artifacts must not hardcode
-deployment hostnames, mirror members, or public URLs.
+deployment hostnames, mirror hosts, or public URLs.
 
 ### 3.5 Core contract surfaces
 

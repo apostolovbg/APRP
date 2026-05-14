@@ -23,7 +23,7 @@ class TestAprpReleaseSummary(unittest.TestCase):
         self.assertIn("## Release Summary", release)
         self.assertIn("## Known Limitations", release)
         self.assertIn("## Validation", release)
-        self.assertIn("1.0.0 production-grade and demo-ready", release)
+        self.assertIn("1.0.0 beta-SaaS release-candidate", release)
         self.assertIn("aprp.aprp.runtime_services", release)
         self.assertIn("aprp.aprp.storefront_services", release)
         self.assertIn("aprp.aprp.showcase_services", release)
@@ -36,6 +36,7 @@ class TestAprpReleaseSummary(unittest.TestCase):
         self.assertIn(
             "Full business integration work is quoted separately", release
         )
+        self.assertIn("103 tests", release)
         self.assertGreaterEqual(
             sum(1 for line in release.splitlines() if line.startswith("## ")),
             4,

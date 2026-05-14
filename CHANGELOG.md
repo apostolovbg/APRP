@@ -62,6 +62,57 @@ Example:
 ## Version 0.4.0
 
 - 2026-05-14:
+  Change: Revised the public docs and validation checks around plural
+    mirror hosts and role-based deployment.
+  Why: Clarified APRP's general contract for one or more mirror cluster
+    members without concrete hostnames.
+  Impact: Aligned README, SPEC, PLAN, system, install, security, and
+    runtime tests to the same reusable host-role model.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  README.md
+  SPEC.md
+  docs/install.md
+  docs/security.md
+  docs/system.md
+  tests/test_aprp_baseline.py
+  tests/test_aprp_runtime.py
+
+- 2026-05-14:
+  Change: Expanded the deployment docs to name the proof, mirror, and
+    storefront profiles and to document DNS-01 issuance.
+  Why: Clarified the reusable install contract for `kuche`, `kotka`,
+    and external WordPress/WooCommerce sites.
+  Impact: README, SPEC, PLAN, and operator guides now describe the same
+    host-agnostic certificate and routing model.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  README.md
+  SPEC.md
+  docs/install.md
+  docs/security.md
+  docs/system.md
+  tests/test_aprp_baseline.py
+  tests/test_aprp_runtime.py
+
+- 2026-05-14:
+  Change: Rebaselined the public docs to active beta wording and marked
+    Slice 1 done.
+  Why: Removed the stale alpha wording and recorded the current
+    103-test baseline honestly.
+  Impact: README, release summary, plan status, and baseline checks now
+    describe the beta product state.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  README.md
+  docs/release.md
+  tests/test_aprp_baseline.py
+  tests/test_aprp_release_summary.py
+
+- 2026-05-14:
   Change: Updated the active plan baseline date for the current gate
     session.
   Why: Kept the plan metadata synchronized with the newly replaced

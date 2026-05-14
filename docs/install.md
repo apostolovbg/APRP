@@ -11,9 +11,18 @@ scripts. The install is config-first: `ops/opsconfig.yaml` holds the
 non-secret runtime shape, while `ops/env.primary.example` and
 `ops/env.mirror.example` hold secrets and local auth.
 
+The same install contract must support an ERP host, one or more mirror
+hosts (cluster members), and a separate WordPress/WooCommerce
+storefront host that may be managed elsewhere, including by a hosting
+provider.
+
 The install path must not hardcode deployment hosts or public URLs in
 compose files or shell scripts. The repo-owned config renderer translates
 the tracked YAML into the shell exports the runtime uses.
+
+Public TLS certificates should be issued with DNS-01 ACME per hostname
+using certbot and manual TXT records. See `docs/system.md` for the
+issuance procedure.
 
 For runtime details, see `docs/system.md`. For controlled public demo
 rules, see `docs/showcase.md` and `docs/security.md`.
@@ -29,12 +38,17 @@ rules, see `docs/showcase.md` and `docs/security.md`.
 ## Install steps
 
 1. copy `ops/opsconfig.yaml.example` to `ops/opsconfig.yaml`;
-2. fill the instance-specific hostnames and local runtime settings;
+2. fill the instance-specific ERP host, mirror hosts, storefront host,
+   and local runtime settings;
 3. keep secrets in the untracked env files;
 4. render the shell exports with `python3 ops/opsconfig.py primary`;
-5. run `./ops/deploy.sh` on the primary host;
-6. run `./ops/deploy_mirror.sh` on the mirror host when present;
-7. run `./ops/backup.sh backup` after the site is up.
+5. issue DNS-01 certificates for the chosen hostnames with certbot and
+   manual TXT records;
+6. run `./ops/deploy.sh` on the ERP host;
+7. run `./ops/deploy_mirror.sh` on each mirror host when present;
+8. connect the storefront host to APRP and verify the storefront
+   contract;
+9. run `./ops/backup.sh backup` after the site is up.
 
 ## Validation
 

@@ -6,10 +6,10 @@
 
 ## Overview
 
-APRP is at the 1.0.0 production-grade and demo-ready release-candidate
-checkpoint. The repository now carries an installable ERPNext/Frappe
-application, config-first runtime assets, safe showcase handling, and
-repo-owned deploy, backup, and mirror operations.
+APRP is at the 1.0.0 beta-SaaS release-candidate checkpoint. The
+repository now carries an installable ERPNext/Frappe application,
+config-first runtime assets, safe showcase handling, and repo-owned
+deploy, backup, and mirror operations.
 
 This summary records what the current code base supports and what remains
 intentionally out of scope.
@@ -44,7 +44,8 @@ intentionally out of scope.
 
 ## Validation
 
-- Python tests pass with `python3 -m unittest discover -v`.
+- Python tests pass with `python3 -m unittest discover -v`; the current
+  suite contains 103 tests.
 - Python files compile with `python3 -m compileall -q aprp tests`.
 - Shell scripts pass `bash -n` checks in the test suite.
 - Compose validation runs where Docker is available.

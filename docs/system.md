@@ -15,20 +15,32 @@ need before they call Compose or the backup tools.
 That YAML file also carries the internal service hostnames, ports, and
 URLs used by the stack bootstrap.
 
+The same config shape can describe an ERP host, one or more mirror
+hosts (cluster members), and an external storefront host on another
+server or provider. The runtime contract stays the same whether those
+roles are co-located or separated.
+
+A WordPress/WooCommerce site on any server can connect to APRP on any
+other server through the storefront contract.
+
 The tracked `ops/opsconfig.yaml.example` file shows the expected shape of
 that instance config.
 
 The `ops/env.primary.example` and `ops/env.mirror.example` files are for
 secrets and machine-local auth only.
 
+Public TLS certificates are issued per hostname with DNS-01 ACME. The
+hostnames may point at the same public IP or at different hosts; the
+certificate workflow stays the same.
+
 For install and development guidance, see `docs/install.md` and
 `docs/development.md`. For security and public-demo rules, see
 `docs/security.md`.
 
-## Primary host
+## ERP host
 
-The primary host runs the ERP runtime, workers, Redis, ProxySQL, Galera
-primary, and the arbitrator service.
+The ERP host runs the ERP runtime, workers, Redis, ProxySQL, the Galera
+primary member, and the arbitrator service.
 
 The backend container starts through `ops/backend_entrypoint.sh`, which runs
 `ops/site_setup.sh` before it hands off to `bench serve`.
@@ -45,12 +57,17 @@ Bring the stack up through the repo-owned deploy script:
 The deploy script loads `ops/opsconfig.yaml`, exports the non-secret config,
 and then prepares the site.
 
-## Mirror host
+## Mirror hosts
 
-The mirror host runs only the Galera mirror member.
+The mirror hosts run the Galera mirror members.
 
 The mirror stack keeps its own `db-mirror-data` volume and `mirror-net`
 network. It does not publish ERP ports or run ERP services.
+
+The mirror profile may be co-located with the primary profile during a
+proof install. When it is, the profile still behaves like an agnostic
+mirror: it uses the mirror config, the mirror data, and the mirror
+scripts.
 
 Bring it up with:
 
@@ -80,8 +97,47 @@ Run it from the backend container or through deploy:
 ./ops/site_setup.sh
 ```
 
-The expected site name on the primary host comes from `ops/opsconfig.yaml`
+The expected site name on the ERP host comes from `ops/opsconfig.yaml`
 through the repo-owned config loader.
+
+## Storefront host
+
+The storefront host is the public WordPress/WooCommerce surface or a
+compatible external sales surface.
+
+It may be managed by the operator, by a hosting provider, or by a
+separate team. APRP still connects to it through the storefront
+contract.
+
+The storefront host may share infrastructure with the ERP host during a
+proof install, but it does not become the ERP authority.
+
+## DNS-01 Certificate Issuance
+
+Use DNS-01 when issuing public TLS certificates for APRP hosts.
+
+This works for the ERP host, each mirror host in the cluster, the
+storefront host, and any other operator-owned domain.
+
+Procedure:
+
+1. pick the hostname or hostnames you want to publish;
+2. ensure the DNS zone is under operator control;
+3. install `certbot` or another ACME client that supports DNS-01
+   validation;
+4. store the DNS provider token or manual DNS credentials in an
+   untracked secret file;
+5. request a certificate for the chosen hostname;
+6. create the `_acme-challenge` TXT record manually or through the DNS
+   provider API;
+7. wait for propagation and finalize issuance;
+8. install the certificate and private key in the reverse proxy;
+9. reload the proxy;
+10. repeat for each hostname or operator-owned domain;
+11. renew using the same DNS-01 credentials.
+
+Do not rely on wildcard assumptions unless a deployment explicitly
+chooses that path.
 
 ## Backup
 
@@ -178,6 +234,10 @@ When a recovery happens:
 ## Installation rehearsal
 
 A fresh install must work from `ops/opsconfig.yaml` plus local secrets.
+
+The proof installation, mirror hosts, and storefront host must all be
+able to use the same contract whether they run on one host or on
+separate hosts.
 
 The same config profile feeds the repo-owned rehearsal path:
 

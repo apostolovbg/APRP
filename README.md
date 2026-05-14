@@ -191,6 +191,17 @@ purchase summaries, supplier liabilities, sales-state totals, COD
 settlement summaries, courier-fee totals, and reviewable export
 payloads.
 
+The proof installation uses the ERP host role. The mirror configuration
+may include one or more mirror hosts (cluster members). A separate
+WordPress/WooCommerce storefront host, including a Superhosting-managed
+one, connects through the same storefront contract. Those roles may
+share one host during a proof install or run on separate hosts later.
+A WordPress/WooCommerce site on any server should be able to connect to
+APRP on any server.
+
+Public certificates are issued per hostname with DNS-01 ACME using
+certbot and manual TXT records, not by hardcoding wildcard assumptions.
+
 The intended model is:
 
 - ERPNext/Frappe provides the ERP platform;
@@ -230,9 +241,9 @@ already includes the blind storefront contract.
 
 ## Documentation
 
-Operational guidance lives in `docs/system.md`.
-It covers the backend host, the mirror host, site bootstrap, backup,
-restore, and recovery sequencing for the APRP runtime.
+Operational guidance lives in `docs/system.md`. It covers the ERP host,
+mirror hosts, storefront host, site bootstrap, backup, restore, and
+recovery sequencing for the APRP runtime.
 
 Inventory modeling lives in `docs/inventory.md`.
 Purchasing modeling lives in `docs/purchasing.md`.
@@ -253,12 +264,16 @@ settlement summaries, courier-fee summaries, and export payloads.
 
 ## Deployment and Operations
 
-APRP is container-first.
-The primary ERP runtime is expected on the configured backend host, and the
-mirror database member is expected on the configured mirror host.
+APRP is container-first. The primary ERP runtime is expected on the
+configured ERP host, the mirror database may include one or more
+configured mirror hosts, and the storefront host is expected as a
+separate first-class integration target.
 
 The repo-owned deploy and backup scripts load `ops/opsconfig.yaml` before they
 call Compose or the backup tools.
+
+For public-host certificate issuance and profile-specific DNS setup, see
+`docs/system.md` and `docs/security.md`.
 
 Non-CI GitHub workflows are generated wrappers around those repo-owned
 scripts. They are intended for self-hosted runners or host-managed
@@ -274,8 +289,11 @@ Public-facing surfaces must remain scoped and reviewable.
 
 ## Project Status
 
-APRP is in active alpha.
-The repository is the product contract and the runtime implementation target.
+APRP is in active beta.
+The current automated suite contains 103 tests, and known limitations
+live in `docs/release.md`.
+The repository is the product contract and the runtime implementation
+target.
 
 ## Commercial Integration
 

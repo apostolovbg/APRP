@@ -74,9 +74,9 @@ class TestAprpRuntime(unittest.TestCase):
                 Path(".github/workflows/recovery.yml").read_text(
                     encoding="utf-8"
                 ),
-                Path("docs/system.md").read_text(encoding="utf-8"),
             ]
         )
+        system_text = Path("docs/system.md").read_text(encoding="utf-8")
 
         self.assertNotIn("aprp.store", runtime_text)
         self.assertNotIn("kuche.aprp.store", runtime_text)
@@ -102,8 +102,6 @@ class TestAprpRuntime(unittest.TestCase):
         self.assertIn("mirror-reseed", runtime_text)
         self.assertIn("mirror-rejoin", runtime_text)
         self.assertIn("cluster-status", runtime_text)
-        self.assertIn("docker compose -f compose.yaml config", runtime_text)
-        self.assertIn("Production Preflight", runtime_text)
         self.assertIn("workflow_dispatch", runtime_text)
         self.assertIn("self-hosted", runtime_text)
         self.assertIn("aprp-primary", runtime_text)
@@ -114,6 +112,11 @@ class TestAprpRuntime(unittest.TestCase):
         self.assertIn("./ops/db_mirror_restore.sh", runtime_text)
         self.assertIn("Strict-Transport-Security", runtime_text)
         self.assertIn("reverse_proxy backend:8000", runtime_text)
+        self.assertIn("Production Preflight", system_text)
+        self.assertIn("docker compose -f compose.yaml config", system_text)
+        self.assertIn("DNS-01 Certificate Issuance", system_text)
+        self.assertIn("mirror hosts", system_text.lower())
+        self.assertIn("storefront host", system_text.lower())
         self.assertFalse(Path("ops/deploy_config.json").exists())
         self.assertFalse(Path("ops/backup_config.json").exists())
 
