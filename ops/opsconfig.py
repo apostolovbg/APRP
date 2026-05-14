@@ -55,6 +55,10 @@ def _primary_exports(config_data: dict) -> None:
     """Emit the primary-host shell exports derived from config."""
 
     _emit("APRP_APP_NAME", _require(config_data, "app_name"))
+    _emit(
+        "APRP_SERVER_CONTAINER_NAME",
+        _require(config_data, "server_container_name"),
+    )
     backend_site_name = _require(config_data, "backend_site_name")
     backend_host = _require(config_data, "backend_host")
     contact_email = _require(config_data, "contact_email")
@@ -109,6 +113,10 @@ def _mirror_exports(config_data: dict) -> None:
     """Emit the mirror-host shell exports derived from config."""
 
     _emit("APRP_GALERA_NODE", "db-mirror")
+    _emit(
+        "APRP_MIRROR_CONTAINER_NAME",
+        _require(config_data, "mirror_container_name"),
+    )
     _emit(
         "APRP_GALERA_CLUSTER_NAME",
         _require(config_data, "galera_cluster_name"),

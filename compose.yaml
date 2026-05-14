@@ -149,6 +149,9 @@ services:
   backend:
     build: *aprp_app_build
     image: *aprp_app_image
+    container_name: >-
+      ${APRP_SERVER_CONTAINER_NAME:?APRP_SERVER_CONTAINER_NAME is
+      required}
     working_dir: /home/frappe/frappe-bench/apps/aprp
     command:
       - bash

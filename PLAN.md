@@ -49,6 +49,8 @@ Keep slices dependency-ordered, concrete, current, and runtime-focused.
   configuration may include one or more mirror hosts (cluster
   members); the storefront host is a first-class external integration
   target.
+* The tracked config seeds standardized container names `aprp-server`
+  and `aprp-mirror` for the ERP and mirror containers.
 * Those roles may be co-located on one host during proof installs or
   deployed separately later without changing the contract.
 * Non-secret runtime config stays in `ops/opsconfig.yaml`.

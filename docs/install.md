@@ -16,6 +16,11 @@ hosts (cluster members), and a separate WordPress/WooCommerce
 storefront host that may be managed elsewhere, including by a hosting
 provider.
 
+The current proof installation maps those roles to `kuche.aprp.store`,
+`kotka.aprp.store`, and `aprp.store`.
+The repo-owned config seeds the standardized container names
+`aprp-server` and `aprp-mirror`.
+
 The install path must not hardcode deployment hosts or public URLs in
 compose files or shell scripts. The repo-owned config renderer translates
 the tracked YAML into the shell exports the runtime uses.
@@ -42,8 +47,9 @@ rules, see `docs/showcase.md` and `docs/security.md`.
    and local runtime settings;
 3. keep secrets in the untracked env files;
 4. render the shell exports with `python3 ops/opsconfig.py primary`;
-5. issue DNS-01 certificates for the chosen hostnames with certbot and
-   manual TXT records;
+5. issue DNS-01 certificates for `kuche.aprp.store` and
+   `kotka.aprp.store` with certbot and manual TXT records through
+   Superhosting.bg;
 6. run `./ops/deploy.sh` on the ERP host;
 7. run `./ops/deploy_mirror.sh` on each mirror host when present;
 8. connect the storefront host to APRP and verify the storefront

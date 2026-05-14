@@ -23,6 +23,8 @@ class TestAprpOpsConfig(unittest.TestCase):
         )
 
         self.assertEqual("aprp", ops_config["app_name"])
+        self.assertEqual("aprp-server", ops_config["server_container_name"])
+        self.assertEqual("aprp-mirror", ops_config["mirror_container_name"])
         self.assertEqual("proxysql", ops_config["db_host"])
         self.assertEqual("backend.example.invalid", ops_config["backend_host"])
         self.assertIn("redis_cache_url", ops_config)
@@ -58,11 +60,13 @@ class TestAprpOpsConfig(unittest.TestCase):
         ).stdout
 
         self.assertIn("export APRP_APP_NAME=", primary)
+        self.assertIn("export APRP_SERVER_CONTAINER_NAME=", primary)
         self.assertIn("export APRP_BACKEND_HOST=", primary)
         self.assertIn("export DB_HOST=", primary)
         self.assertIn("export REDIS_CACHE=", primary)
         self.assertIn("export SOCKETIO_PORT=", primary)
         self.assertIn("export APRP_GALERA_NODE=", mirror)
+        self.assertIn("export APRP_MIRROR_CONTAINER_NAME=", mirror)
 
     def test_main_renders_primary_exports(self):
         """Ensure main() renders the primary export set."""
@@ -82,4 +86,5 @@ class TestAprpOpsConfig(unittest.TestCase):
 
         self.assertEqual(0, exit_code)
         self.assertIn("export APRP_APP_NAME=", buffer.getvalue())
+        self.assertIn("export APRP_SERVER_CONTAINER_NAME=", buffer.getvalue())
         self.assertIn("export APRP_BACKEND_HOST=", buffer.getvalue())

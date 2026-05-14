@@ -77,10 +77,14 @@ class TestAprpRuntime(unittest.TestCase):
             ]
         )
         system_text = Path("docs/system.md").read_text(encoding="utf-8")
+        install_text = Path("docs/install.md").read_text(encoding="utf-8")
+        security_text = Path("docs/security.md").read_text(encoding="utf-8")
 
         self.assertNotIn("aprp.store", runtime_text)
         self.assertNotIn("kuche.aprp.store", runtime_text)
         self.assertNotIn("kotka.aprp.store", runtime_text)
+        self.assertIn("APRP_SERVER_CONTAINER_NAME", runtime_text)
+        self.assertIn("APRP_MIRROR_CONTAINER_NAME", runtime_text)
         self.assertIn("APRP_BACKEND_HOST", runtime_text)
         self.assertIn("APRP_CONTACT_EMAIL", runtime_text)
         self.assertIn("APRP_BACKEND_SITE_NAME", runtime_text)
@@ -106,6 +110,8 @@ class TestAprpRuntime(unittest.TestCase):
         self.assertIn("self-hosted", runtime_text)
         self.assertIn("aprp-primary", runtime_text)
         self.assertIn("aprp-mirror", runtime_text)
+        self.assertIn("aprp-server", runtime_text)
+        self.assertIn("aprp-mirror", runtime_text)
         self.assertIn("./ops/deploy.sh", runtime_text)
         self.assertIn("./ops/backup.sh", runtime_text)
         self.assertIn("./ops/deploy_mirror.sh", runtime_text)
@@ -115,8 +121,22 @@ class TestAprpRuntime(unittest.TestCase):
         self.assertIn("Production Preflight", system_text)
         self.assertIn("docker compose -f compose.yaml config", system_text)
         self.assertIn("DNS-01 Certificate Issuance", system_text)
-        self.assertIn("mirror hosts", system_text.lower())
-        self.assertIn("storefront host", system_text.lower())
+        self.assertIn("kuche.aprp.store", system_text)
+        self.assertIn("kotka.aprp.store", system_text)
+        self.assertIn("aprp.store", system_text)
+        self.assertIn("aprp-server", system_text)
+        self.assertIn("aprp-mirror", system_text)
+        self.assertIn("Superhosting.bg", system_text)
+        self.assertIn("kuche.aprp.store", install_text)
+        self.assertIn("kotka.aprp.store", install_text)
+        self.assertIn("aprp.store", install_text)
+        self.assertIn("Superhosting.bg", install_text)
+        self.assertIn("manual TXT", install_text)
+        self.assertIn("kuche.aprp.store", security_text)
+        self.assertIn("kotka.aprp.store", security_text)
+        self.assertIn("aprp.store", security_text)
+        self.assertIn("Superhosting.bg", security_text)
+        self.assertIn("manual TXT", security_text)
         self.assertFalse(Path("ops/deploy_config.json").exists())
         self.assertFalse(Path("ops/backup_config.json").exists())
 
@@ -130,6 +150,8 @@ class TestAprpRuntime(unittest.TestCase):
         for key in [
             "profile",
             "app_name",
+            "server_container_name",
+            "mirror_container_name",
             "backend_host",
             "mirror_host",
             "backend_site_name",
@@ -178,6 +200,8 @@ class TestAprpRuntime(unittest.TestCase):
             self.assertIn(key, ops_config)
         for key in [
             "app_name",
+            "server_container_name",
+            "mirror_container_name",
             "backend_host",
             "mirror_host",
             "backend_site_name",
@@ -249,6 +273,18 @@ class TestAprpRuntime(unittest.TestCase):
             capture_output=True,
             text=True,
         ).stdout
+        mirror = subprocess.run(
+            [
+                "python3",
+                "ops/opsconfig.py",
+                "mirror",
+                "--config",
+                "ops/opsconfig.yaml.example",
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout
         backup = subprocess.run(
             [
                 "python3",
@@ -267,12 +303,14 @@ class TestAprpRuntime(unittest.TestCase):
         self.assertIn("export SITE_NAME=", primary)
         self.assertIn("export APRP_CONTACT_EMAIL=", primary)
         self.assertIn("export APRP_APP_NAME=", primary)
+        self.assertIn("export APRP_SERVER_CONTAINER_NAME=", primary)
         self.assertIn("export DB_HOST=", primary)
         self.assertIn("export DB_PORT=", primary)
         self.assertIn("export REDIS_CACHE=", primary)
         self.assertIn("export REDIS_QUEUE=", primary)
         self.assertIn("export REDIS_SOCKETIO=", primary)
         self.assertIn("export SOCKETIO_PORT=", primary)
+        self.assertIn("export APRP_MIRROR_CONTAINER_NAME=", mirror)
         self.assertIn("export BACKUP_SITE_NAME=", backup)
         self.assertIn("export BACKUP_RCLONE_REMOTE=", backup)
 

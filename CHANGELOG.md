@@ -62,6 +62,31 @@ Example:
 ## Version 0.4.0
 
 - 2026-05-14:
+  Change: Seeded standardized container names in config and aligned the
+    operational docs to the live proof-install roles.
+  Why: APRP needed to define one reusable install contract that names
+    the ERP, mirror, and storefront paths without ad hoc drift.
+  Impact: The runtime config, docs, and tests now agree on
+    `aprp-server`, `aprp-mirror`, `kuche.aprp.store`,
+    `kotka.aprp.store`, and `aprp.store`.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  README.md
+  SPEC.md
+  compose.mirror.yaml
+  compose.yaml
+  docs/install.md
+  docs/security.md
+  docs/system.md
+  ops/opsconfig.py
+  ops/opsconfig.yaml.example
+  ops/opsconfig.yaml
+  tests/test_aprp_baseline.py
+  tests/test_aprp_runtime.py
+  tests/test_opsconfig.py
+
+- 2026-05-14:
   Change: Revised the public docs and validation checks around plural
     mirror hosts and role-based deployment.
   Why: Clarified APRP's general contract for one or more mirror cluster

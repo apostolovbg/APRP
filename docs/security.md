@@ -15,6 +15,10 @@ certificate and routing model must work for the ERP host, mirror hosts
 (cluster members), the storefront host, and any other operator-owned
 domain.
 
+The current proof installation uses `kuche.aprp.store` for the ERP
+host, `kotka.aprp.store` for the mirror host, and `aprp.store` for the
+storefront host.
+
 The controlled showcase mode is the public demo surface. Its rules live
 in `docs/showcase.md`, and its seed/reset helpers live in
 `aprp.aprp.showcase_services`.
@@ -31,6 +35,11 @@ in `docs/showcase.md`, and its seed/reset helpers live in
 - keep DNS provider tokens in untracked secret files;
 - do not depend on wildcard issuance unless the deployment explicitly
   chooses that path.
+
+The ERP and mirror hostnames use Superhosting.bg for DNS-01 TXT record
+management in the current proof installation.
+The storefront host may be provider-managed and still remains part of
+the APRP integration contract.
 
 ## Secrets and state
 

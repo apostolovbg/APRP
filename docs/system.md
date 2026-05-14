@@ -20,6 +20,12 @@ hosts (cluster members), and an external storefront host on another
 server or provider. The runtime contract stays the same whether those
 roles are co-located or separated.
 
+The current proof installation maps the ERP host to `kuche.aprp.store`,
+the mirror host to `kotka.aprp.store`, and the storefront host to
+`aprp.store`.
+The repo-owned scripts seed the standardized container names
+`aprp-server` and `aprp-mirror` from tracked config.
+
 A WordPress/WooCommerce site on any server can connect to APRP on any
 other server through the storefront contract.
 
@@ -42,6 +48,9 @@ For install and development guidance, see `docs/install.md` and
 The ERP host runs the ERP runtime, workers, Redis, ProxySQL, the Galera
 primary member, and the arbitrator service.
 
+In the current proof installation, this role maps to
+`kuche.aprp.store` and the `aprp-server` container.
+
 The backend container starts through `ops/backend_entrypoint.sh`, which runs
 `ops/site_setup.sh` before it hands off to `bench serve`.
 
@@ -60,6 +69,9 @@ and then prepares the site.
 ## Mirror hosts
 
 The mirror hosts run the Galera mirror members.
+
+In the current proof installation, this role maps to
+`kotka.aprp.store` and the `aprp-mirror` container.
 
 The mirror stack keeps its own `db-mirror-data` volume and `mirror-net`
 network. It does not publish ERP ports or run ERP services.
@@ -112,12 +124,17 @@ contract.
 The storefront host may share infrastructure with the ERP host during a
 proof install, but it does not become the ERP authority.
 
+In the current proof installation, this role maps to `aprp.store`.
+
 ## DNS-01 Certificate Issuance
 
 Use DNS-01 when issuing public TLS certificates for APRP hosts.
 
 This works for the ERP host, each mirror host in the cluster, the
 storefront host, and any other operator-owned domain.
+
+The current proof installation uses Superhosting.bg as the DNS provider
+for the ERP and mirror hostnames.
 
 Procedure:
 

@@ -5,6 +5,9 @@ services:
   db-mirror:
     image: mariadb:10.11
     restart: unless-stopped
+    container_name: >-
+      ${APRP_MIRROR_CONTAINER_NAME:?APRP_MIRROR_CONTAINER_NAME is
+      required}
     env_file:
       - ${APRP_COMPOSE_ENV_FILE:-.env.mirror}
     environment:

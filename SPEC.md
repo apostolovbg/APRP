@@ -47,6 +47,9 @@ APRP uses three first-class public deployment roles:
 * mirror hosts (cluster members) for database continuity;
 * storefront host for the external WordPress/WooCommerce sales surface.
 
+The tracked config seeds standardized container names `aprp-server` and
+`aprp-mirror` for the ERP and mirror containers.
+
 Those roles may share one physical host during a proof install or run
 on separate hosts later. The config shape must work in both cases.
 A WordPress/WooCommerce installation on any server must be able to

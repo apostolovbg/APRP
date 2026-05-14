@@ -4,6 +4,8 @@
 
 profile: aprp-example
 app_name: aprp
+server_container_name: aprp-server
+mirror_container_name: aprp-mirror
 backend_host: backend.example.invalid
 mirror_host: mirror.example.invalid
 backend_site_name: backend.example.invalid

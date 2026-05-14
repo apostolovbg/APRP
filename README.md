@@ -61,6 +61,8 @@ The `ops/env.primary.example` and `ops/env.mirror.example` files are for
 secrets and machine-local auth only.
 The same YAML file also carries the internal service hostnames, ports,
 and URLs used by Compose and bootstrap.
+The tracked config seeds standardized container names `aprp-server` and
+`aprp-mirror` for the ERP and mirror containers.
 
 ## What APRP Is
 
