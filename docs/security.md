@@ -18,6 +18,9 @@ domain.
 The current proof installation uses `kuche.aprp.store` for the ERP
 host, `kotka.aprp.store` for the mirror host, and `aprp.store` for the
 storefront host.
+Host-managed checkouts live at `/opt/aprp/checkout`, and local certbot
+state lives in untracked `ops/certs/<hostname>/` directories inside
+that checkout.
 
 The controlled showcase mode is the public demo surface. Its rules live
 in `docs/showcase.md`, and its seed/reset helpers live in
@@ -40,6 +43,21 @@ The ERP and mirror hostnames use Superhosting.bg for DNS-01 TXT record
 management in the current proof installation.
 The storefront host may be provider-managed and still remains part of
 the APRP integration contract.
+
+Certbot should be run with one `config-dir` per hostname so the issued
+files remain separated. Example:
+
+```bash
+certbot certonly \
+  --manual \
+  --preferred-challenges dns \
+  --agree-tos \
+  --email ops@example.invalid \
+  --config-dir ops/certs/kuche.aprp.store \
+  --work-dir ops/certs/kuche.aprp.store/work \
+  --logs-dir ops/certs/kuche.aprp.store/logs \
+  -d kuche.aprp.store
+```
 
 ## Secrets and state
 
@@ -76,3 +94,7 @@ The procedure is:
 8. reload the proxy;
 9. repeat for each hostname that needs TLS;
 10. renew with the same DNS-01 credentials.
+
+Store the resulting `fullchain.pem` and `privkey.pem` files under the
+matching `ops/certs/<hostname>/live/<hostname>/` tree and point the
+reverse proxy at those paths.

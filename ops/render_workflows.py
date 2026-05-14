@@ -29,7 +29,7 @@ WORKFLOWS: dict[str, str] = {
                 shell: bash
             steps:
               - name: Run deploy script
-                working-directory: /opt/aprp/APRP
+                working-directory: /opt/aprp/checkout
                 run: ./ops/deploy.sh
         """
     ),
@@ -67,7 +67,7 @@ WORKFLOWS: dict[str, str] = {
                 shell: bash
             steps:
               - name: Run backup script
-                working-directory: /opt/aprp/APRP
+                working-directory: /opt/aprp/checkout
                 env:
                   APRP_BACKUP_COMMAND: ${{ inputs.command }}
                   APRP_BACKUP_SESSION_PATH: ${{ inputs.session_path }}
@@ -99,7 +99,7 @@ WORKFLOWS: dict[str, str] = {
                 shell: bash
             steps:
               - name: Run mirror script
-                working-directory: /opt/aprp/APRP
+                working-directory: /opt/aprp/checkout
                 run: ./ops/deploy_mirror.sh
         """
     ),
@@ -134,7 +134,7 @@ WORKFLOWS: dict[str, str] = {
                 shell: bash
             steps:
               - name: Run recovery script
-                working-directory: /opt/aprp/APRP
+                working-directory: /opt/aprp/checkout
                 env:
                   APRP_RECOVERY_COMMAND: ${{ inputs.command }}
                 run: ./ops/db_mirror_restore.sh "${APRP_RECOVERY_COMMAND}"

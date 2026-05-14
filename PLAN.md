@@ -51,6 +51,9 @@ Keep slices dependency-ordered, concrete, current, and runtime-focused.
   target.
 * The tracked config seeds standardized container names `aprp-server`
   and `aprp-mirror` for the ERP and mirror containers.
+* Host-managed checkouts use `/opt/aprp/checkout`.
+* DNS-01 certbot state lives in untracked `ops/certs/<hostname>/`
+  directories inside that checkout.
 * Those roles may be co-located on one host during proof installs or
   deployed separately later without changing the contract.
 * Non-secret runtime config stays in `ops/opsconfig.yaml`.
@@ -59,6 +62,8 @@ Keep slices dependency-ordered, concrete, current, and runtime-focused.
   restore, mirror, health checks, and release rehearsal.
 * Public certificates are issued per hostname with DNS-01 ACME using
   certbot and manual TXT records, with untracked DNS credentials.
+* The initial proof-install hostnames are `kuche.aprp.store`,
+  `kotka.aprp.store`, and `aprp.store`.
 * Public documentation must be sharp, honest, and free of private
   implementation history.
 * APRP must be able to support a public storefront, a controlled ERP

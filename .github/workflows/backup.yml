@@ -30,7 +30,7 @@ jobs:
         shell: bash
     steps:
       - name: Run backup script
-        working-directory: /opt/aprp/APRP
+        working-directory: /opt/aprp/checkout
         env:
           APRP_BACKUP_COMMAND: ${{ inputs.command }}
           APRP_BACKUP_SESSION_PATH: ${{ inputs.session_path }}

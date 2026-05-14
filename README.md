@@ -63,6 +63,9 @@ The same YAML file also carries the internal service hostnames, ports,
 and URLs used by Compose and bootstrap.
 The tracked config seeds standardized container names `aprp-server` and
 `aprp-mirror` for the ERP and mirror containers.
+Host-managed checkouts use `/opt/aprp/checkout`, and local certbot
+state lives in untracked `ops/certs/<hostname>/` directories inside that
+checkout.
 
 ## What APRP Is
 

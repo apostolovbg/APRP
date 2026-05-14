@@ -62,6 +62,32 @@ Example:
 ## Version 0.4.0
 
 - 2026-05-14:
+  Change: Added host-managed checkout and DNS-01 certbot state
+    formalization.
+  Why: APRP needed an explicit local operator contract for checkout
+    layout, certificate storage, and workflow wrappers.
+  Impact: The docs, plan, spec, workflow wrappers, and tests now agree
+    on `/opt/aprp/checkout` and `ops/certs/<hostname>/`.
+  Files:
+  CHANGELOG.md
+  .gitignore
+  .github/workflows/backup.yml
+  .github/workflows/deploy.yml
+  .github/workflows/mirror.yml
+  .github/workflows/recovery.yml
+  PLAN.md
+  README.md
+  SPEC.md
+  docs/development.md
+  docs/install.md
+  docs/security.md
+  docs/system.md
+  ops/render_workflows.py
+  tests/test_aprp_baseline.py
+  tests/test_aprp_runtime.py
+  tests/test_workflow_wrappers.py
+
+- 2026-05-14:
   Change: Seeded standardized container names in config and aligned the
     operational docs to the live proof-install roles.
   Why: APRP needed to define one reusable install contract that names

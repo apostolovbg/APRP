@@ -16,5 +16,5 @@ jobs:
         shell: bash
     steps:
       - name: Run deploy script
-        working-directory: /opt/aprp/APRP
+        working-directory: /opt/aprp/checkout
         run: ./ops/deploy.sh

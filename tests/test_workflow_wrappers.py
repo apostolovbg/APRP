@@ -54,9 +54,11 @@ class TestAprpWorkflowWrappers(unittest.TestCase):
             "aprp.store",
             "kuche.aprp.store",
             "kotka.aprp.store",
+            "/opt/aprp/APRP",
         ]:
             self.assertNotIn(banned, combined)
 
+        self.assertIn("/opt/aprp/checkout", combined)
         self.assertIn("self-hosted", combined)
         self.assertIn("aprp-primary", combined)
         self.assertIn("aprp-mirror", combined)

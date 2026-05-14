@@ -26,6 +26,9 @@ the mirror host to `kotka.aprp.store`, and the storefront host to
 The repo-owned scripts seed the standardized container names
 `aprp-server` and `aprp-mirror` from tracked config.
 
+On macOS and Linux host-managed installs, the checkout lives at
+`/opt/aprp/checkout`.
+
 A WordPress/WooCommerce site on any server can connect to APRP on any
 other server through the storefront contract.
 
@@ -38,6 +41,10 @@ secrets and machine-local auth only.
 Public TLS certificates are issued per hostname with DNS-01 ACME. The
 hostnames may point at the same public IP or at different hosts; the
 certificate workflow stays the same.
+
+Local certbot state lives in untracked `ops/certs/<hostname>/`
+directories inside the checkout. Each hostname keeps its own
+`config-dir`, `work-dir`, and `logs-dir`.
 
 For install and development guidance, see `docs/install.md` and
 `docs/development.md`. For security and public-demo rules, see
@@ -135,6 +142,32 @@ storefront host, and any other operator-owned domain.
 
 The current proof installation uses Superhosting.bg as the DNS provider
 for the ERP and mirror hostnames.
+
+Example commands:
+
+```bash
+mkdir -p ops/certs/kuche.aprp.store
+certbot certonly \
+  --manual \
+  --preferred-challenges dns \
+  --agree-tos \
+  --email ops@example.invalid \
+  --config-dir ops/certs/kuche.aprp.store \
+  --work-dir ops/certs/kuche.aprp.store/work \
+  --logs-dir ops/certs/kuche.aprp.store/logs \
+  -d kuche.aprp.store
+
+mkdir -p ops/certs/kotka.aprp.store
+certbot certonly \
+  --manual \
+  --preferred-challenges dns \
+  --agree-tos \
+  --email ops@example.invalid \
+  --config-dir ops/certs/kotka.aprp.store \
+  --work-dir ops/certs/kotka.aprp.store/work \
+  --logs-dir ops/certs/kotka.aprp.store/logs \
+  -d kotka.aprp.store
+```
 
 Procedure:
 

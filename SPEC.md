@@ -77,6 +77,9 @@ may request certificates for each role-specific hostname or
 user-owned domain with certbot and manual TXT records, without using
 wildcard assumptions.
 
+Local certbot state lives in untracked `ops/certs/<hostname>/`
+directories inside the host checkout.
+
 The DNS-01 procedure itself is documented in `docs/system.md` and
 `docs/security.md`.
 
@@ -321,7 +324,7 @@ not hardcoded addresses in compose files or other non-config artifacts.
 The default host checkout path is:
 
 ```text
-/opt/aprp/APRP
+/opt/aprp/checkout
 ```
 
 Docker, deploy, backup, mirror, and operator scripts should assume this path
