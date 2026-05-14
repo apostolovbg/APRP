@@ -13,10 +13,17 @@ The courier contract lives in `aprp.aprp.courier_contract`.
 It defines courier capability profiles, shipment records, courier events,
 and reconciliation summaries so each installation can wire its own carrier
 mix without hardcoding brand behavior into the core.
+The courier service layer in `aprp.aprp.courier_services` bridges shipment
+drafts, tracking references, event logs, dispatch batches, and summaries.
 
 The first courier targets are Speedy and Econt.
 The adapter contract is capability-based, so more carriers can be added
 without reshaping the product.
+
+The tracked adapter shells are `CourierSimulatorAdapter`,
+`CourierSpeedyAdapter`, and `CourierEcontAdapter`.
+Live courier API roots and credentials stay in installation config or
+secrets, not in the repository.
 
 ## Core model
 
@@ -46,5 +53,5 @@ Public visitors must not see courier administration surfaces.
 - Keep COD pending until the courier confirms collection and settlement.
 - Keep returns and delivery exceptions visible before ERP posting.
 - Keep tracking and label references explicit for each shipment.
-- Keep courier-specific credentials in installation secrets, not in the
-  generic product contract.
+- Keep courier-specific API roots and credentials in installation config or
+  secrets, not in the generic product contract.

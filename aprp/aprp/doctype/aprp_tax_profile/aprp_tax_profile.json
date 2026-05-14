@@ -1,0 +1,79 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-05-13 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 0,
+ "engine": "InnoDB",
+ "field_order": [
+  "tax_profile_name",
+  "country",
+  "vat_rate",
+  "sales_vat_rate",
+  "purchase_vat_rate",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "tax_profile_name",
+   "fieldtype": "Data",
+   "label": "Tax Profile Name",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Data",
+   "label": "Country",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "vat_rate",
+   "fieldtype": "Float",
+   "label": "VAT Rate",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "sales_vat_rate",
+   "fieldtype": "Float",
+   "label": "Sales VAT Rate",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "purchase_vat_rate",
+   "fieldtype": "Float",
+   "label": "Purchase VAT Rate",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 0,
+ "istable": 0,
+ "max_attachments": 0,
+ "module": "APRP",
+ "name": "APRP Tax Profile",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  }
+ ],
+ "quick_entry": 0,
+ "show_name_in_global_search": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "autoname": "field:tax_profile_name"
+}

@@ -1,0 +1,1 @@
+"""APRP Frappe DocType package."""

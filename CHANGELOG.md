@@ -6,7 +6,7 @@
 **Maintenance Stance:** active
 **Compatibility Policy:** forward-only
 **Versioning Mode:** versioned
-**Last Updated:** 2026-05-13
+**Last Updated:** 2026-05-14
 **DevCovenant Version:** 1.0.1b5
 
 <!-- DEVCOV:BEGIN -->
@@ -60,6 +60,487 @@ Example:
 ## Log changes here
 
 ## Version 0.4.0
+
+- 2026-05-14:
+  Change: Added the release summary doc and release-gate coverage.
+  Why: Aligned the product docs and validation surfaces with the
+    1.0.0 release candidate checkpoint.
+  Impact: Validate APRP release readiness with an honest summary and
+    clear limitations.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  README.md
+  SPEC.md
+  docs/release.md
+  tests/test_aprp_baseline.py
+  tests/test_aprp_release_summary.py
+
+- 2026-05-14:
+  Change: Added install, development, and security guides for the APRP
+    product surface.
+  Why: Aligned the public documentation with the active install,
+    showcase, and security contract.
+  Impact: Enable APRP users to install, develop, and validate the
+    product from documented paths.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  README.md
+  SPEC.md
+  docs/development.md
+  docs/install.md
+  docs/security.md
+  docs/system.md
+  tests/test_aprp_baseline.py
+
+- 2026-05-14:
+  Change: Added safe showcase service helpers, docs, and boundary tests.
+  Why: Needed to support controlled public proof flows with disposable
+    sessions and demo-only records without mixing production state.
+  Impact: Validate APRP showcase behavior before public walkthroughs.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  README.md
+  SPEC.md
+  aprp/aprp/__init__.py
+  aprp/aprp/showcase_services.py
+  docs/showcase.md
+  docs/storefront.md
+  tests/test_aprp_baseline.py
+  tests/test_aprp_showcase_services.py
+
+- 2026-05-14:
+  Change: Hardened ops validation with compose renders and preflight
+    checks.
+  Why: Proved the deploy, backup, mirror, and health-check contract
+    against the tracked config shape.
+  Impact: Validate APRP rollout readiness before production deploys.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  docs/system.md
+  tests/test_aprp_runtime.py
+
+- 2026-05-14:
+  Change: Added the accounting service layer, proof helpers, and export
+    payload builders.
+  Why: Turned the purchasing summary contract into runtime support for
+    purchase, liability, sales, COD, and courier-fee review.
+  Impact: Enable APRP to produce accountant-reviewable operational
+    summaries without legal-accounting claims.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  README.md
+  SPEC.md
+  aprp/aprp/__init__.py
+  aprp/aprp/accounting_services.py
+  docs/accounting.md
+  docs/purchasing.md
+  tests/test_aprp_accounting_services.py
+  tests/test_aprp_baseline.py
+
+- 2026-05-13:
+  Change: Added the courier service layer, adapter shells, and proof
+    tests.
+  Why: Supported shipment drafts, tracking references, courier events,
+    and adapter selection without live credentials.
+  Impact: APRP can now validate courier shipments, build dispatch
+    batches, summarize replay state, and document the courier shell
+    surface.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  README.md
+  SPEC.md
+  aprp/aprp/__init__.py
+  aprp/aprp/courier_services.py
+  docs/couriers.md
+  tests/test_aprp_baseline.py
+  tests/test_aprp_courier_services.py
+
+- 2026-05-13:
+  Change: Added the POS service layer, simulator shell, and replay proof
+    tests.
+  Why: Supported receipt capture, blackout replay, and operator-review
+    helpers without live fiscal hardware.
+  Impact: APRP can now validate receipts, map lines, build replay
+    batches, and summarize blackout recovery paths.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  README.md
+  SPEC.md
+  aprp/aprp/__init__.py
+  aprp/aprp/pos_services.py
+  docs/pos.md
+  tests/test_aprp_baseline.py
+  tests/test_aprp_pos_services.py
+
+- 2026-05-13:
+  Change: Added the storefront sync service layer, adapter shells, and
+    proof tests.
+  Why: Extended the storefront contract into a runnable sync path
+    without real storefront credentials.
+  Impact: APRP can now build product, stock, availability, event, batch,
+    and order-ingest drafts through simulator and WooCommerce shells.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  README.md
+  SPEC.md
+  aprp/aprp/__init__.py
+  aprp/aprp/storefront_services.py
+  docs/storefront.md
+  tests/test_aprp_baseline.py
+  tests/test_aprp_storefront_services.py
+
+- 2026-05-13:
+  Change: Added the APRP runtime service layer, package exports, and
+    runtime service coverage for product profiles, supplier SKU mappings,
+    intake sessions, unresolved barcodes, and integration logs.
+  Why: Connected the installable app scaffold to pure helpers that bridge
+    contract data into DocType drafts without live external credentials.
+  Impact: APRP can now normalize contract data into publishability checks,
+    intake-session posting helpers, barcode resolution drafts, and hashed
+    integration-log payloads.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  README.md
+  SPEC.md
+  aprp/aprp/__init__.py
+  aprp/aprp/runtime_services.py
+  tests/test_aprp_baseline.py
+  tests/test_aprp_runtime_services.py
+
+- 2026-05-13:
+  Change: Added the APRP Frappe app scaffold, install hooks, DocType tree,
+    and per-module import checks for the installable app surface.
+  Why: Aligned the repository with the installable ERPNext app surface we
+    just added.
+  Impact: APRP now exposes callable install hooks, installable DocType
+    JSON/controllers, and install validation tests.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  README.md
+  SPEC.md
+  aprp/hooks.py
+  aprp/install.py
+  tests/test_hooks.py
+  tests/test_install_validation.py
+  aprp/aprp/doctype/__init__.py
+  aprp/aprp/doctype/aprp_courier_adapter/__init__.py
+  aprp/aprp/doctype/aprp_courier_adapter/aprp_courier_adapter.json
+  aprp/aprp/doctype/aprp_courier_adapter/aprp_courier_adapter.py
+  aprp/aprp/doctype/aprp_courier_event/__init__.py
+  aprp/aprp/doctype/aprp_courier_event/aprp_courier_event.json
+  aprp/aprp/doctype/aprp_courier_event/aprp_courier_event.py
+  aprp/aprp/doctype/aprp_courier_shipment/__init__.py
+  aprp/aprp/doctype/aprp_courier_shipment/aprp_courier_shipment.json
+  aprp/aprp/doctype/aprp_courier_shipment/aprp_courier_shipment.py
+  aprp/aprp/doctype/aprp_customer/__init__.py
+  aprp/aprp/doctype/aprp_customer/aprp_customer.json
+  aprp/aprp/doctype/aprp_customer/aprp_customer.py
+  aprp/aprp/doctype/aprp_intake_line/__init__.py
+  aprp/aprp/doctype/aprp_intake_line/aprp_intake_line.json
+  aprp/aprp/doctype/aprp_intake_line/aprp_intake_line.py
+  aprp/aprp/doctype/aprp_intake_session/__init__.py
+  aprp/aprp/doctype/aprp_intake_session/aprp_intake_session.json
+  aprp/aprp/doctype/aprp_intake_session/aprp_intake_session.py
+  aprp/aprp/doctype/aprp_integration_log/__init__.py
+  aprp/aprp/doctype/aprp_integration_log/aprp_integration_log.json
+  aprp/aprp/doctype/aprp_integration_log/aprp_integration_log.py
+  aprp/aprp/doctype/aprp_location/__init__.py
+  aprp/aprp/doctype/aprp_location/aprp_location.json
+  aprp/aprp/doctype/aprp_location/aprp_location.py
+  aprp/aprp/doctype/aprp_location_policy/__init__.py
+  aprp/aprp/doctype/aprp_location_policy/aprp_location_policy.json
+  aprp/aprp/doctype/aprp_location_policy/aprp_location_policy.py
+  aprp/aprp/doctype/aprp_pack_family/__init__.py
+  aprp/aprp/doctype/aprp_pack_family/aprp_pack_family.json
+  aprp/aprp/doctype/aprp_pack_family/aprp_pack_family.py
+  aprp/aprp/doctype/aprp_pos_receipt/__init__.py
+  aprp/aprp/doctype/aprp_pos_receipt/aprp_pos_receipt.json
+  aprp/aprp/doctype/aprp_pos_receipt/aprp_pos_receipt.py
+  aprp/aprp/doctype/aprp_pos_replay_batch/__init__.py
+  aprp/aprp/doctype/aprp_pos_replay_batch/aprp_pos_replay_batch.json
+  aprp/aprp/doctype/aprp_pos_replay_batch/aprp_pos_replay_batch.py
+  aprp/aprp/doctype/aprp_price_list/__init__.py
+  aprp/aprp/doctype/aprp_price_list/aprp_price_list.json
+  aprp/aprp/doctype/aprp_price_list/aprp_price_list.py
+  aprp/aprp/doctype/aprp_product/__init__.py
+  aprp/aprp/doctype/aprp_product/aprp_product.json
+  aprp/aprp/doctype/aprp_product/aprp_product.py
+  aprp/aprp/doctype/aprp_product_profile/__init__.py
+  aprp/aprp/doctype/aprp_product_profile/aprp_product_profile.json
+  aprp/aprp/doctype/aprp_product_profile/aprp_product_profile.py
+  aprp/aprp/doctype/aprp_storefront_sync_batch/__init__.py
+  aprp/aprp/doctype/aprp_storefront_sync_batch/aprp_storefront_sync_batch.json
+  aprp/aprp/doctype/aprp_storefront_sync_batch/aprp_storefront_sync_batch.py
+  aprp/aprp/doctype/aprp_storefront_sync_event/__init__.py
+  aprp/aprp/doctype/aprp_storefront_sync_event/aprp_storefront_sync_event.json
+  aprp/aprp/doctype/aprp_storefront_sync_event/aprp_storefront_sync_event.py
+  aprp/aprp/doctype/aprp_supplier/__init__.py
+  aprp/aprp/doctype/aprp_supplier/aprp_supplier.json
+  aprp/aprp/doctype/aprp_supplier/aprp_supplier.py
+  aprp/aprp/doctype/aprp_supplier_sku_mapping/__init__.py
+  aprp/aprp/doctype/aprp_supplier_sku_mapping/aprp_supplier_sku_mapping.json
+  aprp/aprp/doctype/aprp_supplier_sku_mapping/aprp_supplier_sku_mapping.py
+  aprp/aprp/doctype/aprp_tax_profile/__init__.py
+  aprp/aprp/doctype/aprp_tax_profile/aprp_tax_profile.json
+  aprp/aprp/doctype/aprp_tax_profile/aprp_tax_profile.py
+  aprp/aprp/doctype/aprp_unresolved_barcode/__init__.py
+  aprp/aprp/doctype/aprp_unresolved_barcode/aprp_unresolved_barcode.json
+  aprp/aprp/doctype/aprp_unresolved_barcode/aprp_unresolved_barcode.py
+  aprp/aprp/doctype/aprp_warehouse_policy/__init__.py
+  aprp/aprp/doctype/aprp_warehouse_policy/aprp_warehouse_policy.json
+  aprp/aprp/doctype/aprp_warehouse_policy/aprp_warehouse_policy.py
+  tests/test_aprp_product.py
+  tests/test_aprp_supplier.py
+  tests/test_aprp_customer.py
+  tests/test_aprp_location.py
+  tests/test_aprp_warehouse_policy.py
+  tests/test_aprp_tax_profile.py
+  tests/test_aprp_price_list.py
+  tests/test_aprp_pack_family.py
+  tests/test_aprp_product_profile.py
+  tests/test_aprp_supplier_sku_mapping.py
+  tests/test_aprp_location_policy.py
+  tests/test_aprp_intake_session.py
+  tests/test_aprp_intake_line.py
+  tests/test_aprp_unresolved_barcode.py
+  tests/test_aprp_storefront_sync_batch.py
+  tests/test_aprp_storefront_sync_event.py
+  tests/test_aprp_pos_receipt.py
+  tests/test_aprp_pos_replay_batch.py
+  tests/test_aprp_courier_adapter.py
+  tests/test_aprp_courier_shipment.py
+  tests/test_aprp_courier_event.py
+  tests/test_aprp_integration_log.py
+
+- 2026-05-13:
+  Change: Generated the APRP DocType tree for the core product and
+    operational surfaces.
+  Why: Added the installable DocType packages required by the new app surface.
+  Impact: APRP now ships the core and operational DocType
+    JSON/controllers in the app package.
+  Files:
+  CHANGELOG.md
+  aprp/aprp/doctype/__init__.py
+  aprp/aprp/doctype/aprp_courier_adapter/__init__.py
+  aprp/aprp/doctype/aprp_courier_adapter/aprp_courier_adapter.json
+  aprp/aprp/doctype/aprp_courier_adapter/aprp_courier_adapter.py
+  aprp/aprp/doctype/aprp_courier_event/__init__.py
+  aprp/aprp/doctype/aprp_courier_event/aprp_courier_event.json
+  aprp/aprp/doctype/aprp_courier_event/aprp_courier_event.py
+  aprp/aprp/doctype/aprp_courier_shipment/__init__.py
+  aprp/aprp/doctype/aprp_courier_shipment/aprp_courier_shipment.json
+  aprp/aprp/doctype/aprp_courier_shipment/aprp_courier_shipment.py
+  aprp/aprp/doctype/aprp_customer/__init__.py
+  aprp/aprp/doctype/aprp_customer/aprp_customer.json
+  aprp/aprp/doctype/aprp_customer/aprp_customer.py
+  aprp/aprp/doctype/aprp_intake_line/__init__.py
+  aprp/aprp/doctype/aprp_intake_line/aprp_intake_line.json
+  aprp/aprp/doctype/aprp_intake_line/aprp_intake_line.py
+  aprp/aprp/doctype/aprp_intake_session/__init__.py
+  aprp/aprp/doctype/aprp_intake_session/aprp_intake_session.json
+  aprp/aprp/doctype/aprp_intake_session/aprp_intake_session.py
+  aprp/aprp/doctype/aprp_integration_log/__init__.py
+  aprp/aprp/doctype/aprp_integration_log/aprp_integration_log.json
+  aprp/aprp/doctype/aprp_integration_log/aprp_integration_log.py
+  aprp/aprp/doctype/aprp_location/__init__.py
+  aprp/aprp/doctype/aprp_location/aprp_location.json
+  aprp/aprp/doctype/aprp_location/aprp_location.py
+  aprp/aprp/doctype/aprp_location_policy/__init__.py
+  aprp/aprp/doctype/aprp_location_policy/aprp_location_policy.json
+  aprp/aprp/doctype/aprp_location_policy/aprp_location_policy.py
+  aprp/aprp/doctype/aprp_pack_family/__init__.py
+  aprp/aprp/doctype/aprp_pack_family/aprp_pack_family.json
+  aprp/aprp/doctype/aprp_pack_family/aprp_pack_family.py
+  aprp/aprp/doctype/aprp_pos_receipt/__init__.py
+  aprp/aprp/doctype/aprp_pos_receipt/aprp_pos_receipt.json
+  aprp/aprp/doctype/aprp_pos_receipt/aprp_pos_receipt.py
+  aprp/aprp/doctype/aprp_pos_replay_batch/__init__.py
+  aprp/aprp/doctype/aprp_pos_replay_batch/aprp_pos_replay_batch.json
+  aprp/aprp/doctype/aprp_pos_replay_batch/aprp_pos_replay_batch.py
+  aprp/aprp/doctype/aprp_price_list/__init__.py
+  aprp/aprp/doctype/aprp_price_list/aprp_price_list.json
+  aprp/aprp/doctype/aprp_price_list/aprp_price_list.py
+  aprp/aprp/doctype/aprp_product/__init__.py
+  aprp/aprp/doctype/aprp_product/aprp_product.json
+  aprp/aprp/doctype/aprp_product/aprp_product.py
+  aprp/aprp/doctype/aprp_product_profile/__init__.py
+  aprp/aprp/doctype/aprp_product_profile/aprp_product_profile.json
+  aprp/aprp/doctype/aprp_product_profile/aprp_product_profile.py
+  aprp/aprp/doctype/aprp_storefront_sync_batch/__init__.py
+  aprp/aprp/doctype/aprp_storefront_sync_batch/aprp_storefront_sync_batch.json
+  aprp/aprp/doctype/aprp_storefront_sync_batch/aprp_storefront_sync_batch.py
+  aprp/aprp/doctype/aprp_storefront_sync_event/__init__.py
+  aprp/aprp/doctype/aprp_storefront_sync_event/aprp_storefront_sync_event.json
+  aprp/aprp/doctype/aprp_storefront_sync_event/aprp_storefront_sync_event.py
+  aprp/aprp/doctype/aprp_supplier/__init__.py
+  aprp/aprp/doctype/aprp_supplier/aprp_supplier.json
+  aprp/aprp/doctype/aprp_supplier/aprp_supplier.py
+  aprp/aprp/doctype/aprp_supplier_sku_mapping/__init__.py
+  aprp/aprp/doctype/aprp_supplier_sku_mapping/aprp_supplier_sku_mapping.json
+  aprp/aprp/doctype/aprp_supplier_sku_mapping/aprp_supplier_sku_mapping.py
+  aprp/aprp/doctype/aprp_tax_profile/__init__.py
+  aprp/aprp/doctype/aprp_tax_profile/aprp_tax_profile.json
+  aprp/aprp/doctype/aprp_tax_profile/aprp_tax_profile.py
+  aprp/aprp/doctype/aprp_unresolved_barcode/__init__.py
+  aprp/aprp/doctype/aprp_unresolved_barcode/aprp_unresolved_barcode.json
+  aprp/aprp/doctype/aprp_unresolved_barcode/aprp_unresolved_barcode.py
+  aprp/aprp/doctype/aprp_warehouse_policy/__init__.py
+  aprp/aprp/doctype/aprp_warehouse_policy/aprp_warehouse_policy.json
+  aprp/aprp/doctype/aprp_warehouse_policy/aprp_warehouse_policy.py
+
+- 2026-05-13:
+  Change: Added per-module import checks for the new DocType controllers.
+  Why: Added per-module import checks for the new controller files.
+  Impact: APRP now verifies each generated controller module imports
+    cleanly under tests.
+  Files:
+  CHANGELOG.md
+  tests/test_aprp_product.py
+  tests/test_aprp_supplier.py
+  tests/test_aprp_customer.py
+  tests/test_aprp_location.py
+  tests/test_aprp_warehouse_policy.py
+  tests/test_aprp_tax_profile.py
+  tests/test_aprp_price_list.py
+  tests/test_aprp_pack_family.py
+  tests/test_aprp_product_profile.py
+  tests/test_aprp_supplier_sku_mapping.py
+  tests/test_aprp_location_policy.py
+  tests/test_aprp_intake_session.py
+  tests/test_aprp_intake_line.py
+  tests/test_aprp_unresolved_barcode.py
+  tests/test_aprp_storefront_sync_batch.py
+  tests/test_aprp_storefront_sync_event.py
+  tests/test_aprp_pos_receipt.py
+  tests/test_aprp_pos_replay_batch.py
+  tests/test_aprp_courier_adapter.py
+  tests/test_aprp_courier_shipment.py
+  tests/test_aprp_courier_event.py
+  tests/test_aprp_integration_log.py
+
+- 2026-05-13:
+  Change: Generated the APRP DocType tree for the core product and
+    operational surfaces.
+  Why: Added the installable DocType packages required by the new app surface.
+  Impact: APRP now ships the core and operational DocType
+    JSON/controllers in the app package.
+  Files:
+  CHANGELOG.md
+  aprp/aprp/doctype/__init__.py
+  aprp/aprp/doctype/aprp_courier_adapter/__init__.py
+  aprp/aprp/doctype/aprp_courier_adapter/aprp_courier_adapter.json
+  aprp/aprp/doctype/aprp_courier_adapter/aprp_courier_adapter.py
+  aprp/aprp/doctype/aprp_courier_event/__init__.py
+  aprp/aprp/doctype/aprp_courier_event/aprp_courier_event.json
+  aprp/aprp/doctype/aprp_courier_event/aprp_courier_event.py
+  aprp/aprp/doctype/aprp_courier_shipment/__init__.py
+  aprp/aprp/doctype/aprp_courier_shipment/aprp_courier_shipment.json
+  aprp/aprp/doctype/aprp_courier_shipment/aprp_courier_shipment.py
+  aprp/aprp/doctype/aprp_customer/__init__.py
+  aprp/aprp/doctype/aprp_customer/aprp_customer.json
+  aprp/aprp/doctype/aprp_customer/aprp_customer.py
+  aprp/aprp/doctype/aprp_intake_line/__init__.py
+  aprp/aprp/doctype/aprp_intake_line/aprp_intake_line.json
+  aprp/aprp/doctype/aprp_intake_line/aprp_intake_line.py
+  aprp/aprp/doctype/aprp_intake_session/__init__.py
+  aprp/aprp/doctype/aprp_intake_session/aprp_intake_session.json
+  aprp/aprp/doctype/aprp_intake_session/aprp_intake_session.py
+  aprp/aprp/doctype/aprp_integration_log/__init__.py
+  aprp/aprp/doctype/aprp_integration_log/aprp_integration_log.json
+  aprp/aprp/doctype/aprp_integration_log/aprp_integration_log.py
+  aprp/aprp/doctype/aprp_location/__init__.py
+  aprp/aprp/doctype/aprp_location/aprp_location.json
+  aprp/aprp/doctype/aprp_location/aprp_location.py
+  aprp/aprp/doctype/aprp_location_policy/__init__.py
+  aprp/aprp/doctype/aprp_location_policy/aprp_location_policy.json
+  aprp/aprp/doctype/aprp_location_policy/aprp_location_policy.py
+  aprp/aprp/doctype/aprp_pack_family/__init__.py
+  aprp/aprp/doctype/aprp_pack_family/aprp_pack_family.json
+  aprp/aprp/doctype/aprp_pack_family/aprp_pack_family.py
+  aprp/aprp/doctype/aprp_pos_receipt/__init__.py
+  aprp/aprp/doctype/aprp_pos_receipt/aprp_pos_receipt.json
+  aprp/aprp/doctype/aprp_pos_receipt/aprp_pos_receipt.py
+  aprp/aprp/doctype/aprp_pos_replay_batch/__init__.py
+  aprp/aprp/doctype/aprp_pos_replay_batch/aprp_pos_replay_batch.json
+  aprp/aprp/doctype/aprp_pos_replay_batch/aprp_pos_replay_batch.py
+  aprp/aprp/doctype/aprp_price_list/__init__.py
+  aprp/aprp/doctype/aprp_price_list/aprp_price_list.json
+  aprp/aprp/doctype/aprp_price_list/aprp_price_list.py
+  aprp/aprp/doctype/aprp_product/__init__.py
+  aprp/aprp/doctype/aprp_product/aprp_product.json
+  aprp/aprp/doctype/aprp_product/aprp_product.py
+  aprp/aprp/doctype/aprp_product_profile/__init__.py
+  aprp/aprp/doctype/aprp_product_profile/aprp_product_profile.json
+  aprp/aprp/doctype/aprp_product_profile/aprp_product_profile.py
+  aprp/aprp/doctype/aprp_storefront_sync_batch/__init__.py
+  aprp/aprp/doctype/aprp_storefront_sync_batch/aprp_storefront_sync_batch.json
+  aprp/aprp/doctype/aprp_storefront_sync_batch/aprp_storefront_sync_batch.py
+  aprp/aprp/doctype/aprp_storefront_sync_event/__init__.py
+  aprp/aprp/doctype/aprp_storefront_sync_event/aprp_storefront_sync_event.json
+  aprp/aprp/doctype/aprp_storefront_sync_event/aprp_storefront_sync_event.py
+  aprp/aprp/doctype/aprp_supplier/__init__.py
+  aprp/aprp/doctype/aprp_supplier/aprp_supplier.json
+  aprp/aprp/doctype/aprp_supplier/aprp_supplier.py
+  aprp/aprp/doctype/aprp_supplier_sku_mapping/__init__.py
+  aprp/aprp/doctype/aprp_supplier_sku_mapping/aprp_supplier_sku_mapping.json
+  aprp/aprp/doctype/aprp_supplier_sku_mapping/aprp_supplier_sku_mapping.py
+  aprp/aprp/doctype/aprp_tax_profile/__init__.py
+  aprp/aprp/doctype/aprp_tax_profile/aprp_tax_profile.json
+  aprp/aprp/doctype/aprp_tax_profile/aprp_tax_profile.py
+  aprp/aprp/doctype/aprp_unresolved_barcode/__init__.py
+  aprp/aprp/doctype/aprp_unresolved_barcode/aprp_unresolved_barcode.json
+  aprp/aprp/doctype/aprp_unresolved_barcode/aprp_unresolved_barcode.py
+  aprp/aprp/doctype/aprp_warehouse_policy/__init__.py
+  aprp/aprp/doctype/aprp_warehouse_policy/aprp_warehouse_policy.json
+  aprp/aprp/doctype/aprp_warehouse_policy/aprp_warehouse_policy.py
+
+- 2026-05-13:
+  Change: Added per-module import checks for the new DocType controllers.
+  Why: Added per-module import checks for the new controller files.
+  Impact: APRP now verifies each generated controller module imports
+    cleanly under tests.
+  Files:
+  CHANGELOG.md
+  tests/test_aprp_baseline.py
+  tests/test_aprp_core_contract.py
+  tests/test_aprp_courier_adapter.py
+  tests/test_aprp_courier_contract.py
+  tests/test_aprp_courier_event.py
+  tests/test_aprp_courier_shipment.py
+  tests/test_aprp_customer.py
+  tests/test_aprp_intake_line.py
+  tests/test_aprp_intake_session.py
+  tests/test_aprp_integration_log.py
+  tests/test_aprp_inventory_contract.py
+  tests/test_aprp_location.py
+  tests/test_aprp_location_policy.py
+  tests/test_aprp_pack_family.py
+  tests/test_aprp_pos_contract.py
+  tests/test_aprp_pos_receipt.py
+  tests/test_aprp_pos_replay_batch.py
+  tests/test_aprp_price_list.py
+  tests/test_aprp_product.py
+  tests/test_aprp_product_profile.py
+  tests/test_aprp_purchasing_contract.py
+  tests/test_aprp_runtime.py
+  tests/test_aprp_storefront_contract.py
+  tests/test_aprp_storefront_sync_batch.py
+  tests/test_aprp_storefront_sync_event.py
+  tests/test_aprp_supplier.py
+  tests/test_aprp_supplier_sku_mapping.py
+  tests/test_aprp_tax_profile.py
+  tests/test_aprp_unresolved_barcode.py
+  tests/test_aprp_warehouse_policy.py
 
 - 2026-05-13:
   Change: Revised PLAN.md to describe APRP as production-grade and

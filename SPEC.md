@@ -6,7 +6,7 @@
 **Maintenance Stance:** active
 **Compatibility Policy:** forward-only
 **Versioning Mode:** versioned
-**Last Updated:** 2026-05-13
+**Last Updated:** 2026-05-14
 **DevCovenant Version:** 1.0.1b5
 
 <!-- DEVCOV:BEGIN -->
@@ -147,6 +147,8 @@ APRP must help a business answer:
 ### 1.3 Technical principles
 
 * ERPNext/Frappe is the ERP foundation.
+* APRP ships its own DocTypes, hooks, and install-time scaffolding inside
+  the app package.
 * APRP custom logic lives in an ERPNext/Frappe custom app.
 * ERP is the operational source of truth.
 * Storefronts are public sales surfaces, not the business brain.
@@ -333,10 +335,25 @@ The first explicit APRP contract surfaces are:
   and blackout-summary definitions.
 * `aprp.aprp.storefront_contract` for catalog-row, order-line,
   reservation, and sync-summary definitions.
+* `aprp.aprp.runtime_services` for product-profile, supplier-SKU,
+  intake-session, unresolved-barcode, and integration-log drafts.
+* `aprp.aprp.pos_services` for receipt-draft, replay-batch, summary,
+  validation, and replay-state helpers.
+* `aprp.aprp.storefront_services` for product-sync, stock-sync,
+  availability-sync, sync-event, sync-batch, and order-ingest helpers.
+* `aprp.aprp.showcase_services` for demo-only seed, reset, and
+  controlled-public-proof helpers.
+* `aprp.aprp.accounting_services` for purchase-summary,
+  liability-summary, sales-summary, COD-settlement, courier-fee, and
+  export payload drafts.
 * `docs/inventory.md` for inventory-facing rules and navigation.
 * `docs/purchasing.md` for supplier-facing rules and navigation.
 * `docs/pos.md` for receipt capture and blackout replay rules.
 * `docs/storefront.md` for storefront sync and order-flow rules.
+* `docs/install.md` for install and bootstrap guidance.
+* `docs/development.md` for local development guidance.
+* `docs/security.md` for security and public-demo guidance.
+* `docs/release.md` for release summary and known limitations.
 * `docs/accounting.md` for monthly review and period-lock rules.
 * Permission domains are operator, staff, and location-scoped users.
 
@@ -449,6 +466,9 @@ The POS ingestion module covers:
 * operator review.
 
 The POS contract lives in `aprp.aprp.pos_contract`.
+The POS service layer in `aprp.aprp.pos_services` bridges captured
+receipts into receipt drafts, replay entries, replay batches, and
+operator-review summaries.
 
 POS ingestion must support recovery from periods where the storefront or ERP
 was unavailable, while preserving auditability.
@@ -456,6 +476,7 @@ was unavailable, while preserving auditability.
 ### 4.6 Couriers
 
 The courier contract lives in `aprp.aprp.courier_contract`.
+The courier service layer lives in `aprp.aprp.courier_services`.
 
 The courier module covers:
 
@@ -477,6 +498,10 @@ Courier adapters must isolate courier-specific behavior from the generic APRP
 core and stay capability-based for domestic and international delivery,
 office pickup, address delivery, store pickup, COD, tracking, pickup
 requests, and returns.
+The adapter shells are `CourierSimulatorAdapter`, `CourierSpeedyAdapter`,
+and `CourierEcontAdapter`.
+Courier-specific API roots and credentials stay in installation config or
+secrets; the repo only defines the capability matrix.
 
 ### 4.7 Accounting support
 
@@ -485,17 +510,20 @@ accounting review.
 
 The accounting and procurement summary contract lives in
 `aprp.aprp.purchasing_contract`.
+The accounting service layer in `aprp.aprp.accounting_services`
+transforms that contract into purchase summaries, supplier-liability
+summaries, sales summaries by payment state, COD settlement summaries,
+courier fee summaries, and accountant-reviewable export payloads.
 
 Minimum accounting support includes:
 
 * release forecasts, procurement profiles, purchase liabilities,
-  cashflow plans, and monthly accounting summaries;
-* purchase totals;
-* sales totals;
-* payment state;
-* COD state;
-* courier payout state;
-* VAT-relevant exports where configured;
+  cashflow plans, and purchase summaries;
+* purchase totals and liability variance totals;
+* sales totals by payment state;
+* COD settlement totals;
+* courier fee totals;
+* accountant-reviewable export payloads;
 * adjustment records;
 * monthly review surfaces and period-lock readiness.
 
@@ -507,6 +535,13 @@ unrestricted ERP access.
 The storefront contract lives in `aprp.aprp.storefront_contract` and
 models public catalog rows, imported orders, explicit reservations, and
 sync summaries.
+The runtime service layer in `aprp.aprp.runtime_services` bridges the
+contract data into DocType drafts for product profiles, supplier SKU
+mappings, intake sessions, unresolved barcodes, and integration logs.
+The storefront service layer in `aprp.aprp.storefront_services` bridges
+catalog rows and orders into publishable payloads, sync events, batch
+drafts, and normalized storefront orders for the simulator and
+WooCommerce shells.
 
 The storefront must support:
 
@@ -906,6 +941,9 @@ storefront unless explicitly approved.
 APRP must support POS ingestion patterns for offline or in-store sales.
 
 The POS replay contract lives in `aprp.aprp.pos_contract`.
+The POS service layer in `aprp.aprp.pos_services` bridges receipts and
+replay batches into validation, line mapping, replay state, and summary
+drafts for simulator and Datecs-shaped proof paths.
 
 POS ingestion must capture:
 
@@ -961,6 +999,8 @@ Initial courier targets:
 * Econt.
 
 Other couriers may be added through adapters.
+The proof-path service layer stays in `aprp.aprp.courier_services` and
+the tracked adapter shells remain capability-only.
 
 ### 10.2 COD lifecycle
 
@@ -1032,6 +1072,23 @@ HTTP requests must redirect to HTTPS.
 Cookies for public-facing sessions must be secure and protected.
 
 HSTS must be enabled for public entrypoints.
+
+### 11.4 Safe showcase mode
+
+APRP may expose a controlled showcase mode for screenshare and public
+validation.
+
+Showcase mode must use demo-only records, disposable session state, and
+reset/reseed flows that do not mix with production rows.
+
+Anonymous visitors must not receive unrestricted ERP access in showcase
+mode.
+
+Controlled showcase actions may include browsing the seeded catalog,
+placing a disposable checkout, and resetting the showcase session.
+
+The showcase implementation lives in `aprp.aprp.showcase_services` and
+the operator guide lives in `docs/showcase.md`.
 
 ## 12. Security Rules
 
@@ -1232,6 +1289,7 @@ Test behavior should cover:
 * courier adapter boundaries;
 * backup/restore script syntax;
 * generalized config and secret smoke tests;
+* safe showcase seed/reset logic;
 * public-facing safety boundaries.
 
 ### 15.2 Validation before public exposure
@@ -1246,6 +1304,8 @@ Before public exposure, APRP must validate:
   shape;
 * any public-facing installation profile passes only after the
   generalized install smoke tests succeed;
+* safe showcase mode keeps demo-only records separate from production
+  state;
 * storefront sync proof works;
 * backup and restore documentation exists.
 
@@ -1261,6 +1321,11 @@ Required documentation:
 * `docs/inventory.md` for stock workflows;
 * `docs/purchasing.md` for procurement workflows;
 * `docs/storefront.md` for storefront sync and order flow;
+* `docs/showcase.md` for showcase seed, reset, and public demo rules;
+* `docs/install.md` for install and bootstrap guidance;
+* `docs/development.md` for local development guidance;
+* `docs/security.md` for security and public-demo guidance;
+* `docs/release.md` for release summary and known limitations;
 * `docs/accounting.md` for monthly accounting review;
 * `docs/pos.md` for POS ingestion and blackout recovery;
 * `docs/couriers.md` for Econt/Speedy and courier adapters;

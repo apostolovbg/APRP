@@ -1,0 +1,99 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-05-13 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 0,
+ "engine": "InnoDB",
+ "field_order": [
+  "family_name",
+  "unit_product",
+  "box_product",
+  "case_product",
+  "pallet_product",
+  "units_per_box",
+  "boxes_per_case",
+  "cases_per_pallet",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "family_name",
+   "fieldtype": "Data",
+   "label": "Family Name",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "unit_product",
+   "fieldtype": "Link",
+   "label": "Unit Product",
+   "options": "APRP Product",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "box_product",
+   "fieldtype": "Link",
+   "label": "Box Product",
+   "options": "APRP Product",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "case_product",
+   "fieldtype": "Link",
+   "label": "Case Product",
+   "options": "APRP Product"
+  },
+  {
+   "fieldname": "pallet_product",
+   "fieldtype": "Link",
+   "label": "Pallet Product",
+   "options": "APRP Product"
+  },
+  {
+   "fieldname": "units_per_box",
+   "fieldtype": "Int",
+   "label": "Units per Box"
+  },
+  {
+   "fieldname": "boxes_per_case",
+   "fieldtype": "Int",
+   "label": "Boxes per Case"
+  },
+  {
+   "fieldname": "cases_per_pallet",
+   "fieldtype": "Int",
+   "label": "Cases per Pallet"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 0,
+ "istable": 0,
+ "max_attachments": 0,
+ "module": "APRP",
+ "name": "APRP Pack Family",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  }
+ ],
+ "quick_entry": 0,
+ "show_name_in_global_search": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "autoname": "field:family_name"
+}

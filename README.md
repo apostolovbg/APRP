@@ -2,7 +2,7 @@
 **Doc ID:** README
 **Doc Type:** repo-readme
 **Project Version:** 0.4.0
-**Last Updated:** 2026-05-13
+**Last Updated:** 2026-05-14
 **DevCovenant Version:** 1.0.1b5
 
 <!-- DEVCOV:BEGIN -->
@@ -174,6 +174,22 @@ foundation.
 
 APRP is expected to run as an ERPNext/Frappe custom application with supporting
 runtime assets.
+It ships its own DocTypes and install hooks as part of the app package.
+The runtime service layer in `aprp.aprp.runtime_services` converts contract
+data into DocType drafts and validation before Frappe persistence.
+The storefront service layer in `aprp.aprp.storefront_services` proves
+catalog, stock, availability, batch, and order-ingest flows through the
+simulator and WooCommerce shells without real store credentials.
+The showcase service layer in `aprp.aprp.showcase_services` proves
+demo-only seed, reset, and boundary checks for controlled public
+validation without mixing production rows.
+The POS service layer in `aprp.aprp.pos_services` proves receipt capture,
+line mapping, blackout replay batches, and operator-review state without
+live fiscal hardware.
+The accounting service layer in `aprp.aprp.accounting_services` proves
+purchase summaries, supplier liabilities, sales-state totals, COD
+settlement summaries, courier-fee totals, and reviewable export
+payloads.
 
 The intended model is:
 
@@ -197,6 +213,11 @@ The current APRP baseline is the generalized ERP/ops framework.
 The next plan phase builds the product layer on top of it:
 
 - core master data and permissions;
+- runtime service helpers for product profiles, intake, and logs;
+- POS ingestion helpers and blackout replay proof paths;
+- storefront sync helpers and adapter shells for proof paths;
+- courier service helpers and adapter shells for proof paths;
+- accounting review helpers and export payloads;
 - multi-location stock and packaging;
 - procurement and cashflow planning;
 - blind storefront synchronization;
@@ -217,8 +238,18 @@ Inventory modeling lives in `docs/inventory.md`.
 Purchasing modeling lives in `docs/purchasing.md`.
 POS modeling lives in `docs/pos.md`.
 Courier modeling lives in `docs/couriers.md`.
+The courier service layer in `aprp.aprp.courier_services` bridges shipment
+drafts, tracking references, event logs, dispatch batches, and summaries.
 Storefront modeling lives in `docs/storefront.md`.
+Showcase modeling lives in `docs/showcase.md`.
+Release summary lives in `docs/release.md`.
+Installation guidance lives in `docs/install.md`.
+Local development guidance lives in `docs/development.md`.
+Security and public-demo guidance lives in `docs/security.md`.
 Accounting modeling lives in `docs/accounting.md`.
+The accounting service layer in `aprp.aprp.accounting_services` bridges
+purchase summaries, liability summaries, sales-state totals, COD
+settlement summaries, courier-fee summaries, and export payloads.
 
 ## Deployment and Operations
 
@@ -243,13 +274,15 @@ Public-facing surfaces must remain scoped and reviewable.
 
 ## Project Status
 
-APRP is in beta.
+APRP is in active alpha.
 The repository is the product contract and the runtime implementation target.
 
 ## Commercial Integration
 
 APRP is designed to support storefront, courier, POS, and procurement
 integrations without letting those systems become the operational authority.
+Commercial implementation, onboarding, and integration work are available
+for businesses that need a tailored deployment.
 
 ## Maintainer
 

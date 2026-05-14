@@ -17,3 +17,7 @@ class TestAprpHooks(unittest.TestCase):
             "Advanced Production Resource Planning",
             hooks.app_description,
         )
+        self.assertEqual(["frappe", "erpnext"], hooks.required_apps)
+        self.assertEqual("aprp.install.before_install", hooks.before_install)
+        self.assertEqual("aprp.install.after_install", hooks.after_install)
+        self.assertEqual("aprp.install.before_tests", hooks.before_tests)

@@ -21,6 +21,10 @@ that instance config.
 The `ops/env.primary.example` and `ops/env.mirror.example` files are for
 secrets and machine-local auth only.
 
+For install and development guidance, see `docs/install.md` and
+`docs/development.md`. For security and public-demo rules, see
+`docs/security.md`.
+
 ## Primary host
 
 The primary host runs the ERP runtime, workers, Redis, ProxySQL, Galera
@@ -95,6 +99,47 @@ Restore from a local session, a single SQL file, or an offsite session with:
 ```bash
 ./ops/backup.sh restore [SESSION_DIR|SQL_FILE|REMOTE_SESSION]
 ```
+
+## Health Checks
+
+Use the same checks before and after deploys.
+
+Primary stack:
+
+```bash
+./ops/db_mirror_restore.sh cluster-status
+```
+
+Mirror stack:
+
+```bash
+./ops/db_mirror_restore.sh mirror-status
+```
+
+When Docker is available, validate both Compose files before rollout:
+
+```bash
+docker compose -f compose.yaml config
+docker compose -f compose.mirror.yaml config
+```
+
+The health check is clear when the Galera probe reports `wsrep_ready`
+`ON` and `wsrep_cluster_status` `Primary`, and the Compose config render
+completes without errors.
+
+## Production Preflight
+
+Run this checklist before a real rollout:
+
+1. confirm `ops/opsconfig.yaml` and the local secret files exist;
+2. render the runtime exports with `python3 ops/opsconfig.py primary`;
+3. run `bash -n` over the repo-owned shell scripts;
+4. run the Compose config render commands above where Docker is
+   available;
+5. verify `./ops/db_mirror_restore.sh cluster-status` and
+   `./ops/db_mirror_restore.sh mirror-status`;
+6. run `./ops/deploy.sh`;
+7. run `./ops/backup.sh backup`.
 
 ## Automation wrappers
 

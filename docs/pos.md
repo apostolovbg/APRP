@@ -13,6 +13,11 @@ The contract lives in `aprp.aprp.pos_contract`.
 It defines receipt lines, fiscal receipt references, replay batches,
 and replay summaries for POS and Datecs-driven sales capture.
 
+The service layer lives in `aprp.aprp.pos_services`.
+It turns captured receipts into receipt drafts, replay entries, replay
+batches, and operator-review summaries for simulator and Datecs-shaped
+proof paths.
+
 POS does not replace ERP inventory authority. It captures sales in a
 reviewable form and hands them back into ERP for posting, stock
 movement, and accounting.

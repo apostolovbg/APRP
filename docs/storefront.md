@@ -13,6 +13,17 @@ The contract lives in `aprp.aprp.storefront_contract`.
 It defines the catalog rows, order rows, reservations, and sync batch
 summary that move between ERP and the storefront.
 
+The service layer lives in `aprp.aprp.storefront_services`.
+It turns catalog rows into product, stock, and availability payloads,
+logs sync events and sync batches, and normalizes incoming storefront
+orders for the simulator and WooCommerce shells.
+The simulator shell exposes sample catalog rows for proof runs without
+real storefront credentials.
+The WooCommerce shell carries the HTTPS storefront boundary without
+hardcoding live hosts or secrets.
+Safe showcase mode lives in `aprp.aprp.showcase_services` and
+`docs/showcase.md`.
+
 The storefront is not the ERP authority. ERP still owns product truth,
 price truth, stock truth, and reservation truth. The storefront only
 exposes the public sales surface and sends customer actions back into

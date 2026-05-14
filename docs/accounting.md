@@ -10,6 +10,11 @@ The APRP accounting surface turns procurement data into monthly,
 reviewable summaries.
 
 The contract lives in `aprp.aprp.purchasing_contract`.
+The service layer in `aprp.aprp.accounting_services` turns that contract
+into purchase summaries, supplier liability summaries, sales summaries
+by payment state, COD settlement summaries, courier fee summaries, and
+accountant-reviewable export payloads.
+
 It keeps release forecasts, procurement profiles, purchase liabilities,
 cashflow plans, and accounting summaries explicit.
 
@@ -48,5 +53,6 @@ Read-only staff can inspect the summaries when needed.
   cash.
 - Keep the accounting surface driven from the same operational data as
   purchasing and inventory.
+- Keep export payloads tied to the same operational summaries.
 - Treat monthly summaries as operational evidence, not as a substitute
   for accounting judgment.

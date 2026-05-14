@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import os
+import shlex
+import shutil
 import subprocess
 import unittest
 from pathlib import Path
@@ -13,6 +16,30 @@ import aprp
 
 class TestAprpRuntime(unittest.TestCase):
     """Verify the runtime stack files stay coherent."""
+
+    def _render_opsconfig_env(self, mode: str) -> dict[str, str]:
+        """Return shell exports rendered from the tracked ops config."""
+
+        rendered = subprocess.run(
+            [
+                "python3",
+                "ops/opsconfig.py",
+                mode,
+                "--config",
+                "ops/opsconfig.yaml.example",
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout
+        env: dict[str, str] = {}
+        for line in rendered.splitlines():
+            if not line.startswith("export "):
+                continue
+            assignment = shlex.split(line, posix=True)[1]
+            key, value = assignment.split("=", 1)
+            env[key] = value
+        return env
 
     def test_package_version_tracks_version_file(self):
         """Ensure the package version comes from the repo version anchor."""
@@ -74,6 +101,9 @@ class TestAprpRuntime(unittest.TestCase):
         self.assertIn("db-mirror-data", runtime_text)
         self.assertIn("mirror-reseed", runtime_text)
         self.assertIn("mirror-rejoin", runtime_text)
+        self.assertIn("cluster-status", runtime_text)
+        self.assertIn("docker compose -f compose.yaml config", runtime_text)
+        self.assertIn("Production Preflight", runtime_text)
         self.assertIn("workflow_dispatch", runtime_text)
         self.assertIn("self-hosted", runtime_text)
         self.assertIn("aprp-primary", runtime_text)
@@ -281,3 +311,41 @@ class TestAprpRuntime(unittest.TestCase):
 
         for script in scripts:
             subprocess.run(["bash", "-n", script], check=True)
+
+    def test_compose_files_validate_with_rendered_opsconfig(self):
+        """Ensure the Compose files validate when Docker is available."""
+
+        if shutil.which("docker") is None:
+            self.skipTest("docker compose is not available.")
+
+        try:
+            subprocess.run(
+                ["docker", "compose", "version"],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+        except (FileNotFoundError, subprocess.CalledProcessError):
+            self.skipTest("docker compose is not available.")
+
+        primary_env = os.environ.copy()
+        primary_env.update(self._render_opsconfig_env("primary"))
+        primary_env["APRP_COMPOSE_ENV_FILE"] = "ops/env.primary.example"
+        mirror_env = os.environ.copy()
+        mirror_env.update(self._render_opsconfig_env("mirror"))
+        mirror_env["APRP_COMPOSE_ENV_FILE"] = "ops/env.mirror.example"
+
+        subprocess.run(
+            ["docker", "compose", "-f", "compose.yaml", "config"],
+            check=True,
+            capture_output=True,
+            text=True,
+            env=primary_env,
+        )
+        subprocess.run(
+            ["docker", "compose", "-f", "compose.mirror.yaml", "config"],
+            check=True,
+            capture_output=True,
+            text=True,
+            env=mirror_env,
+        )

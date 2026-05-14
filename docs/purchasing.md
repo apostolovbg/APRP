@@ -12,8 +12,9 @@ and accounting review data explicit.
 The core contract lives in `aprp.aprp.core_contract`.
 The purchasing and accounting contract lives in
 `aprp.aprp.purchasing_contract`.
-The companion guide in `docs/accounting.md` explains the monthly review
-surface that consumes the same data.
+The companion guide in `docs/accounting.md` and the accounting service
+layer in `aprp.aprp.accounting_services` explain the monthly review and
+export surface that consumes the same data.
 
 Purchasing is the part of the system that explains what must be bought,
 who it is being bought from, and how release forecasts turn into
@@ -56,5 +57,6 @@ lock readiness.
 - Keep purchase liabilities and landed cost visible when invoices arrive.
 - Keep cashflow planning and salary planning in the same monthly review
   surface.
+- Keep accountant-reviewable export payloads tied to the same data.
 - Treat purchasing setup as part of the operational core, not a one-off
   import step.

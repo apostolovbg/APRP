@@ -6,7 +6,7 @@
 **Maintenance Stance:** active
 **Compatibility Policy:** forward-only
 **Versioning Mode:** versioned
-**Last Updated:** 2026-05-13
+**Last Updated:** 2026-05-14
 **DevCovenant Version:** 1.0.1b5
 
 <!-- DEVCOV:BEGIN -->
@@ -34,7 +34,7 @@ For this plan, production-grade and demo-ready completion means:
 * core APRP business objects exist as real Frappe surfaces;
 * adapter boundaries exist for storefront, POS, couriers, and accounting;
 * at least one ERP-to-storefront proof path works;
-* demo data can be created safely;
+* proof data can be created safely;
 * deployment, backup, restore, and health-check flows are documented;
 * public documentation is honest and sellable;
 * no secrets, private data, or legacy identity are present.
@@ -107,11 +107,11 @@ If time or tool budget runs out, prioritize:
 6. Documentation cleanup.
 7. UI polish.
 
-A working thin vertical demo beats a wide unfinished platform.
+A working thin vertical proof beats a wide unfinished platform.
 
 ## Slice 0 — Reality Check
 
-**Status:** open
+**Status:** done
 
 Inspect the current repository and produce a gap map.
 
@@ -132,7 +132,7 @@ Done when:
 
 ## Slice 1 — Installable ERPNext App
 
-**Status:** open
+**Status:** done
 
 Make APRP a real installable ERPNext/Frappe app.
 
@@ -175,7 +175,7 @@ Done when:
 
 ## Slice 2 — Runtime Services
 
-**Status:** open
+**Status:** done
 
 Turn contract modules into runtime service helpers.
 
@@ -200,7 +200,7 @@ Done when:
 
 ## Slice 3 — Storefront Sync Proof
 
-**Status:** open
+**Status:** done
 
 Build the first commercially visible proof path.
 
@@ -215,7 +215,7 @@ Required capabilities:
 * sync batch creation;
 * sync event logging;
 * order ingest boundary;
-* demo product data.
+* sample product data.
 
 Done when:
 
@@ -223,11 +223,11 @@ Done when:
 * simulated adapter tests pass;
 * sync failures are logged;
 * unsafe products are blocked from publication;
-* docs explain the showcase behavior.
+* docs explain the proof behavior.
 
 ## Slice 4 — POS and Blackout Replay
 
-**Status:** open
+**Status:** done
 
 Build the POS ingestion and recovery boundary.
 
@@ -252,7 +252,7 @@ Done when:
 
 ## Slice 5 — Courier Adapter System
 
-**Status:** open
+**Status:** done
 
 Build courier integration boundaries.
 
@@ -279,7 +279,7 @@ Done when:
 
 ## Slice 6 — Accounting and Cashflow Support
 
-**Status:** open
+**Status:** done
 
 Build operational accounting support surfaces.
 
@@ -300,7 +300,7 @@ Done when:
 
 ## Slice 7 — Ops Validation
 
-**Status:** open
+**Status:** done
 
 Harden deployment, backup, restore, mirror, and health-check assumptions.
 
@@ -325,7 +325,7 @@ Done when:
 
 ## Slice 8 — Safe Showcase Mode
 
-**Status:** open
+**Status:** done
 
 Build the safe demonstration layer.
 
@@ -350,7 +350,7 @@ Done when:
 
 ## Slice 9 — Public Documentation
 
-**Status:** open
+**Status:** done
 
 Align public docs with actual behavior.
 
@@ -376,7 +376,7 @@ Done when:
 
 ## Slice 10 — Release Candidate Gate
 
-**Status:** open
+**Status:** done
 
 Prepare 1.0.0 production-grade and demo-ready release.
 
