@@ -20,9 +20,9 @@ The current proof installation maps those roles to `kuche.aprp.store`,
 `kotka.aprp.store`, and `aprp.store`.
 The repo-owned config seeds the standardized container names
 `aprp-server` and `aprp-mirror`.
-Host-managed checkouts live at `/opt/aprp/checkout`.
+Run the repo-owned scripts from the APRP checkout root.
 Local certbot state lives in untracked `ops/certs/<hostname>/`
-directories inside that checkout.
+directories inside that root.
 
 The install path must not hardcode deployment hosts or public URLs in
 compose files or shell scripts. The repo-owned config renderer translates
@@ -53,14 +53,14 @@ rules, see `docs/showcase.md` and `docs/security.md`.
 5. issue DNS-01 certificates for `kuche.aprp.store` and
    `kotka.aprp.store` with certbot and manual TXT records through
    Superhosting.bg, using `ops/certs/<hostname>/` as the local state
-   directory;
+   directory from the checkout root;
 6. run `./ops/deploy.sh` on the ERP host;
 7. run `./ops/deploy_mirror.sh` on each mirror host when present;
 8. connect the storefront host to APRP and verify the storefront
    contract;
 9. run `./ops/backup.sh backup` after the site is up.
 
-Example command shape:
+From the APRP checkout root, example command shape:
 
 ```bash
 certbot certonly \

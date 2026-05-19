@@ -51,9 +51,10 @@ Keep slices dependency-ordered, concrete, current, and runtime-focused.
   target.
 * The tracked config seeds standardized container names `aprp-server`
   and `aprp-mirror` for the ERP and mirror containers.
-* Host-managed checkouts use `/opt/aprp/checkout`.
+* Repo-owned scripts run from the APRP checkout root; the repository
+  does not hardcode an absolute checkout path.
 * DNS-01 certbot state lives in untracked `ops/certs/<hostname>/`
-  directories inside that checkout.
+  directories inside that checkout root.
 * Those roles may be co-located on one host during proof installs or
   deployed separately later without changing the contract.
 * Non-secret runtime config stays in `ops/opsconfig.yaml`.

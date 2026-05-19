@@ -27,7 +27,6 @@ jobs:
         shell: bash
     steps:
       - name: Run recovery script
-        working-directory: /opt/aprp/checkout
         env:
           APRP_RECOVERY_COMMAND: ${{ inputs.command }}
         run: ./ops/db_mirror_restore.sh "${APRP_RECOVERY_COMMAND}"

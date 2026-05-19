@@ -10,8 +10,7 @@ APRP development happens from a clean checkout plus the tracked config
 shape. The goal is to keep the framework installable, testable, and
 generalized before any specific client deployment is layered on top.
 
-On macOS and Linux host-managed installs, the checkout lives at
-`/opt/aprp/checkout`.
+Run development commands from the APRP checkout root.
 
 The local loop should exercise the same contract as the runtime:
 DocTypes, service helpers, config rendering, and repo-owned operator

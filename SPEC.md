@@ -78,7 +78,7 @@ user-owned domain with certbot and manual TXT records, without using
 wildcard assumptions.
 
 Local certbot state lives in untracked `ops/certs/<hostname>/`
-directories inside the host checkout.
+directories inside the checkout root.
 
 The DNS-01 procedure itself is documented in `docs/system.md` and
 `docs/security.md`.
@@ -321,14 +321,13 @@ not hardcoded addresses in compose files or other non-config artifacts.
 
 ### 3.3 Repository path contract
 
-The default host checkout path is:
+APRP does not hardcode a universal checkout path.
 
-```text
-/opt/aprp/checkout
-```
+Repo-owned scripts run from the APRP checkout root, and operators may
+place that checkout wherever their host layout requires.
 
-Docker, deploy, backup, mirror, and operator scripts should assume this path
-unless explicitly configured otherwise.
+Non-secret repo state, local certbot state, and operator scripts all
+stay under that checkout root.
 
 ### 3.4 Container posture
 

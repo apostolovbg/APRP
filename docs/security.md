@@ -18,9 +18,8 @@ domain.
 The current proof installation uses `kuche.aprp.store` for the ERP
 host, `kotka.aprp.store` for the mirror host, and `aprp.store` for the
 storefront host.
-Host-managed checkouts live at `/opt/aprp/checkout`, and local certbot
-state lives in untracked `ops/certs/<hostname>/` directories inside
-that checkout.
+Run the repo-owned scripts from the APRP checkout root, and keep local
+certbot state in untracked `ops/certs/<hostname>/` directories there.
 
 The controlled showcase mode is the public demo surface. Its rules live
 in `docs/showcase.md`, and its seed/reset helpers live in
@@ -45,7 +44,7 @@ The storefront host may be provider-managed and still remains part of
 the APRP integration contract.
 
 Certbot should be run with one `config-dir` per hostname so the issued
-files remain separated. Example:
+files remain separated. From the APRP checkout root, example:
 
 ```bash
 certbot certonly \

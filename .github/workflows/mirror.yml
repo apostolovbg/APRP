@@ -16,5 +16,4 @@ jobs:
         shell: bash
     steps:
       - name: Run mirror script
-        working-directory: /opt/aprp/checkout
         run: ./ops/deploy_mirror.sh

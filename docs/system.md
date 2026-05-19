@@ -26,8 +26,7 @@ the mirror host to `kotka.aprp.store`, and the storefront host to
 The repo-owned scripts seed the standardized container names
 `aprp-server` and `aprp-mirror` from tracked config.
 
-On macOS and Linux host-managed installs, the checkout lives at
-`/opt/aprp/checkout`.
+Run the repo-owned scripts from the APRP checkout root.
 
 A WordPress/WooCommerce site on any server can connect to APRP on any
 other server through the storefront contract.
@@ -43,7 +42,7 @@ hostnames may point at the same public IP or at different hosts; the
 certificate workflow stays the same.
 
 Local certbot state lives in untracked `ops/certs/<hostname>/`
-directories inside the checkout. Each hostname keeps its own
+directories inside the checkout root. Each hostname keeps its own
 `config-dir`, `work-dir`, and `logs-dir`.
 
 For install and development guidance, see `docs/install.md` and
@@ -143,7 +142,7 @@ storefront host, and any other operator-owned domain.
 The current proof installation uses Superhosting.bg as the DNS provider
 for the ERP and mirror hostnames.
 
-Example commands:
+From the APRP checkout root, run:
 
 ```bash
 mkdir -p ops/certs/kuche.aprp.store

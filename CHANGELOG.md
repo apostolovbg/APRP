@@ -62,6 +62,32 @@ Example:
 ## Version 0.4.0
 
 - 2026-05-14:
+  Change: Removed the hardcoded checkout-path assumption and rewrote
+    the operator docs to stay repo-relative.
+  Why: Replaced an unverified host path contract with a repo-relative
+    checkout model.
+  Impact: The plan, spec, guides, workflow wrappers, and tests now
+    describe the checkout root generically and keep certbot state under
+    `ops/certs/<hostname>/`.
+  Files:
+  CHANGELOG.md
+  PLAN.md
+  README.md
+  SPEC.md
+  docs/development.md
+  docs/install.md
+  docs/security.md
+  docs/system.md
+  ops/render_workflows.py
+  .github/workflows/backup.yml
+  .github/workflows/deploy.yml
+  .github/workflows/mirror.yml
+  .github/workflows/recovery.yml
+  tests/test_aprp_baseline.py
+  tests/test_aprp_runtime.py
+  tests/test_workflow_wrappers.py
+
+- 2026-05-14:
   Change: Added host-managed checkout and DNS-01 certbot state
     formalization.
   Why: APRP needed an explicit local operator contract for checkout
